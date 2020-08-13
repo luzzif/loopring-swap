@@ -1,10 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { FlexContainer, Logo } from "./styled";
+import { FlexContainer, Logo, SettingsIcon } from "./styled";
 import { Box, Flex } from "reflexbox";
 import logo from "../../../images/logo.svg";
 import { Button } from "../../button";
-import { faPlug, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faPlug, faUser, faCog } from "@fortawesome/free-solid-svg-icons";
 import { FormattedMessage } from "react-intl";
 
 export const Toolbar = ({
@@ -17,23 +17,30 @@ export const Toolbar = ({
             <Logo src={logo} />
         </Box>
         <Flex alignItems="center" height="100%">
-            <Button
-                faIcon={!loggedIn && (selectedWeb3Account ? faUser : faPlug)}
-                onClick={onConnectingWallet}
-                size="small"
-            >
-                {loggedIn ? (
-                    selectedWeb3Account
-                ) : (
-                    <FormattedMessage
-                        id={
-                            selectedWeb3Account
-                                ? "toolbar.action.wallet.login"
-                                : "toolbar.action.wallet.connect"
-                        }
-                    />
-                )}
-            </Button>
+            <Box mr={3}>
+                <SettingsIcon icon={faCog} />
+            </Box>
+            <Box>
+                <Button
+                    faIcon={
+                        !loggedIn && (selectedWeb3Account ? faUser : faPlug)
+                    }
+                    onClick={onConnectingWallet}
+                    size="small"
+                >
+                    {loggedIn ? (
+                        selectedWeb3Account
+                    ) : (
+                        <FormattedMessage
+                            id={
+                                selectedWeb3Account
+                                    ? "toolbar.action.wallet.login"
+                                    : "toolbar.action.wallet.connect"
+                            }
+                        />
+                    )}
+                </Button>
+            </Box>
         </Flex>
     </FlexContainer>
 );
