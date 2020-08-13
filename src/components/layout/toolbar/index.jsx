@@ -13,7 +13,7 @@ export const Toolbar = ({
     loggedIn,
 }) => (
     <FlexContainer>
-        <Box height={36}>
+        <Box height={28}>
             <Logo src={logo} />
         </Box>
         <Flex alignItems="center" height="100%">
