@@ -170,7 +170,7 @@ export const App = () => {
                     justifyContent="center"
                     alignItems="center"
                 >
-                    <Box width={["90%", "80%", "60%", "25%"]}>
+                    <Box width={["90%", "80%", "60%", "24%"]}>
                         <Swapper />
                     </Box>
                 </Flex>
