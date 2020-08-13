@@ -13,12 +13,13 @@ export const TokenSpecifier = ({
     specification,
     onChange,
     supportedTokens,
+    balances,
 }) => {
     const { amount, token } = specification;
 
     const [modalOpen, setModalOpen] = useState(false);
     const [stringAmount, setStringAmount] = useState("");
-    const [amountError, setAmountError] = useState(false);
+    // const [amountError, setAmountError] = useState(false);
 
     useEffect(() => {
         if (!stringAmount.endsWith(".")) {
@@ -38,14 +39,14 @@ export const TokenSpecifier = ({
                 newAmount.indexOf(" ") >= 0 ||
                 newAmount.indexOf("-") >= 0
             ) {
-                setAmountError(newAmount);
+                // setAmountError(newAmount);
                 onChange({ ...specification, amount: "0" });
                 return;
             }
             if (newAmount.endsWith(".")) {
-                setAmountError(true);
+                // setAmountError(true);
             } else {
-                setAmountError(false);
+                // setAmountError(false);
             }
             if (/\.{2,}/.test(newAmount) || newAmount.split(".").length > 2) {
                 return;
@@ -106,6 +107,7 @@ export const TokenSpecifier = ({
                 onChange={handleTokenChange}
                 supportedTokens={supportedTokens}
                 selected={token}
+                balances={balances}
             />
         </>
     );
@@ -115,5 +117,5 @@ TokenSpecifier.propTypes = {
     variant: PropTypes.oneOf(["from", "to"]),
     specification: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
-    onChasupportedTokensnge: PropTypes.array.isRequired,
+    supportedTokens: PropTypes.array.isRequired,
 };

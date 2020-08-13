@@ -31,5 +31,6 @@
 
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
     "error.login": "There was an error logging in. Please try again later.",
-    "error.supported.tokens": "There was an error fetching the supported tokens. Please try again later."
+    "error.supported.tokens": "There was an error fetching the supported tokens. Please try again later.",
+    "error.user.balances": "There was an error fetching your balances. Please try again later."
 }

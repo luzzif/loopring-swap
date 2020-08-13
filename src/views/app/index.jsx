@@ -11,7 +11,11 @@ import { AuthDrawer } from "../../components/auth-drawer";
 import { initializeWeb3 } from "../../actions/web3";
 import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { login, getSupportedTokens } from "../../actions/loopring";
+import {
+    login,
+    getSupportedTokens,
+    getUserBalances,
+} from "../../actions/loopring";
 import { Flex, Box } from "reflexbox";
 import { Swapper } from "../swapper";
 import { FullScreenOverlay } from "../../components/full-screen-overlay";
@@ -85,10 +89,14 @@ export const App = () => {
         web3Instance,
         selectedAccount: selectedWeb3Account,
         loopringAccount,
+        loopringWallet,
+        supportedTokens,
     } = useSelector((state) => ({
         web3Instance: state.web3.instance,
         selectedAccount: state.web3.selectedAccount,
         loopringAccount: state.loopring.account,
+        loopringWallet: state.loopring.wallet,
+        supportedTokens: state.loopring.supportedTokens.data,
     }));
 
     const [lightTheme, setLightTheme] = useState(true);
@@ -97,6 +105,23 @@ export const App = () => {
     useEffect(() => {
         dispatch(getSupportedTokens());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (
+            loopringAccount &&
+            loopringWallet &&
+            supportedTokens &&
+            supportedTokens.length > 0
+        ) {
+            dispatch(
+                getUserBalances(
+                    loopringAccount,
+                    loopringWallet,
+                    supportedTokens
+                )
+            );
+        }
+    }, [dispatch, loopringAccount, loopringWallet, supportedTokens]);
 
     // setting up local storage-saved theme
     useEffect(() => {

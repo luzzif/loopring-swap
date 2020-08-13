@@ -7,11 +7,13 @@ import {
 import { toast } from "react-toastify";
 import { getTokenInfo } from "../../lightcone/api/v1/tokeninfo/get";
 import { FormattedMessage } from "react-intl";
+import { getBalances } from "../../lightcone/api/v1/balances/get";
+import { getLoopringApiKey } from "../../utils/loopring";
+import BigNumber from "bignumber.js";
+
+// login
 
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
-export const GET_SUPPORTED_TOKENS_START = "GET_SUPPORTED_TOKENS_START";
-export const GET_SUPPORTED_TOKENS_END = "GET_SUPPORTED_TOKENS_END";
-export const GET_SUPPORTED_TOKENS_SUCCESS = "GET_SUPPORTED_TOKENS_SUCCESS";
 
 export const login = (web3Instance, selectedWeb3Account) => async (
     dispatch
@@ -60,6 +62,12 @@ export const login = (web3Instance, selectedWeb3Account) => async (
     }
 };
 
+// get supported tokens
+
+export const GET_SUPPORTED_TOKENS_START = "GET_SUPPORTED_TOKENS_START";
+export const GET_SUPPORTED_TOKENS_END = "GET_SUPPORTED_TOKENS_END";
+export const GET_SUPPORTED_TOKENS_SUCCESS = "GET_SUPPORTED_TOKENS_SUCCESS";
+
 export const getSupportedTokens = () => async (dispatch) => {
     dispatch({ type: GET_SUPPORTED_TOKENS_START });
     try {
@@ -72,4 +80,51 @@ export const getSupportedTokens = () => async (dispatch) => {
         console.error("error getting supported tokens", error);
     }
     dispatch({ type: GET_SUPPORTED_TOKENS_END });
+};
+
+// get user balances
+
+export const GET_USER_BALANCES_START = "GET_USER_BALANCES_START";
+export const GET_USER_BALANCES_END = "GET_USER_BALANCES_END";
+export const GET_USER_BALANCES_SUCCESS = "GET_USER_BALANCES_SUCCESS";
+
+export const getUserBalances = (account, wallet, supportedTokens) => async (
+    dispatch
+) => {
+    dispatch({ type: GET_USER_BALANCES_START });
+    try {
+        const partialBalances = await getBalances(
+            account.accountId,
+            await getLoopringApiKey(wallet, account),
+            supportedTokens
+        );
+        // we process the tokens with no balance too,
+        // saving them with a 0 balance if necessary
+        const allBalances = supportedTokens
+            .filter((supportedToken) => supportedToken.enabled)
+            .reduce((allBalances, supportedToken) => {
+                const supportedTokenId = supportedToken.tokenId;
+                const supportedTokenSymbol = supportedToken.symbol;
+                const matchingBalance = partialBalances.find(
+                    (balance) => balance.tokenId === supportedTokenId
+                );
+                const balance = new BigNumber(
+                    matchingBalance ? matchingBalance.totalAmount : "0"
+                );
+                allBalances.push({
+                    id: supportedTokenId,
+                    symbol: supportedTokenSymbol,
+                    name: supportedToken.name,
+                    address: supportedToken.address,
+                    balance,
+                });
+                return allBalances;
+            }, [])
+            .sort((a, b) => b.balance.minus(a.balance).toNumber());
+        dispatch({ type: GET_USER_BALANCES_SUCCESS, balances: allBalances });
+    } catch (error) {
+        toast.error(<FormattedMessage id="error.user.balances" />);
+        console.error("error getting user balances", error);
+    }
+    dispatch({ type: GET_USER_BALANCES_END });
 };

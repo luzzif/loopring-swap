@@ -57,7 +57,7 @@ export const Button = ({ children, faIcon, size, ...rest }) => (
 );
 
 Button.propTypes = {
-    faIcon: PropTypes.node,
+    faIcon: PropTypes.object,
     size: PropTypes.oneOf(["small", "medium", "large"]),
 };
 

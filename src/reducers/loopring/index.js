@@ -3,6 +3,9 @@ import {
     GET_SUPPORTED_TOKENS_SUCCESS,
     GET_SUPPORTED_TOKENS_START,
     GET_SUPPORTED_TOKENS_END,
+    GET_USER_BALANCES_SUCCESS,
+    GET_USER_BALANCES_START,
+    GET_USER_BALANCES_END,
 } from "../../actions/loopring";
 
 const initialState = {
@@ -10,6 +13,10 @@ const initialState = {
     wallet: null,
     exchange: null,
     supportedTokens: {
+        loadings: 0,
+        data: [],
+    },
+    balances: {
         loadings: 0,
         data: [],
     },
@@ -50,6 +57,33 @@ export const loopringReducer = (state = initialState, action) => {
                 supportedTokens: {
                     ...state.supportedTokens,
                     data: action.supportedTokens,
+                },
+            };
+        }
+        case GET_USER_BALANCES_START: {
+            return {
+                ...state,
+                balances: {
+                    ...state.balances,
+                    loadings: state.balances.loadings + 1,
+                },
+            };
+        }
+        case GET_USER_BALANCES_END: {
+            return {
+                ...state,
+                balances: {
+                    ...state.balances,
+                    loadings: state.balances.loadings - 1,
+                },
+            };
+        }
+        case GET_USER_BALANCES_SUCCESS: {
+            return {
+                ...state,
+                balances: {
+                    ...state.balances,
+                    data: action.balances,
                 },
             };
         }

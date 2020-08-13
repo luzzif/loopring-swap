@@ -61,12 +61,14 @@ export const TokenModal = ({
     }, [searchTerm, balancesInEther, supportedTokens]);
 
     useEffect(() => {
-        if (!balances) {
+        if (!balances || balances.length === 0) {
             return;
         }
-        const balancesInEther = Object.entries(balances).reduce(
-            (balancesInEther, [address, balanceInWei]) => {
-                balancesInEther[address] = new BigNumber(fromWei(balanceInWei));
+        const balancesInEther = balances.reduce(
+            (balancesInEther, { address, balance }) => {
+                balancesInEther[address] = new BigNumber(
+                    fromWei(balance.toFixed())
+                );
                 return balancesInEther;
             },
             {}
@@ -105,6 +107,7 @@ export const TokenModal = ({
                                   const { address, symbol, name } = token;
                                   return (
                                       <RowFlex
+                                          key={address}
                                           alignItems="center"
                                           p={16}
                                           onClick={getClickHandler(token)}
@@ -152,6 +155,6 @@ TokenModal.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
-    balances: PropTypes.object.isRequired,
-    selected: PropTypes.object.isRequired,
+    balances: PropTypes.array.isRequired,
+    selected: PropTypes.object,
 };

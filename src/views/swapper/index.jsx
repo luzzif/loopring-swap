@@ -11,12 +11,10 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 
 export const Swapper = () => {
-    const { loadingSupportedTokens, supportedTokens } = useSelector(
-        (state) => ({
-            loadingSupportedTokens: !!state.loopring.supportedTokens.loadings,
-            supportedTokens: state.loopring.supportedTokens.data,
-        })
-    );
+    const { supportedTokens, balances } = useSelector((state) => ({
+        supportedTokens: state.loopring.supportedTokens.data,
+        balances: state.loopring.balances.data,
+    }));
 
     const [fromSpecification, setFromSpecification] = useState({
         amount: "0",
@@ -57,6 +55,7 @@ export const Swapper = () => {
                         specification={fromSpecification}
                         onChange={handleFromChange}
                         supportedTokens={supportedTokens}
+                        balances={balances}
                     />
                 </Box>
                 <Box
@@ -73,6 +72,7 @@ export const Swapper = () => {
                         specification={toSpecification}
                         onChange={handleToChange}
                         supportedTokens={supportedTokens}
+                        balances={balances}
                     />
                 </Box>
             </BackgroundFlex>
