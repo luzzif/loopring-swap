@@ -77,7 +77,7 @@ export const TokenSpecifier = ({
     return (
         <>
             <RootFlex>
-                <HeaderText width="100%" mb={2}>
+                <HeaderText width="100%" mb={3}>
                     <FormattedMessage id={`token.specifier.${variant}`} />
                 </HeaderText>
                 <Flex width="100%">
@@ -92,7 +92,7 @@ export const TokenSpecifier = ({
                             onChange={handleAmountChange}
                         />
                     </Box>
-                    <Box display="flex" alignItems="center">
+                    <Box display="flex" alignItems="center" ml={2}>
                         <TokenSelect
                             token={token}
                             onClick={handleSelectClick}

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Flex } from "reflexbox";
+import { Flex, Box } from "reflexbox";
 
 export const Root = styled(Flex)`
     background: ${(props) => props.theme.background};
@@ -9,7 +9,8 @@ export const Root = styled(Flex)`
     height: 100%;
 `;
 
-export const ContentContainer = styled.div`
+export const Content = styled(Box)`
     width: 100%;
     height: 100%;
 `;
+

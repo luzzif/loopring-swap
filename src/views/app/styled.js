@@ -30,7 +30,7 @@ export const GlobalStyle = createGlobalStyle`
         margin-top: 16px !important;
         box-shadow: 0px 30px 62px 0px ${(props) =>
             props.theme.shadow} !important;
-        border-radius: 4px !important;
+        border-radius: 12px !important;
     }
 
     .custom-toast-body {
@@ -54,6 +54,6 @@ export const GlobalStyle = createGlobalStyle`
 
     .web3modal-provider-container,
     .web3modal-modal-card {
-        border-radius: 4px !important;
+        border-radius: 12px !important;
     }
 `;

@@ -1,7 +1,8 @@
 import React from "react";
 import { Toolbar } from "./toolbar";
 import PropTypes from "prop-types";
-import { Root, ContentContainer } from "./styled";
+import { Root, Content } from "./styled";
+import { Footer } from "./footer";
 
 export const Layout = ({
     children,
@@ -9,13 +10,14 @@ export const Layout = ({
     selectedWeb3Account,
     loggedIn,
 }) => (
-    <Root>
+    <Root flexDirection="column">
         <Toolbar
             onConnectingWallet={onConnectingWallet}
             selectedWeb3Account={selectedWeb3Account}
             loggedIn={loggedIn}
         />
-        <ContentContainer>{children}</ContentContainer>
+        <Content>{children}</Content>
+        <Footer />
     </Root>
 );
 

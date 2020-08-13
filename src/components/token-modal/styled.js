@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Flex } from "reflexbox";
+import { Flex, Box } from "reflexbox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const RootFlex = styled(Flex)`
@@ -17,7 +17,7 @@ export const RootFlex = styled(Flex)`
 
 export const ContentFlex = styled(Flex)`
     background: ${(props) => props.theme.background};
-    border-radius: 4px;
+    border-radius: 12px;
     max-height: 60%;
     overflow: auto;
     box-shadow: 0px 30px 62px 0px ${(props) => props.theme.shadow};
@@ -29,13 +29,13 @@ export const ListFlex = styled(Flex)`
 
 export const HeaderFlex = styled(Flex)`
     width: 100%;
-    height: 60px;
+    height: 64px;
     min-height: 60px;
     align-items: center;
     justify-content: space-between;
     background: ${(props) => props.theme.foreground};
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-left: 20px;
+    padding-right: 20px;
     font-size: 20px;
     font-weight: 700;
     color: ${(props) => props.theme.text};
@@ -46,12 +46,12 @@ export const RowFlex = styled(Flex)`
     cursor: pointer;
     background: ${(props) =>
         props.selected ? props.theme.foreground : props.theme.background};
+    border-radius: 12px;
     :hover {
-        border-radius: 4px;
         background: ${(props) => props.theme.foreground};
     }
 `;
 
-export const CloseIcon = styled(FontAwesomeIcon)`
+export const CloseBox = styled(Box)`
     cursor: pointer;
 `;

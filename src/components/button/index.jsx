@@ -27,7 +27,7 @@ const commonsStyles = css`
     background: ${(props) => props.theme.primary};
     color: rgba(255, 255, 255, 0.8);
     border: none;
-    border-radius: 4px;
+    border-radius: 12px;
     font-weight: 600;
     transition: all 0.3s ease;
     outline: none;

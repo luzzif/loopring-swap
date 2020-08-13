@@ -4,11 +4,19 @@ import Web3 from "web3";
 import BigNumber from "bignumber.js";
 import { Flex, Box } from "reflexbox";
 import { TokenIcon } from "../token-icon";
-import { RowFlex, RootFlex, ContentFlex, ListFlex, CloseIcon } from "./styled";
+import {
+    RowFlex,
+    RootFlex,
+    ContentFlex,
+    ListFlex,
+    CloseIcon,
+    HeaderFlex,
+    CloseBox,
+} from "./styled";
 import { FullScreenOverlay } from "../full-screen-overlay";
-import { HeaderFlex } from "../auth-drawer/styled";
 import { FormattedMessage } from "react-intl";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const {
     utils: { fromWei },
@@ -88,11 +96,11 @@ export const TokenModal = ({
                 >
                     <HeaderFlex>
                         <FormattedMessage id="token.modal.header" />
-                        <Box ml={3}>
-                            <CloseIcon icon={faTimes} onClick={onClose} />
-                        </Box>
+                        <CloseBox ml={3} p={2}>
+                            <FontAwesomeIcon icon={faTimes} onClick={onClose} />
+                        </CloseBox>
                     </HeaderFlex>
-                    <ListFlex flexDirection="column" py="8px">
+                    <ListFlex flexDirection="column" py="8px" px="12px">
                         {tokenDataset.length > 0
                             ? tokenDataset.map((token) => {
                                   const { address, symbol, name } = token;
