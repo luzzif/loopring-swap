@@ -20,6 +20,7 @@ export const Toolbar = ({
             <Button
                 faIcon={!loggedIn && (selectedWeb3Account ? faUser : faPlug)}
                 onClick={onConnectingWallet}
+                size="small"
             >
                 {loggedIn ? (
                     selectedWeb3Account

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Layout } from "../../components/layout";
 import { ThemeProvider } from "styled-components";
-import { GlobalStyle, FullScreenOverlay } from "./styled.js";
+import { GlobalStyle } from "./styled.js";
 import { useDispatch, useSelector } from "react-redux";
 import MewConnect from "@myetherwallet/mewconnect-web-client";
 import Web3Modal from "web3modal";
@@ -13,7 +13,8 @@ import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { login, getSupportedTokens } from "../../actions/loopring";
 import { Flex, Box } from "reflexbox";
-import { Swapper } from "../../components/swapper";
+import { Swapper } from "../swapper";
+import { FullScreenOverlay } from "../../components/full-screen-overlay";
 
 const commonColors = {
     error: "#c62828",
@@ -142,7 +143,7 @@ export const App = () => {
                     justifyContent="center"
                     alignItems="center"
                 >
-                    <Box width={["95%", "80%", "60%", "20%"]}>
+                    <Box width={["90%", "80%", "60%", "25%"]}>
                         <Swapper />
                     </Box>
                 </Flex>

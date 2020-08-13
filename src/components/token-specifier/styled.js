@@ -21,7 +21,9 @@ export const Input = styled.input`
     border: none;
     background: ${(props) => props.theme.background};
     outline: none;
-    line-height: 24px;
+    line-height: 40px;
+    width: 100%;
+    height: 40px;
     ::placeholder {
         color: ${(props) => props.theme.placeholder};
     }

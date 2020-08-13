@@ -19,7 +19,7 @@
     "drawer.wallet.connect.list.item.discord": "Discord",
     "drawer.wallet.connect.list.item.bug.report": "Bug report",
     "drawer.wallet.connect.list.item.exchange.api": "Exchange API",
-    "drawer.wallet.connect.list.item.smart.contract": "DEX smart contract (beta1)",
+    "drawer.wallet.connect.list.item.smart.contract": "DEX smart contract",
     "drawer.wallet.connect.list.item.loopring.protocol": "Loopring protocol",
     "drawer.wallet.connect.list.item.fee.schedule": "Fee schedule",
     "drawer.wallet.connect.list.item.token.listing": "Token listing",
@@ -27,6 +27,7 @@
     "token.specifier.from": "From",
     "token.specifier.to": "To",
     "swapper.action.swap": "Swap",
+    "token.modal.header": "Assets",
 
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
     "error.login": "There was an error logging in. Please try again later.",
