@@ -11,7 +11,7 @@ export const RootFlex = styled(Flex)`
 `;
 
 export const HeaderText = styled(Box)`
-    font-size: 20px;
+    font-size: 16px;
 `;
 
 export const Input = styled.input`

@@ -5,7 +5,7 @@ export const FlexContainer = styled(Flex)`
     padding-left: 20px;
     padding-right: 20px;
     width: 100%;
-    height: 60px;
+    height: 40px;
     align-items: center;
     justify-content: center;
     font-size: 12px;
