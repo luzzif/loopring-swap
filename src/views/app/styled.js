@@ -51,6 +51,11 @@ export const GlobalStyle = createGlobalStyle`
     .Toastify__toast--error {
         background: ${(props) => props.theme.error} !important;
     }
+
+    .web3modal-provider-container,
+    .web3modal-modal-card {
+        border-radius: 4px !important;
+    }
 `;
 
 export const FullScreenOverlay = styled.div`

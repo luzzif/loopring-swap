@@ -7,23 +7,29 @@ import React, {
 } from "react";
 import PropTypes from "prop-types";
 import { Box } from "reflexbox";
-import { faPlug, faLock, faLockOpen } from "@fortawesome/free-solid-svg-icons";
+import {
+    faPlug,
+    faLock,
+    faLockOpen,
+    faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import { selectedTheme } from "../../views/app";
 import { FormattedMessage } from "react-intl";
 import {
     RootFlex,
-    HeaderBox,
+    HeaderFlex,
     Icon,
     FullWidthButton,
     Divider,
-    EllipsizedText,
+    EllipsizedBox,
+    CloseIcon,
 } from "./styled";
 import { Lrc } from "./sections/lrc";
 import { Support } from "./sections/support";
 import { TechnicalResources } from "./sections/technical-resources";
 import { ExchangeInfo } from "./sections/exchange-info";
 
-export const WalletConnectionDrawer = ({
+export const AuthDrawer = ({
     open,
     onClose,
     onConnectWallet,
@@ -34,43 +40,28 @@ export const WalletConnectionDrawer = ({
     const container = useRef(null);
 
     const [icon, setIcon] = useState(null);
+    const [iconColor, setIconColor] = useState("");
     const [summaryMessageKey, setSummaryMessageKey] = useState("placeholder");
     const [buttonMessageKey, setButtonMessageKey] = useState("placeholder");
 
     useLayoutEffect(() => {
         if (loggedIn) {
             setIcon(faLockOpen);
+            setIconColor(selectedTheme.success);
             setSummaryMessageKey("drawer.wallet.connect.logout");
             setButtonMessageKey("drawer.wallet.connect.action.logout");
         } else if (selectedWeb3Account) {
             setIcon(faLock);
-            setSummaryMessageKey("drawer.wallet.connect.summary");
+            setIconColor(selectedTheme.error);
+            setSummaryMessageKey("drawer.wallet.connect.login");
             setButtonMessageKey("drawer.wallet.connect.action.login");
         } else {
             setIcon(faPlug);
-            setSummaryMessageKey("drawer.wallet.connect.login");
+            setIconColor(selectedTheme.primary);
+            setSummaryMessageKey("drawer.wallet.connect.summary");
             setButtonMessageKey("drawer.wallet.connect.action.connect");
         }
     }, [loggedIn, selectedWeb3Account]);
-
-    const handleClick = useCallback(
-        (event) => {
-            if (container.current.contains(event.target)) {
-                return;
-            }
-            onClose();
-        },
-        [onClose]
-    );
-
-    useEffect(() => {
-        if (open) {
-            document.addEventListener("mousedown", handleClick);
-            return () => {
-                document.removeEventListener("mousedown", handleClick);
-            };
-        }
-    }, [handleClick, open]);
 
     return (
         <RootFlex
@@ -79,23 +70,18 @@ export const WalletConnectionDrawer = ({
             open={open}
             ref={container}
         >
-            <HeaderBox mb={4}>
-                <EllipsizedText>
+            <HeaderFlex mb={4}>
+                <EllipsizedBox>
                     {selectedWeb3Account || (
                         <FormattedMessage id="drawer.wallet.connect.header.connect" />
                     )}
-                </EllipsizedText>
-            </HeaderBox>
+                </EllipsizedBox>
+                <Box ml={3}>
+                    <CloseIcon icon={faTimes} onClick={onClose} />
+                </Box>
+            </HeaderFlex>
             <Box mb={3}>
-                <Icon
-                    icon={icon}
-                    color={
-                        selectedWeb3Account
-                            ? selectedTheme.error
-                            : selectedTheme.primary
-                    }
-                    fontSize="40"
-                />
+                <Icon icon={icon} color={iconColor} fontSize="40" />
             </Box>
             <Box px={4} mb={3} fontSize="12px" textAlign="center">
                 <FormattedMessage id={summaryMessageKey} />
@@ -119,7 +105,6 @@ export const WalletConnectionDrawer = ({
                 <Divider />
             </Box>
             <TechnicalResources />
-            {/* Exchange info */}
             <Box width="100%" mb={3}>
                 <Divider />
             </Box>
@@ -128,7 +113,7 @@ export const WalletConnectionDrawer = ({
     );
 };
 
-WalletConnectionDrawer.propTypes = {
+AuthDrawer.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onConnectWallet: PropTypes.func.isRequired,

@@ -7,7 +7,7 @@ import MewConnect from "@myetherwallet/mewconnect-web-client";
 import Web3Modal from "web3modal";
 import { INFURA_ID } from "../../env";
 import { useCallback } from "react";
-import { WalletConnectionDrawer } from "../../components/wallet-connection-drawer";
+import { AuthDrawer } from "../../components/auth-drawer";
 import { initializeWeb3 } from "../../actions/web3";
 import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -17,6 +17,7 @@ const commonColors = {
     error: "#c62828",
     warning: "#FF6F00",
     primary: "rgb(28, 96, 255)",
+    success: "#00c853",
     divider: "rgba(0, 0, 0, 0.1)",
 };
 
@@ -88,7 +89,7 @@ export const App = () => {
     }));
 
     const [lightTheme, setLightTheme] = useState(true);
-    const [connectingWallet, setConnectingWallet] = useState(false);
+    const [authorizing, setAuthorizing] = useState(false);
 
     // setting up local storage-saved theme
     useEffect(() => {
@@ -102,11 +103,11 @@ export const App = () => {
     }, [dispatch]);
 
     const handleConnectingWallet = useCallback(() => {
-        setConnectingWallet(true);
+        setAuthorizing(true);
     }, []);
 
     const handleConnectingWalletClose = useCallback(() => {
-        setConnectingWallet(false);
+        setAuthorizing(false);
     }, []);
 
     const handleConnectWallet = useCallback(() => {
@@ -117,6 +118,10 @@ export const App = () => {
         dispatch(login(web3Instance, selectedWeb3Account));
     }, [dispatch, selectedWeb3Account, web3Instance]);
 
+    const handleOverlayClick = useCallback(() => {
+        setAuthorizing(false);
+    }, []);
+
     return (
         <ThemeProvider theme={lightTheme ? light : dark}>
             <GlobalStyle />
@@ -125,9 +130,12 @@ export const App = () => {
                 selectedWeb3Account={selectedWeb3Account}
                 loggedIn={!!loopringAccount}
             ></Layout>
-            <FullScreenOverlay open={connectingWallet} />
-            <WalletConnectionDrawer
-                open={connectingWallet}
+            <FullScreenOverlay
+                open={authorizing}
+                onClick={handleOverlayClick}
+            />
+            <AuthDrawer
+                open={authorizing}
                 onClose={handleConnectingWalletClose}
                 onConnectWallet={handleConnectWallet}
                 selectedWeb3Account={selectedWeb3Account}

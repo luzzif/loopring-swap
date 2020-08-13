@@ -16,12 +16,12 @@ export const RootFlex = styled(Flex)`
     overflow-y: auto;
 `;
 
-export const HeaderBox = styled(Box)`
+export const HeaderFlex = styled(Flex)`
     width: 100%;
     height: 56px;
     min-height: 56px;
-    display: flex;
     align-items: center;
+    justify-content: space-between;
     background: ${(props) => props.theme.foreground};
     padding-left: 16px;
     padding-right: 16px;
@@ -30,7 +30,7 @@ export const HeaderBox = styled(Box)`
     color: ${(props) => props.theme.text};
 `;
 
-export const EllipsizedText = styled.span`
+export const EllipsizedBox = styled(Box)`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -38,6 +38,10 @@ export const EllipsizedText = styled.span`
 
 export const Icon = styled(FontAwesomeIcon)`
     font-size: 40px;
+`;
+
+export const CloseIcon = styled(FontAwesomeIcon)`
+    cursor: pointer;
 `;
 
 export const FullWidthButton = styled(Button)`
