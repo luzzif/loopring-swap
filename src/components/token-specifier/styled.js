@@ -5,18 +5,17 @@ export const RootFlex = styled(Flex)`
     background: ${(props) => props.theme.background};
     border: solid 1px ${(props) => props.theme.border};
     border-radius: 4px;
-    padding: 12px;
+    padding: 16px 16px 12px 16px;
     flex-direction: column;
     width: 100%;
 `;
 
 export const HeaderText = styled(Box)`
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 16px;
 `;
 
 export const Input = styled.input`
-    font-size: 20px;
+    font-size: 24px;
     color: ${(props) => props.theme.text};
     font-family: "Montserrat", sans-serif;
     border: none;

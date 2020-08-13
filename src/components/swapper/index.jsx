@@ -1,11 +1,12 @@
 import React from "react";
 import { Flex, Box } from "reflexbox";
-import { BackgroundFlex, ArrowIcon, FullWidthButton } from "./styled";
+import { BackgroundFlex, ArrowIcon } from "./styled";
 import { TokenSpecifier } from "../token-specifier";
 import { useState } from "react";
-import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown, faExchangeAlt } from "@fortawesome/free-solid-svg-icons";
 import { useCallback } from "react";
 import { FormattedMessage } from "react-intl";
+import { Button } from "../button";
 
 export const Swapper = () => {
     const [fromSpecification, setFromSpecification] = useState({ amount: "0" });
@@ -21,7 +22,7 @@ export const Swapper = () => {
 
     return (
         <Flex flexDirection="column">
-            <BackgroundFlex flexDirection="column" mb={3}>
+            <BackgroundFlex flexDirection="column" mb={4}>
                 <Box>
                     <TokenSpecifier
                         variant="from"
@@ -45,10 +46,10 @@ export const Swapper = () => {
                     />
                 </Box>
             </BackgroundFlex>
-            <Box>
-                <FullWidthButton>
+            <Box display="flex" justifyContent="center">
+                <Button faIcon={faExchangeAlt}>
                     <FormattedMessage id="swapper.action.swap" />
-                </FullWidthButton>
+                </Button>
             </Box>
         </Flex>
     );

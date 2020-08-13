@@ -18,16 +18,19 @@ export const RootFlex = styled(Flex)`
 
 export const HeaderFlex = styled(Flex)`
     width: 100%;
-    height: 56px;
-    min-height: 56px;
+    height: 60px;
+    min-height: 60px;
     align-items: center;
     justify-content: space-between;
     background: ${(props) => props.theme.foreground};
-    padding-left: 16px;
-    padding-right: 16px;
-    font-size: 16px;
+    padding: 8px 16px;
+    font-size: 20px;
     font-weight: 700;
     color: ${(props) => props.theme.text};
+`;
+
+export const SummaryMessage = styled.span`
+    font-size: 16px;
 `;
 
 export const EllipsizedBox = styled(Box)`
@@ -57,7 +60,7 @@ export const ListItemHeader = styled(Box)`
     align-items: center;
     width: 100%;
     padding: 0 20px;
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 700;
     color: ${(props) => props.theme.textLight};
     margin-bottom: 16px;
@@ -69,9 +72,9 @@ export const ListItemBox = styled(Box)`
     align-items: center;
     width: 100%;
     padding: 0 20px;
-    min-height: 40px;
-    height: 40px;
-    font-size: 12px;
+    min-height: 44px;
+    height: 44px;
+    font-size: 16px;
     color: ${(props) => props.theme.text};
     background: ${(props) => props.theme.background};
     :hover {

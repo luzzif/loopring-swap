@@ -12,9 +12,8 @@ export const Toolbar = ({
     selectedWeb3Account,
     loggedIn,
 }) => (
-    <FlexContainer
-    >
-        <Box height={32}>
+    <FlexContainer>
+        <Box height={36}>
             <Logo src={logo} />
         </Box>
         <Flex alignItems="center" height="100%">

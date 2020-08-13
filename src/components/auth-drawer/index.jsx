@@ -1,8 +1,4 @@
-import React, {
-    useRef,
-    useState,
-    useLayoutEffect,
-} from "react";
+import React, { useRef, useState, useLayoutEffect } from "react";
 import PropTypes from "prop-types";
 import { Box } from "reflexbox";
 import {
@@ -21,6 +17,7 @@ import {
     Divider,
     EllipsizedBox,
     CloseIcon,
+    SummaryMessage,
 } from "./styled";
 import { Lrc } from "./sections/lrc";
 import { Support } from "./sections/support";
@@ -82,7 +79,9 @@ export const AuthDrawer = ({
                 <Icon icon={icon} color={iconColor} fontSize="40" />
             </Box>
             <Box px={4} mb={3} fontSize="12px" textAlign="center">
-                <FormattedMessage id={summaryMessageKey} />
+                <SummaryMessage>
+                    <FormattedMessage id={summaryMessageKey} />
+                </SummaryMessage>
             </Box>
             <Box width="100%" px={4} mb={3}>
                 <FullWidthButton
