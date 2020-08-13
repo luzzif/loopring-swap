@@ -5,7 +5,6 @@ import { TokenSpecifier } from "../token-specifier";
 import { useState } from "react";
 import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { useCallback } from "react";
-import { Button } from "../button";
 import { FormattedMessage } from "react-intl";
 
 export const Swapper = () => {

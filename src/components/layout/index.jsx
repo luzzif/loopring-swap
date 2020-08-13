@@ -2,7 +2,6 @@ import React from "react";
 import { Toolbar } from "./toolbar";
 import PropTypes from "prop-types";
 import { Root, ContentContainer } from "./styled";
-import { Flex, Box } from "reflexbox";
 
 export const Layout = ({
     children,

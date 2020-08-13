@@ -12,7 +12,6 @@ import { initializeWeb3 } from "../../actions/web3";
 import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { login, getSupportedTokens } from "../../actions/loopring";
-import { TokenSpecifier } from "../../components/token-specifier";
 import { Flex, Box } from "reflexbox";
 import { Swapper } from "../../components/swapper";
 
