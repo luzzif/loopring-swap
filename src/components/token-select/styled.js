@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Flex } from "reflexbox";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const RootFlex = styled(Flex)`
     border: solid 1px ${(props) => props.theme.border};
@@ -11,4 +12,9 @@ export const RootFlex = styled(Flex)`
     text-overflow: ellipsis;
     white-space: nowrap;
     cursor: pointer;
+`;
+
+export const ChevronIcon = styled(FontAwesomeIcon)`
+    font-size: 12px;
+    color: ${(props) => props.theme.primary};
 `;
