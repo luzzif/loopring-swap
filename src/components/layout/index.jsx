@@ -1,7 +1,8 @@
 import React from "react";
 import { Toolbar } from "./toolbar";
 import PropTypes from "prop-types";
-import { Root } from "./styled";
+import { Root, ContentContainer } from "./styled";
+import { Flex, Box } from "reflexbox";
 
 export const Layout = ({
     children,
@@ -15,7 +16,7 @@ export const Layout = ({
             selectedWeb3Account={selectedWeb3Account}
             loggedIn={loggedIn}
         />
-        {children}
+        <ContentContainer>{children}</ContentContainer>
     </Root>
 );
 

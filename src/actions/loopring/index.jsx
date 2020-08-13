@@ -5,9 +5,13 @@ import {
     getExchangeInfo,
 } from "../../lightcone/api/LightconeAPI";
 import { toast } from "react-toastify";
+import { getTokenInfo } from "../../lightcone/api/v1/tokeninfo/get";
 import { FormattedMessage } from "react-intl";
 
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const GET_SUPPORTED_TOKENS_START = "GET_SUPPORTED_TOKENS_START";
+export const GET_SUPPORTED_TOKENS_END = "GET_SUPPORTED_TOKENS_END";
+export const GET_SUPPORTED_TOKENS_SUCCESS = "GET_SUPPORTED_TOKENS_SUCCESS";
 
 export const login = (web3Instance, selectedWeb3Account) => async (
     dispatch
@@ -54,4 +58,18 @@ export const login = (web3Instance, selectedWeb3Account) => async (
         toast.error(<FormattedMessage id="error.login" />);
         console.error("error initializing loopring", error);
     }
+};
+
+export const getSupportedTokens = () => async (dispatch) => {
+    dispatch({ type: GET_SUPPORTED_TOKENS_START });
+    try {
+        dispatch({
+            type: GET_SUPPORTED_TOKENS_SUCCESS,
+            supportedTokens: await getTokenInfo(),
+        });
+    } catch (error) {
+        toast.error(<FormattedMessage id="error.loopring.supported.tokens" />);
+        console.error("error getting supported tokens", error);
+    }
+    dispatch({ type: GET_SUPPORTED_TOKENS_END });
 };

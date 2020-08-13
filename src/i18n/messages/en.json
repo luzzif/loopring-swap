@@ -24,6 +24,11 @@
     "drawer.wallet.connect.list.item.fee.schedule": "Fee schedule",
     "drawer.wallet.connect.list.item.token.listing": "Token listing",
     "drawer.wallet.connect.list.item.terms.privacy": "Terms and privacy",
+    "token.specifier.from": "From",
+    "token.specifier.to": "To",
+    "swapper.action.swap": "Swap",
+
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
-    "error.login": "There was an error logging in. Please try again later."
+    "error.login": "There was an error logging in. Please try again later.",
+    "error.supported.tokens": "There was an error fetching the supported tokens. Please try again later."
 }

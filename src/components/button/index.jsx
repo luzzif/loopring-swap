@@ -10,7 +10,7 @@ const commonsStyles = css`
     justify-content: center;
     align-items: center;
     font-size: 12px;
-    height: 32px;
+    height: 36px;
     font-family: "Montserrat", sans-serif;
     background: ${(props) => props.theme.primary};
     color: rgba(255, 255, 255, 0.8);

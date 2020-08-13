@@ -13,11 +13,6 @@ export const Toolbar = ({
     loggedIn,
 }) => (
     <FlexContainer
-        px={20}
-        py={3}
-        alignItems="center"
-        justifyContent="space-between"
-        width="100vw"
     >
         <Box height={32}>
             <Logo src={logo} />

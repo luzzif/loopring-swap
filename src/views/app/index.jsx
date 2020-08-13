@@ -11,14 +11,17 @@ import { AuthDrawer } from "../../components/auth-drawer";
 import { initializeWeb3 } from "../../actions/web3";
 import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { login } from "../../actions/loopring";
+import { login, getSupportedTokens } from "../../actions/loopring";
+import { TokenSpecifier } from "../../components/token-specifier";
+import { Flex, Box } from "reflexbox";
+import { Swapper } from "../../components/swapper";
 
 const commonColors = {
     error: "#c62828",
     warning: "#FF6F00",
     primary: "rgb(28, 96, 255)",
     success: "#00c853",
-    divider: "rgba(0, 0, 0, 0.1)",
+    border: "rgba(0, 0, 0, 0.1)",
 };
 
 const light = {
@@ -91,6 +94,10 @@ export const App = () => {
     const [lightTheme, setLightTheme] = useState(true);
     const [authorizing, setAuthorizing] = useState(false);
 
+    useEffect(() => {
+        dispatch(getSupportedTokens());
+    }, [dispatch]);
+
     // setting up local storage-saved theme
     useEffect(() => {
         const cachedTheme =
@@ -129,7 +136,18 @@ export const App = () => {
                 onConnectingWallet={handleConnectingWallet}
                 selectedWeb3Account={selectedWeb3Account}
                 loggedIn={!!loopringAccount}
-            ></Layout>
+            >
+                <Flex
+                    width="100%"
+                    height="100%"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <Box width={["95%", "80%", "60%", "20%"]}>
+                        <Swapper />
+                    </Box>
+                </Flex>
+            </Layout>
             <FullScreenOverlay
                 open={authorizing}
                 onClick={handleOverlayClick}
