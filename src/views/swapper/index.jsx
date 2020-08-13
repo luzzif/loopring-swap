@@ -63,7 +63,7 @@ export const Swapper = () => {
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
-                    height={32}
+                    height={40}
                 >
                     <ArrowIcon icon={faArrowDown} />
                 </Box>

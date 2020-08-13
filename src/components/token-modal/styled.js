@@ -28,11 +28,10 @@ export const ListFlex = styled(Flex)`
 
 export const HeaderFlex = styled(Flex)`
     width: 100%;
-    height: 64px;
-    min-height: 60px;
     align-items: center;
     justify-content: space-between;
     background: ${(props) => props.theme.foreground};
+    padding-top: 12px;
     padding-left: 20px;
     padding-right: 20px;
     font-size: 20px;
@@ -50,6 +49,7 @@ export const SearchFlex = styled(Flex)`
     padding-right: 20px;
     font-size: 20px;
     color: ${(props) => props.theme.text};
+    border-bottom: solid 1px ${(props) => props.theme.border};
 `;
 
 export const Input = styled.input`
@@ -64,7 +64,6 @@ export const Input = styled.input`
         color: ${(props) => props.theme.placeholder};
     }
 `;
-
 
 export const RowFlex = styled(Flex)`
     transition: background 0.3s ease;
