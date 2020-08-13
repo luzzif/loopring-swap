@@ -28,14 +28,16 @@ const commonsStyles = css`
     padding: 0 20px;
     font-size: ${(props) => sizeMap[props.size].fontSize}px;
     font-family: "Montserrat", sans-serif;
-    background: ${(props) => props.theme.primary};
-    color: rgba(255, 255, 255, 0.8);
+    background: ${(props) =>
+        props.disabled ? props.theme.disabled : props.theme.primary};
+    color: ${(props) =>
+        props.disabled ? props.theme.textDisabled : "rgba(255, 255, 255, 0.8)"};
     border: none;
     border-radius: 12px;
     font-weight: 600;
     transition: all 0.3s ease;
     outline: none;
-    cursor: pointer;
+    cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
     text-decoration: none;
 `;
 
