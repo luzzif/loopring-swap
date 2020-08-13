@@ -11,9 +11,10 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 
 export const Swapper = () => {
-    const { supportedTokens, balances } = useSelector((state) => ({
+    const { supportedTokens, balances, loggedIn } = useSelector((state) => ({
         supportedTokens: state.loopring.supportedTokens.data,
         balances: state.loopring.balances.data,
+        loggedIn: !!state.loopring.account,
     }));
 
     const [fromSpecification, setFromSpecification] = useState({
@@ -77,7 +78,19 @@ export const Swapper = () => {
                 </Box>
             </BackgroundFlex>
             <Box display="flex" justifyContent="center">
-                <Button faIcon={faExchangeAlt} size="large">
+                <Button
+                    faIcon={faExchangeAlt}
+                    size="large"
+                    disabled={
+                        !loggedIn ||
+                        !fromSpecification ||
+                        fromSpecification.token ||
+                        fromSpecification.amount === "0" ||
+                        !toSpecification ||
+                        toSpecification.token ||
+                        toSpecification.amount === "0"
+                    }
+                >
                     <FormattedMessage id="swapper.action.swap" />
                 </Button>
             </Box>
