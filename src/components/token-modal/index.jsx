@@ -11,11 +11,14 @@ import {
     ListFlex,
     HeaderFlex,
     CloseBox,
+    SearchFlex,
+    Input,
 } from "./styled";
 import { FullScreenOverlay } from "../full-screen-overlay";
 import { FormattedMessage } from "react-intl";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRef } from "react";
 
 const {
     utils: { fromWei },
@@ -30,6 +33,8 @@ export const TokenModal = ({
     balances,
     selected,
 }) => {
+    const contentRef = useRef(null);
+
     const [searchTerm, setSearchTerm] = useState("");
     const [tokenDataset, setTokenDataset] = useState(supportedTokens);
     const [balancesInEther, setBalancesInEther] = useState({});
@@ -81,17 +86,27 @@ export const TokenModal = ({
         onClose();
     };
 
-    const handleLocalClose = useCallback(() => {
-        onClose();
-        setTokenDataset(supportedTokens);
-        setSearchTerm("");
-    }, [onClose, supportedTokens]);
+    const handleLocalClose = useCallback(
+        (event) => {
+            if (!contentRef.current.contains(event.target)) {
+                onClose();
+                setTokenDataset(supportedTokens);
+                setSearchTerm("");
+            }
+        },
+        [onClose, supportedTokens]
+    );
+
+    const handleSearchTermChange = useCallback((event) => {
+        setSearchTerm(event.target.value);
+    }, []);
 
     return (
         <>
             <FullScreenOverlay open={open} />
             <RootFlex open={open} onClick={handleLocalClose}>
                 <ContentFlex
+                    ref={contentRef}
                     width={["90%", "80%", "60%", "30%"]}
                     flexDirection="column"
                 >
@@ -101,6 +116,18 @@ export const TokenModal = ({
                             <FontAwesomeIcon icon={faTimes} onClick={onClose} />
                         </CloseBox>
                     </HeaderFlex>
+                    <SearchFlex>
+                        <Box mr={3}>
+                            <FontAwesomeIcon icon={faSearch} />
+                        </Box>
+                        <Box>
+                            <Input
+                                value={searchTerm}
+                                onChange={handleSearchTermChange}
+                                placeholder="Search"
+                            />
+                        </Box>
+                    </SearchFlex>
                     <ListFlex flexDirection="column" py="8px" px="12px">
                         {tokenDataset.length > 0
                             ? tokenDataset.map((token) => {
