@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { Flex, Box } from "reflexbox";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const RootFlex = styled(Flex)`
     position: fixed;

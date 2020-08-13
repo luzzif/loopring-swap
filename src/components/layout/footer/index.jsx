@@ -1,5 +1,5 @@
 import React from "react";
-import { FlexContainer, Logo } from "./styled";
+import { FlexContainer } from "./styled";
 import { Box } from "reflexbox";
 import { version } from "../../../../package.json";
 

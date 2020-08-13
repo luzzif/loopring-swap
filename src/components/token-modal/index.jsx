@@ -9,7 +9,6 @@ import {
     RootFlex,
     ContentFlex,
     ListFlex,
-    CloseIcon,
     HeaderFlex,
     CloseBox,
 } from "./styled";
