@@ -4,6 +4,7 @@ import { TokenIcon } from "../token-icon";
 import { Box } from "reflexbox";
 import { RootFlex, ChevronIcon } from "./styled";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { FormattedMessage } from "react-intl";
 
 export const TokenSelect = ({ token, onClick }) => (
     <RootFlex alignItems="center" onClick={onClick}>
@@ -15,7 +16,7 @@ export const TokenSelect = ({ token, onClick }) => (
                 <Box>{token.symbol}</Box>
             </>
         ) : (
-            "Select a token"
+            <FormattedMessage id="token.select.action.select" />
         )}
         <Box ml={2} display="flex" alignItems="center">
             <ChevronIcon icon={faChevronDown} />

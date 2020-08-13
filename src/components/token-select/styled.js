@@ -15,6 +15,7 @@ export const RootFlex = styled(Flex)`
 `;
 
 export const ChevronIcon = styled(FontAwesomeIcon)`
+    color: ${(props) => props.theme.primary};
     font-size: 12px;
     color: ${(props) => props.theme.primary};
 `;

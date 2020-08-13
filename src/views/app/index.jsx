@@ -26,6 +26,8 @@ const commonColors = {
     primary: "rgb(28, 96, 255)",
     success: "#00c853",
     border: "rgba(0, 0, 0, 0.1)",
+    disabled: "rgb(202, 209, 213)",
+    textDisabled: "rgba(5, 5, 5, 0.565)",
 };
 
 const light = {

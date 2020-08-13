@@ -28,6 +28,7 @@
     "token.specifier.to": "To",
     "swapper.action.swap": "Swap",
     "token.modal.header": "Assets",
+    "token.select.action.select": "Select",
 
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
     "error.login": "There was an error logging in. Please try again later.",
