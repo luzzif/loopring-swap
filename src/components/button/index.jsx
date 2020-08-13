@@ -13,6 +13,10 @@ const sizeMap = {
         height: 44,
         fontSize: 16,
     },
+    large: {
+        height: 56,
+        fontSize: 20,
+    },
 };
 
 const commonsStyles = css`
@@ -54,7 +58,7 @@ export const Button = ({ children, faIcon, size, ...rest }) => (
 
 Button.propTypes = {
     faIcon: PropTypes.node,
-    size: PropTypes.oneOf(["small", "medium"]),
+    size: PropTypes.oneOf(["small", "medium", "large"]),
 };
 
 Button.defaultProps = {

@@ -77,7 +77,7 @@ export const Swapper = () => {
                 </Box>
             </BackgroundFlex>
             <Box display="flex" justifyContent="center">
-                <Button faIcon={faExchangeAlt}>
+                <Button faIcon={faExchangeAlt} size="large">
                     <FormattedMessage id="swapper.action.swap" />
                 </Button>
             </Box>
