@@ -160,7 +160,7 @@ export const TokenModal = ({
                                             flex={1}
                                         >
                                             <Flex flexDirection="column">
-                                                <Box mb="8px">{symbol}</Box>
+                                                <Box mb="4px">{symbol}</Box>
                                                 <SecondaryTextBox
                                                     selected={currentlySelected}
                                                 >
