@@ -34,7 +34,6 @@
     "token.modal.header": "Assets",
     "token.select.action.select": "Select",
     "swapper.price": "Price",
-    "swapper.login.warning": "Authenticate to start swapping",
     "token.modal.empty": "Nothing matches your search...",
 
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",

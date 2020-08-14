@@ -248,13 +248,6 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     />
                 </Button>
             </Box>
-            {!loggedIn && (
-                <Box display="flex" justifyContent="center" textAlign="center">
-                    <ErrorMessage>
-                        <FormattedMessage id="swapper.login.warning" />
-                    </ErrorMessage>
-                </Box>
-            )}
         </Flex>
     );
 };
