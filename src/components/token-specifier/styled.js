@@ -5,7 +5,7 @@ export const RootFlex = styled(Flex)`
     background: ${(props) => props.theme.background};
     border: solid 1px ${(props) => props.theme.border};
     border-radius: 12px;
-    padding: 16px 16px 12px 16px;
+    padding: 16px 16px 8px 16px;
     flex-direction: column;
     width: 100%;
     transition: background 0.3s ease, border 0.3s ease;

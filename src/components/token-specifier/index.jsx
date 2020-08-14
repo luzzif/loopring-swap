@@ -79,7 +79,7 @@ export const TokenSpecifier = ({
     return (
         <>
             <RootFlex>
-                <HeaderText width="100%" mb={3}>
+                <HeaderText width="100%" mb={2}>
                     <FormattedMessage id={`token.specifier.${variant}`} />
                 </HeaderText>
                 <Flex width="100%">

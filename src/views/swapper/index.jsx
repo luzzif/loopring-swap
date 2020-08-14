@@ -203,7 +203,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
-                    height={40}
+                    height={36}
                 >
                     <ArrowIcon icon={faArrowDown} />
                 </Box>
