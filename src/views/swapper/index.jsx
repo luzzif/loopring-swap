@@ -7,7 +7,7 @@ import { useState } from "react";
 import {
     faArrowDown,
     faExchangeAlt,
-    faPlug,
+    faLockOpen,
 } from "@fortawesome/free-solid-svg-icons";
 import { FormattedMessage } from "react-intl";
 import { Button } from "../../components/button";
@@ -234,7 +234,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
             </BackgroundFlex>
             <Box display="flex" justifyContent="center" mb={4}>
                 <Button
-                    faIcon={loggedIn ? faExchangeAlt : faPlug}
+                    faIcon={loggedIn ? faExchangeAlt : faLockOpen}
                     size="large"
                     disabled={
                         loggedIn &&
