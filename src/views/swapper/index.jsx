@@ -42,56 +42,38 @@ export const Swapper = ({ onConnectWalletClick }) => {
         loadingExchangeRate: !!state.loopring.exchangeRate.loadings,
     }));
 
-    const [fromSpecification, setFromSpecification] = useState({
-        amount: "0",
-        token: null,
-    });
-    const [toSpecification, setToSpecification] = useState({
-        amount: "0",
-        token: null,
-    });
+    const [fromToken, setFromToken] = useState(null);
+    const [fromAmount, setFromAmount] = useState("0");
+    const [toToken, setToToken] = useState(null);
+    const [toAmount, setToAmount] = useState("0");
     const [filteredToTokens, setFilteredToTokens] = useState([]);
     const [compatibleMarkets, setCompatibleMarkets] = useState([]);
     const [changingTo, setChangingTo] = useState(false);
 
     // set ether as the default "from" token
     useEffect(() => {
-        if (
-            supportedTokens &&
-            supportedTokens.length > 0 &&
-            !fromSpecification.token
-        ) {
-            setFromSpecification({
-                ...fromSpecification,
-                token: supportedTokens.find((token) => token.symbol === "ETH"),
-            });
+        if (supportedTokens && supportedTokens.length > 0 && !fromToken) {
+            setFromToken(
+                supportedTokens.find((token) => token.symbol === "ETH")
+            );
         }
-    }, [fromSpecification, supportedTokens]);
+    }, [fromToken, supportedTokens]);
 
     // on "from" token change, find out the compatible markets
     useEffect(() => {
-        if (
-            supportedMarkets &&
-            supportedMarkets.length > 0 &&
-            fromSpecification.token
-        ) {
+        if (supportedMarkets && supportedMarkets.length > 0 && fromToken) {
             setCompatibleMarkets(
                 supportedMarkets.filter(
-                    (market) =>
-                        market.quoteTokenId === fromSpecification.token.tokenId
+                    (market) => market.quoteTokenId === fromToken.tokenId
                 )
             );
         }
-    }, [fromSpecification.token, supportedMarkets]);
+    }, [fromToken, supportedMarkets]);
 
     // on "from" token change, we need to find the compatible "to" tokens based on available markets.
     // Plus, we reset the currently selected "to" token if it's not compatible with the current "from" one.
     useEffect(() => {
-        if (
-            supportedMarkets &&
-            supportedMarkets.length > 0 &&
-            fromSpecification.token
-        ) {
+        if (supportedMarkets && supportedMarkets.length > 0 && fromToken) {
             const filteredToTokens = supportedToTokens.filter((token) =>
                 compatibleMarkets.find(
                     (market) => market.baseTokenId === token.tokenId
@@ -100,22 +82,22 @@ export const Swapper = ({ onConnectWalletClick }) => {
             if (
                 filteredToTokens &&
                 filteredToTokens.length > 0 &&
-                toSpecification &&
-                toSpecification.token &&
+                toToken &&
                 !filteredToTokens.find(
-                    (token) => token.tokenId === toSpecification.token.tokenId
+                    (token) => token.tokenId === toToken.tokenId
                 )
             ) {
-                setToSpecification({ amount: "0", token: filteredToTokens[0] });
+                setToToken(filteredToTokens[0]);
+                setToAmount("0");
             }
             setFilteredToTokens(filteredToTokens);
         }
     }, [
         compatibleMarkets,
-        fromSpecification,
+        fromToken,
         supportedMarkets,
         supportedToTokens,
-        toSpecification,
+        toToken,
     ]);
 
     // on valid "from" and "to" tokens setting, we need to find their current exchange rate
@@ -123,30 +105,25 @@ export const Swapper = ({ onConnectWalletClick }) => {
         if (
             supportedTokens &&
             supportedTokens.length > 0 &&
-            fromSpecification.token &&
-            toSpecification.token &&
-            fromSpecification.amount !== "0" &&
+            fromToken &&
+            toToken &&
+            fromAmount !== "0" &&
             !!compatibleMarkets.find(
                 (market) =>
-                    market.baseTokenId === toSpecification.token.tokenId &&
-                    market.quoteTokenId === fromSpecification.token.tokenId
+                    market.baseTokenId === toToken.tokenId &&
+                    market.quoteTokenId === fromToken.tokenId
             )
         ) {
-            dispatch(
-                getExchangeRate(
-                    fromSpecification,
-                    toSpecification,
-                    supportedTokens
-                )
-            );
+            dispatch(getExchangeRate(fromToken, toToken, supportedTokens));
         }
     }, [
         changingTo,
         compatibleMarkets,
         dispatch,
-        fromSpecification,
+        fromAmount,
+        fromToken,
         supportedTokens,
-        toSpecification,
+        toToken,
     ]);
 
     // when the exchange rate is fetched, we need to calculate the expected
@@ -155,51 +132,51 @@ export const Swapper = ({ onConnectWalletClick }) => {
         if (
             exchangeRate &&
             exchangeRate.price &&
-            fromSpecification.token &&
-            fromSpecification.amount &&
-            toSpecification.token
+            fromToken &&
+            fromAmount &&
+            toToken
         ) {
-            const referenceSpecification = changingTo
-                ? toSpecification
-                : fromSpecification;
-            let partialAmount = new BigNumber(
-                fromWei(referenceSpecification.amount)
-            );
+            const referenceAmount = changingTo ? toAmount : fromAmount;
+            let partialAmount = new BigNumber(fromWei(referenceAmount));
             if (changingTo) {
                 partialAmount = partialAmount.multipliedBy(exchangeRate.price);
             } else {
                 partialAmount = partialAmount.dividedBy(exchangeRate.price);
             }
             const newAmount = toWei(partialAmount.decimalPlaces(18).toString());
-            if (changingTo && newAmount !== fromSpecification.amount) {
-                setFromSpecification({
-                    ...fromSpecification,
-                    amount: newAmount,
-                });
-            } else if (!changingTo && newAmount !== toSpecification.amount) {
-                setToSpecification({
-                    ...toSpecification,
-                    amount: newAmount,
-                });
+            if (changingTo && newAmount !== fromAmount) {
+                setFromAmount(newAmount);
+            } else if (!changingTo && newAmount !== toAmount) {
+                setToAmount(newAmount);
             }
         }
     }, [
         compatibleMarkets,
         dispatch,
-        fromSpecification,
         exchangeRate,
-        toSpecification,
         changingTo,
+        fromToken,
+        fromAmount,
+        toToken,
+        toAmount,
     ]);
 
-    const handleFromChange = useCallback((newSpecification) => {
-        setChangingTo(false);
-        setFromSpecification(newSpecification);
+    const handleFromTokenChange = useCallback((token) => {
+        setFromToken(token);
     }, []);
 
-    const handleToChange = useCallback((newSpecification) => {
+    const handleFromAmountChange = useCallback((amount) => {
+        setChangingTo(false);
+        setFromAmount(amount);
+    }, []);
+
+    const handleToTokenChange = useCallback((token) => {
+        setToToken(token);
+    }, []);
+
+    const handleToAmountChange = useCallback((amount) => {
         setChangingTo(true);
-        setToSpecification(newSpecification);
+        setToAmount(amount);
     }, []);
 
     return (
@@ -208,8 +185,10 @@ export const Swapper = ({ onConnectWalletClick }) => {
                 <Box>
                     <TokenSpecifier
                         variant="from"
-                        specification={fromSpecification}
-                        onChange={handleFromChange}
+                        amount={fromAmount}
+                        token={fromToken}
+                        onAmountChange={handleFromAmountChange}
+                        onTokenChange={handleFromTokenChange}
                         supportedTokens={supportedFromTokens}
                         balances={balances}
                         loadingSupportedTokens={loadingSupportedTokens}
@@ -226,8 +205,10 @@ export const Swapper = ({ onConnectWalletClick }) => {
                 <Box mb={3}>
                     <TokenSpecifier
                         variant="to"
-                        specification={toSpecification}
-                        onChange={handleToChange}
+                        amount={toAmount}
+                        token={toToken}
+                        onAmountChange={handleToAmountChange}
+                        onTokenChange={handleToTokenChange}
                         supportedTokens={filteredToTokens}
                         balances={balances}
                         loadingSupportedTokens={loadingSupportedTokens}
@@ -241,7 +222,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         {loadingExchangeRate ? (
                             <Spinner size={16} />
                         ) : exchangeRate && exchangeRate.price ? (
-                            `${exchangeRate.price} ${fromSpecification.token.symbol}`
+                            `${exchangeRate.price} ${fromToken.symbol}`
                         ) : (
                             "-"
                         )}
@@ -254,12 +235,10 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     size="large"
                     disabled={
                         loggedIn &&
-                        (!fromSpecification ||
-                            !fromSpecification.token ||
-                            !fromSpecification.amount === "0" ||
-                            !toSpecification ||
-                            !toSpecification.token ||
-                            !toSpecification.amount === "0")
+                        (!fromToken ||
+                            !fromAmount === "0" ||
+                            !toToken ||
+                            !toAmount === "0")
                     }
                     /* TODO: add proper onClick when actually swapping */
                     onClick={loggedIn ? () => {} : onConnectWalletClick}

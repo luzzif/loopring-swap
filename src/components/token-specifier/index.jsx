@@ -10,17 +10,17 @@ import { TokenModal } from "../token-modal";
 
 export const TokenSpecifier = ({
     variant,
-    specification,
-    onChange,
+    amount,
+    token,
+    onAmountChange,
+    onTokenChange,
     supportedTokens,
     balances,
     loadingSupportedTokens,
 }) => {
-    const { amount, token } = specification;
-
     const [modalOpen, setModalOpen] = useState(false);
     const [stringAmount, setStringAmount] = useState("");
-    // const [amountError, setAmountError] = useState(false);
+    const [amountError, setAmountError] = useState(false);
 
     useEffect(() => {
         if (!stringAmount.endsWith(".")) {
@@ -40,14 +40,14 @@ export const TokenSpecifier = ({
                 newAmount.indexOf(" ") >= 0 ||
                 newAmount.indexOf("-") >= 0
             ) {
-                // setAmountError(newAmount);
-                onChange({ ...specification, amount: "0" });
+                setAmountError(newAmount);
+                onAmountChange("0");
                 return;
             }
             if (newAmount.endsWith(".")) {
-                // setAmountError(true);
+                setAmountError(true);
             } else {
-                // setAmountError(false);
+                setAmountError(false);
             }
             if (/\.{2,}/.test(newAmount) || newAmount.split(".").length > 2) {
                 return;
@@ -56,9 +56,21 @@ export const TokenSpecifier = ({
             let properNumericValue = isNaN(numericAmount)
                 ? "0"
                 : numericAmount.toString();
-            onChange({ ...specification, amount: toWei(properNumericValue) });
+            const userTokenBalance =
+                token &&
+                balances.find((balance) => balance.id === token.tokenId);
+            if (
+                userTokenBalance &&
+                userTokenBalance.balance &&
+                userTokenBalance.balance.isLessThan(toWei(properNumericValue))
+            ) {
+                properNumericValue = fromWei(
+                    userTokenBalance.balance.decimalPlaces(18).toFixed()
+                );
+            }
+            onAmountChange(toWei(properNumericValue));
         },
-        [onChange, specification]
+        [balances, onAmountChange, token]
     );
 
     const handleSelectClick = useCallback(() => {
@@ -71,14 +83,14 @@ export const TokenSpecifier = ({
 
     const handleTokenChange = useCallback(
         (token) => {
-            onChange({ ...specification, token });
+            onTokenChange(token);
         },
-        [onChange, specification]
+        [onTokenChange]
     );
 
     return (
         <>
-            <RootFlex>
+            <RootFlex error={amountError}>
                 <HeaderText width="100%" mb={2}>
                     <FormattedMessage id={`token.specifier.${variant}`} />
                 </HeaderText>
@@ -117,8 +129,10 @@ export const TokenSpecifier = ({
 
 TokenSpecifier.propTypes = {
     variant: PropTypes.oneOf(["from", "to"]),
-    specification: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired,
+    amount: PropTypes.string.isRequired,
+    token: PropTypes.object.isRequired,
+    onAmountChange: PropTypes.func.isRequired,
+    onTokenChange: PropTypes.func.isRequired,
     supportedTokens: PropTypes.array.isRequired,
     loadingSupportedTokens: PropTypes.bool.isRequired,
 };

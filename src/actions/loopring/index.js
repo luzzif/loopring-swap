@@ -180,14 +180,12 @@ export const GET_EXCHANGE_RATE_START = "GET_EXCHANGE_RATE_START";
 export const GET_EXCHANGE_RATE_END = "GET_EXCHANGE_RATE_END";
 export const GET_EXCHANGE_RATE_SUCCESS = "GET_EXCHANGE_RATE_SUCCESS";
 
-export const getExchangeRate = (
-    fromSpecification,
-    toSpecification,
-    supportedTokens
-) => async (dispatch) => {
+export const getExchangeRate = (fromToken, toToken, supportedTokens) => async (
+    dispatch
+) => {
     dispatch({ type: GET_EXCHANGE_RATE_START });
     try {
-        const market = `${toSpecification.token.symbol}-${fromSpecification.token.symbol}`;
+        const market = `${toToken.symbol}-${fromToken.symbol}`;
         const depth = await getDepth(market, 0, 1, supportedTokens);
         dispatch({
             type: GET_EXCHANGE_RATE_SUCCESS,
