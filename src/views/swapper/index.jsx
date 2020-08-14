@@ -107,7 +107,6 @@ export const Swapper = ({ onConnectWalletClick }) => {
             supportedTokens.length > 0 &&
             fromToken &&
             toToken &&
-            fromAmount !== "0" &&
             !!compatibleMarkets.find(
                 (market) =>
                     market.baseTokenId === toToken.tokenId &&
@@ -116,15 +115,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
         ) {
             dispatch(getExchangeRate(fromToken, toToken, supportedTokens));
         }
-    }, [
-        changingTo,
-        compatibleMarkets,
-        dispatch,
-        fromAmount,
-        fromToken,
-        supportedTokens,
-        toToken,
-    ]);
+    }, [compatibleMarkets, dispatch, fromToken, supportedTokens, toToken]);
 
     // when the exchange rate is fetched, we need to calculate the expected
     // token amount to receive based on it

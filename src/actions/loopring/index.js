@@ -180,6 +180,7 @@ export const GET_EXCHANGE_RATE_START = "GET_EXCHANGE_RATE_START";
 export const GET_EXCHANGE_RATE_END = "GET_EXCHANGE_RATE_END";
 export const GET_EXCHANGE_RATE_SUCCESS = "GET_EXCHANGE_RATE_SUCCESS";
 
+// TODO: debounce call to avoid hitting the rate limiting
 export const getExchangeRate = (fromToken, toToken, supportedTokens) => async (
     dispatch
 ) => {
