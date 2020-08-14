@@ -26,7 +26,6 @@ const commonColors = {
     warning: "#FF6F00",
     primary: "#1c60ff",
     success: "#00c853",
-    border: "rgba(0, 0, 0, 0.1)",
     disabled: "rgb(202, 209, 213)",
     textDisabled: "rgba(5, 5, 5, 0.565)",
 };
@@ -35,6 +34,7 @@ const light = {
     ...commonColors,
     background: "#edf2f7",
     foreground: "#dfe6ef",
+    border: "#b9ccdf",
     textLight: "#999999",
     text: "#0e062d",
     textInverted: "#F1F9D2",
@@ -47,6 +47,7 @@ const dark = {
     ...commonColors,
     background: "#151618",
     foreground: "rgba(0, 0, 0, .65)",
+    border: "#23262a",
     textLight: "#4d4d4d",
     text: "#F1F9D2",
     textInverted: "#0e062d",

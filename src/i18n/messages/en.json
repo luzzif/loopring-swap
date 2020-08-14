@@ -1,5 +1,5 @@
 {
-    "placeholder": "",
+    "placeholder": "foo",
     "toolbar.action.wallet.connect": "Connect wallet",
     "toolbar.action.wallet.login": "Login",
     "drawer.wallet.connect.summary": "Connect to your Ethereum account to start using Loopring Swap.",

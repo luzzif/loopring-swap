@@ -52,6 +52,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
     });
     const [filteredToTokens, setFilteredToTokens] = useState([]);
     const [compatibleMarkets, setCompatibleMarkets] = useState([]);
+    const [changingTo, setChangingTo] = useState(false);
 
     // set ether as the default "from" token
     useEffect(() => {
@@ -124,6 +125,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
             supportedTokens.length > 0 &&
             fromSpecification.token &&
             toSpecification.token &&
+            fromSpecification.amount !== "0" &&
             !!compatibleMarkets.find(
                 (market) =>
                     market.baseTokenId === toSpecification.token.tokenId &&
@@ -139,6 +141,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
             );
         }
     }, [
+        changingTo,
         compatibleMarkets,
         dispatch,
         fromSpecification,
@@ -154,19 +157,29 @@ export const Swapper = ({ onConnectWalletClick }) => {
             exchangeRate.price &&
             fromSpecification.token &&
             fromSpecification.amount &&
-            fromSpecification.amount !== "0" &&
             toSpecification.token
         ) {
-            const toAmount = toWei(
-                new BigNumber(fromWei(fromSpecification.amount))
-                    .dividedBy(exchangeRate.price)
-                    .decimalPlaces(18)
-                    .toString()
+            const referenceSpecification = changingTo
+                ? toSpecification
+                : fromSpecification;
+            let partialAmount = new BigNumber(
+                fromWei(referenceSpecification.amount)
             );
-            if (toAmount !== toSpecification.amount) {
+            if (changingTo) {
+                partialAmount = partialAmount.multipliedBy(exchangeRate.price);
+            } else {
+                partialAmount = partialAmount.dividedBy(exchangeRate.price);
+            }
+            const newAmount = toWei(partialAmount.decimalPlaces(18).toString());
+            if (changingTo && newAmount !== fromSpecification.amount) {
+                setFromSpecification({
+                    ...fromSpecification,
+                    amount: newAmount,
+                });
+            } else if (!changingTo && newAmount !== toSpecification.amount) {
                 setToSpecification({
                     ...toSpecification,
-                    amount: toAmount,
+                    amount: newAmount,
                 });
             }
         }
@@ -176,13 +189,16 @@ export const Swapper = ({ onConnectWalletClick }) => {
         fromSpecification,
         exchangeRate,
         toSpecification,
+        changingTo,
     ]);
 
     const handleFromChange = useCallback((newSpecification) => {
+        setChangingTo(false);
         setFromSpecification(newSpecification);
     }, []);
 
     const handleToChange = useCallback((newSpecification) => {
+        setChangingTo(true);
         setToSpecification(newSpecification);
     }, []);
 

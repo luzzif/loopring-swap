@@ -19,5 +19,5 @@ export const Toolbar = ({ onDrawerOpenClick }) => (
 );
 
 Toolbar.propTypes = {
-    onMenuClick: PropTypes.func.isRequired,
+    onDrawerOpenClick: PropTypes.func.isRequired,
 };

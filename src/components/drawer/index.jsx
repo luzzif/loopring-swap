@@ -128,5 +128,5 @@ Drawer.propTypes = {
     onLogin: PropTypes.func.isRequired,
     loggedIn: PropTypes.bool.isRequired,
     darkTheme: PropTypes.bool.isRequired,
-    onDarkThemeChange: PropTypes.bool.isRequired,
+    onDarkThemeChange: PropTypes.func.isRequired,
 };
