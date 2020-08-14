@@ -4,18 +4,9 @@ import PropTypes from "prop-types";
 import { Root, Content } from "./styled";
 import { Footer } from "./footer";
 
-export const Layout = ({
-    children,
-    onConnectingWallet,
-    selectedWeb3Account,
-    loggedIn,
-}) => (
+export const Layout = ({ children, onDrawerOpenClick }) => (
     <Root flexDirection="column">
-        <Toolbar
-            onConnectingWallet={onConnectingWallet}
-            selectedWeb3Account={selectedWeb3Account}
-            loggedIn={loggedIn}
-        />
+        <Toolbar onDrawerOpenClick={onDrawerOpenClick} />
         <Content>{children}</Content>
         <Footer />
     </Root>
@@ -23,7 +14,5 @@ export const Layout = ({
 
 Layout.propTypes = {
     children: PropTypes.node.isRequired,
-    onConnectingWallet: PropTypes.func.isRequired,
-    selectedWeb3Account: PropTypes.string,
-    loggedIn: PropTypes.bool.isRequired,
+    onDrawerOpenClick: PropTypes.func.isRequired,
 };

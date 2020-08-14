@@ -15,6 +15,7 @@ export const Logo = styled.img`
     height: 100%;
 `;
 
-export const SettingsIcon = styled(FontAwesomeIcon)`
+export const PointableIcon = styled(FontAwesomeIcon)`
+    font-size: 24px;
     cursor: pointer;
 `;

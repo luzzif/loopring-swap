@@ -1,20 +1,23 @@
-import React from "react";
+import React, { useEffect, useCallback } from "react";
+import PropTypes from "prop-types";
 import { Flex, Box } from "reflexbox";
-import { BackgroundFlex, ArrowIcon } from "./styled";
+import { BackgroundFlex, ArrowIcon, ErrorMessage } from "./styled";
 import { TokenSpecifier } from "../../components/token-specifier";
 import { useState } from "react";
-import { faArrowDown, faExchangeAlt } from "@fortawesome/free-solid-svg-icons";
-import { useCallback } from "react";
+import {
+    faArrowDown,
+    faExchangeAlt,
+    faPlug,
+} from "@fortawesome/free-solid-svg-icons";
 import { FormattedMessage } from "react-intl";
 import { Button } from "../../components/button";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
 import { getExchangeRate } from "../../actions/loopring";
 import BigNumber from "bignumber.js";
 import { fromWei, toWei } from "web3-utils";
 import { Spinner } from "../../components/spinner";
 
-export const Swapper = () => {
+export const Swapper = ({ onConnectWalletClick }) => {
     const dispatch = useDispatch();
 
     const {
@@ -229,23 +232,36 @@ export const Swapper = () => {
                     </Box>
                 </Flex>
             </BackgroundFlex>
-            <Box display="flex" justifyContent="center">
+            <Box display="flex" justifyContent="center" mb={4}>
                 <Button
-                    faIcon={faExchangeAlt}
+                    faIcon={loggedIn ? faExchangeAlt : faPlug}
                     size="large"
                     disabled={
-                        !loggedIn ||
-                        !fromSpecification ||
-                        fromSpecification.token ||
-                        fromSpecification.amount === "0" ||
-                        !toSpecification ||
-                        toSpecification.token ||
-                        toSpecification.amount === "0"
+                        loggedIn &&
+                        (!fromSpecification ||
+                            fromSpecification.token ||
+                            fromSpecification.amount === "0" ||
+                            !toSpecification ||
+                            toSpecification.token ||
+                            toSpecification.amount === "0")
                     }
+                    /* TODO: add proper onClick when actually swapping */
+                    onClick={loggedIn ? () => {} : onConnectWalletClick}
                 >
-                    <FormattedMessage id="swapper.action.swap" />
+                    <FormattedMessage
+                        id={`swapper.action.${loggedIn ? "swap" : "connect"}`}
+                    />
                 </Button>
+            </Box>
+            <Box display="flex" justifyContent="center" textAlign="center">
+                <ErrorMessage>
+                    <FormattedMessage id="swapper.login.warning" />
+                </ErrorMessage>
             </Box>
         </Flex>
     );
+};
+
+Swapper.propTypes = {
+    onConnectWalletClick: PropTypes.func.isRequired,
 };

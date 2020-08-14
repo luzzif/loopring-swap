@@ -28,9 +28,11 @@
     "token.specifier.from": "From",
     "token.specifier.to": "To",
     "swapper.action.swap": "Swap",
+    "swapper.action.connect": "Connect your wallet",
     "token.modal.header": "Assets",
     "token.select.action.select": "Select",
     "swapper.price": "Price",
+    "swapper.login.warning": "Connect your wallet and login to start swapping",
 
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
     "error.login": "There was an error logging in. Please try again later.",

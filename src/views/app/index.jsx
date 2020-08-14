@@ -105,7 +105,7 @@ export const App = () => {
     }));
 
     const [lightTheme, setLightTheme] = useState(true);
-    const [authorizing, setAuthorizing] = useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
     useEffect(() => {
         dispatch(getSupportedMarkets());
@@ -140,12 +140,12 @@ export const App = () => {
             : darkWeb3ModalTheme;
     }, [dispatch]);
 
-    const handleConnectingWallet = useCallback(() => {
-        setAuthorizing(true);
+    const handleDrawerOpenClick = useCallback(() => {
+        setDrawerOpen(true);
     }, []);
 
-    const handleConnectingWalletClose = useCallback(() => {
-        setAuthorizing(false);
+    const handleDrawerClose = useCallback(() => {
+        setDrawerOpen(false);
     }, []);
 
     const handleConnectWallet = useCallback(() => {
@@ -157,14 +157,14 @@ export const App = () => {
     }, [dispatch, selectedWeb3Account, web3Instance]);
 
     const handleOverlayClick = useCallback(() => {
-        setAuthorizing(false);
+        setDrawerOpen(false);
     }, []);
 
     return (
         <ThemeProvider theme={lightTheme ? light : dark}>
             <GlobalStyle />
             <Layout
-                onConnectingWallet={handleConnectingWallet}
+                onDrawerOpenClick={handleDrawerOpenClick}
                 selectedWeb3Account={selectedWeb3Account}
                 loggedIn={!!loopringAccount}
             >
@@ -175,17 +175,14 @@ export const App = () => {
                     alignItems="center"
                 >
                     <Box width={["90%", "80%", "60%", "24%"]}>
-                        <Swapper />
+                        <Swapper onConnectWalletClick={handleDrawerOpenClick} />
                     </Box>
                 </Flex>
             </Layout>
-            <FullScreenOverlay
-                open={authorizing}
-                onClick={handleOverlayClick}
-            />
+            <FullScreenOverlay open={drawerOpen} onClick={handleOverlayClick} />
             <AuthDrawer
-                open={authorizing}
-                onClose={handleConnectingWalletClose}
+                open={drawerOpen}
+                onClose={handleDrawerClose}
                 onConnectWallet={handleConnectWallet}
                 selectedWeb3Account={selectedWeb3Account}
                 onLogin={handleLogin}
