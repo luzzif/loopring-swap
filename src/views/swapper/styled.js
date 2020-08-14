@@ -7,6 +7,7 @@ export const BackgroundFlex = styled(Flex)`
     border-radius: 12px;
     background: ${(props) => props.theme.foreground};
     padding: 12px;
+    transition: background 0.3s ease, border 0.3s ease;
 `;
 
 export const ArrowIcon = styled(FontAwesomeIcon)`

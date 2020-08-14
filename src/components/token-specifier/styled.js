@@ -8,6 +8,7 @@ export const RootFlex = styled(Flex)`
     padding: 16px 16px 12px 16px;
     flex-direction: column;
     width: 100%;
+    transition: background 0.3s ease, border 0.3s ease;
 `;
 
 export const HeaderText = styled(Box)`
@@ -20,11 +21,13 @@ export const Input = styled.input`
     font-family: "Montserrat", sans-serif;
     border: none;
     background: ${(props) => props.theme.background};
+    transition: background 0.3s ease, color 0.3s ease;
     outline: none;
     line-height: 40px;
     width: 100%;
     height: 40px;
     ::placeholder {
+        transition: color 0.3s ease;
         color: ${(props) => props.theme.placeholder};
     }
 `;

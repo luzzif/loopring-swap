@@ -20,6 +20,7 @@ export const RootFlex = styled(Flex)`
 
 export const ContentFlex = styled(Flex)`
     background: ${(props) => props.theme.background};
+    transition: color 0.3s ease, background 0.3s ease;
     border-radius: 12px;
     max-height: 70%;
     overflow: auto;
@@ -36,11 +37,12 @@ export const HeaderFlex = styled(Flex)`
     justify-content: space-between;
     background: ${(props) => props.theme.foreground};
     padding-top: 12px;
-    padding-left: 20px;
+    padding-left: 28px;
     padding-right: 20px;
     font-size: 20px;
     font-weight: 700;
     color: ${(props) => props.theme.text};
+    transition: color 0.3s ease, background 0.3s ease;
 `;
 
 export const SearchFlex = styled(Flex)`
@@ -49,10 +51,11 @@ export const SearchFlex = styled(Flex)`
     min-height: 52px;
     align-items: center;
     background: ${(props) => props.theme.foreground};
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 28px;
+    padding-right: 28px;
     font-size: 20px;
     color: ${(props) => props.theme.text};
+    transition: color 0.3s ease, background 0.3s ease;
 `;
 
 export const Input = styled.input`
@@ -63,6 +66,7 @@ export const Input = styled.input`
     background: ${(props) => props.theme.foreground};
     outline: none;
     width: 100%;
+    transition: color 0.3s ease, background 0.3s ease;
     ::placeholder {
         color: ${(props) => props.theme.placeholder};
     }

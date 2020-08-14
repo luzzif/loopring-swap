@@ -11,11 +11,11 @@ export const RootFlex = styled(Flex)`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    transition: background 0.3s ease;
     cursor: pointer;
 `;
 
 export const ChevronIcon = styled(FontAwesomeIcon)`
     color: ${(props) => props.theme.primary};
     font-size: 12px;
-    color: ${(props) => props.theme.primary};
 `;

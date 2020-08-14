@@ -7,7 +7,7 @@ import MewConnect from "@myetherwallet/mewconnect-web-client";
 import Web3Modal from "web3modal";
 import { INFURA_ID } from "../../env";
 import { useCallback } from "react";
-import { AuthDrawer } from "../../components/auth-drawer";
+import { Drawer } from "../../components/drawer";
 import { initializeWeb3 } from "../../actions/web3";
 import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,7 +24,7 @@ import { FullScreenOverlay } from "../../components/full-screen-overlay";
 const commonColors = {
     error: "#c62828",
     warning: "#FF6F00",
-    primary: "rgb(28, 96, 255)",
+    primary: "#1c60ff",
     success: "#00c853",
     border: "rgba(0, 0, 0, 0.1)",
     disabled: "rgb(202, 209, 213)",
@@ -33,8 +33,8 @@ const commonColors = {
 
 const light = {
     ...commonColors,
-    background: "rgb(237, 242, 247)",
-    foreground: "rgb(223, 230, 239)",
+    background: "#edf2f7",
+    foreground: "#dfe6ef",
     textLight: "#999999",
     text: "#0e062d",
     textInverted: "#F1F9D2",
@@ -45,12 +45,12 @@ const light = {
 
 const dark = {
     ...commonColors,
-    background: "rgb(21, 22, 24)",
+    background: "#151618",
     foreground: "rgba(0, 0, 0, .65)",
     textLight: "#4d4d4d",
     text: "#F1F9D2",
     textInverted: "#0e062d",
-    shadow: "rgba(0, 0, 0, 0.4)",
+    shadow: "rgba(255, 255, 255, 0.1)",
     placeholder: "#666666",
     loader: "#595959",
 };
@@ -160,6 +160,17 @@ export const App = () => {
         setDrawerOpen(false);
     }, []);
 
+    const handleThemeChange = useCallback(() => {
+        const newLightTheme = !lightTheme;
+        const textTheme = newLightTheme ? "light" : "dark";
+        localStorage.setItem("loopring-swap-theme", textTheme);
+        web3ModalOptions.theme = newLightTheme
+            ? lightWeb3ModalTheme
+            : darkWeb3ModalTheme;
+        setLightTheme(newLightTheme);
+        selectedTheme = newLightTheme ? light : dark;
+    }, [lightTheme]);
+
     return (
         <ThemeProvider theme={lightTheme ? light : dark}>
             <GlobalStyle />
@@ -180,13 +191,15 @@ export const App = () => {
                 </Flex>
             </Layout>
             <FullScreenOverlay open={drawerOpen} onClick={handleOverlayClick} />
-            <AuthDrawer
+            <Drawer
                 open={drawerOpen}
                 onClose={handleDrawerClose}
                 onConnectWallet={handleConnectWallet}
                 selectedWeb3Account={selectedWeb3Account}
                 onLogin={handleLogin}
                 loggedIn={!!loopringAccount}
+                darkTheme={!lightTheme}
+                onDarkThemeChange={handleThemeChange}
             />
             <ToastContainer
                 className="custom-toast-root"

@@ -23,14 +23,17 @@ import { Lrc } from "./sections/lrc";
 import { Support } from "./sections/support";
 import { TechnicalResources } from "./sections/technical-resources";
 import { ExchangeInfo } from "./sections/exchange-info";
+import { Settings } from "./sections/settings";
 
-export const AuthDrawer = ({
+export const Drawer = ({
     open,
     onClose,
     onConnectWallet,
     selectedWeb3Account,
     onLogin,
     loggedIn,
+    darkTheme,
+    onDarkThemeChange,
 }) => {
     const container = useRef(null);
 
@@ -93,6 +96,13 @@ export const AuthDrawer = ({
             <Box width="100%" mb={3}>
                 <Divider />
             </Box>
+            <Settings
+                darkTheme={darkTheme}
+                onDarkThemeChange={onDarkThemeChange}
+            />
+            <Box width="100%" mb={3}>
+                <Divider />
+            </Box>
             <Lrc />
             <Box width="100%" mb={3}>
                 <Divider />
@@ -110,11 +120,13 @@ export const AuthDrawer = ({
     );
 };
 
-AuthDrawer.propTypes = {
+Drawer.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onConnectWallet: PropTypes.func.isRequired,
     selectedWeb3Account: PropTypes.string,
     onLogin: PropTypes.func.isRequired,
     loggedIn: PropTypes.bool.isRequired,
+    darkTheme: PropTypes.bool.isRequired,
+    onDarkThemeChange: PropTypes.bool.isRequired,
 };

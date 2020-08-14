@@ -15,7 +15,7 @@ const sizeMap = {
     },
     large: {
         height: 56,
-        fontSize: 20,
+        fontSize: 16,
     },
 };
 

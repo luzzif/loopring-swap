@@ -25,6 +25,7 @@
         "react-intl": "^5.4.7",
         "react-redux": "^7.2.1",
         "react-scripts": "3.4.3",
+        "react-switch": "^5.0.1",
         "react-toastify": "^6.0.8",
         "redux": "^4.0.5",
         "redux-thunk": "^2.3.0",

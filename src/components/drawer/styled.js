@@ -9,8 +9,8 @@ export const RootFlex = styled(Flex)`
     top: 0;
     bottom: 0;
     right: 0;
-    transition: transform 0.3s ease;
-    transform: translateX(${(props) => (props.open ? "0" : "100%")});
+    transition: transform 0.3s ease, background 0.3s ease;
+    transform: translateX(${(props) => (props.open ? "0" : "150%")});
     background: ${(props) => props.theme.background};
     box-shadow: 0px 30px 62px 0px ${(props) => props.theme.shadow};
     overflow-y: auto;
@@ -27,10 +27,13 @@ export const HeaderFlex = styled(Flex)`
     font-size: 20px;
     font-weight: 700;
     color: ${(props) => props.theme.text};
+    transition: color 0.3s ease, background 0.3s ease;
 `;
 
 export const SummaryMessage = styled.span`
     font-size: 16px;
+    color: ${(props) => props.theme.text};
+    transition: color 0.3s ease;
 `;
 
 export const EllipsizedBox = styled(Box)`
@@ -64,6 +67,7 @@ export const ListItemHeader = styled(Box)`
     font-weight: 700;
     color: ${(props) => props.theme.textLight};
     margin-bottom: 16px;
+    transition: color 0.3s ease;
 `;
 
 export const ListItemBox = styled(Box)`
