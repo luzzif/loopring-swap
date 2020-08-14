@@ -186,7 +186,7 @@ export const App = () => {
                     justifyContent="center"
                     alignItems="center"
                 >
-                    <Box width={["90%", "80%", "60%", "24%"]}>
+                    <Box width={["90%", "60%", "50%", "24%"]}>
                         <Swapper onConnectWalletClick={handleDrawerOpenClick} />
                     </Box>
                 </Flex>

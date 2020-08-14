@@ -114,7 +114,7 @@ export const TokenModal = ({
             <RootFlex open={open} onClick={handleLocalClose}>
                 <ContentFlex
                     ref={contentRef}
-                    width={["90%", "80%", "60%", "30%"]}
+                    width={["90%", "60%", "50%", "30%"]}
                     flexDirection="column"
                 >
                     <HeaderFlex>

@@ -6,7 +6,7 @@ export const BackgroundFlex = styled(Flex)`
     border: solid 1px ${(props) => props.theme.border};
     border-radius: 12px;
     background: ${(props) => props.theme.foreground};
-    padding: 12px;
+    padding: 12px 16px;
     transition: background 0.3s ease, border 0.3s ease;
 `;
 
