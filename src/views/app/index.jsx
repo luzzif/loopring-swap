@@ -101,7 +101,7 @@ export const App = () => {
         selectedAccount: state.web3.selectedAccount,
         loopringAccount: state.loopring.account,
         loopringWallet: state.loopring.wallet,
-        supportedTokens: state.loopring.supportedTokens.data,
+        supportedTokens: state.loopring.supportedTokens.data.aggregated,
         supportedMarkets: state.loopring.supportedMarkets.data,
     }));
 

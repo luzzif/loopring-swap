@@ -255,11 +255,11 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     disabled={
                         loggedIn &&
                         (!fromSpecification ||
-                            fromSpecification.token ||
-                            fromSpecification.amount === "0" ||
+                            !fromSpecification.token ||
+                            !fromSpecification.amount === "0" ||
                             !toSpecification ||
-                            toSpecification.token ||
-                            toSpecification.amount === "0")
+                            !toSpecification.token ||
+                            !toSpecification.amount === "0")
                     }
                     /* TODO: add proper onClick when actually swapping */
                     onClick={loggedIn ? () => {} : onConnectWalletClick}
@@ -269,11 +269,13 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     />
                 </Button>
             </Box>
-            <Box display="flex" justifyContent="center" textAlign="center">
-                <ErrorMessage>
-                    <FormattedMessage id="swapper.login.warning" />
-                </ErrorMessage>
-            </Box>
+            {!loggedIn && (
+                <Box display="flex" justifyContent="center" textAlign="center">
+                    <ErrorMessage>
+                        <FormattedMessage id="swapper.login.warning" />
+                    </ErrorMessage>
+                </Box>
+            )}
         </Flex>
     );
 };
