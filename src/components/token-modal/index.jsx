@@ -15,6 +15,7 @@ import {
     Input,
     EmptyIcon,
     EmptyTextBox,
+    SecondaryTextBox,
 } from "./styled";
 import { FullScreenOverlay } from "../full-screen-overlay";
 import { FormattedMessage } from "react-intl";
@@ -138,13 +139,14 @@ export const TokenModal = ({
                         {tokenDataset.length > 0 ? (
                             tokenDataset.map((token) => {
                                 const { address, symbol, name } = token;
+                                const currentlySelected = selected === token;
                                 return (
                                     <RowFlex
                                         key={address}
                                         alignItems="center"
                                         p={16}
                                         onClick={getClickHandler(token)}
-                                        selected={selected === token}
+                                        selected={currentlySelected}
                                     >
                                         <Box mr={3}>
                                             <TokenIcon
@@ -158,8 +160,12 @@ export const TokenModal = ({
                                             flex={1}
                                         >
                                             <Flex flexDirection="column">
-                                                <Box>{symbol}</Box>
-                                                <Box>{name}</Box>
+                                                <Box mb="8px">{symbol}</Box>
+                                                <SecondaryTextBox
+                                                    selected={currentlySelected}
+                                                >
+                                                    {name}
+                                                </SecondaryTextBox>
                                             </Flex>
                                             <Box>
                                                 {balancesInEther &&

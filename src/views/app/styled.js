@@ -3,7 +3,7 @@ import { createGlobalStyle } from "styled-components";
 export const GlobalStyle = createGlobalStyle`
     html {
         height: 100%;
-        font-family: "Montserrat", sans-serif;
+        font-family: 'Work Sans', sans-serif;
     }
 
     body {
@@ -35,7 +35,6 @@ export const GlobalStyle = createGlobalStyle`
 
     .custom-toast-body {
         font-size: 16px;
-        font-family: "Montserrat", sans-serif;
         margin: 0;
         padding: 4px 12px;
     }

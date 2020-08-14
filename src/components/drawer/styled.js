@@ -1,4 +1,3 @@
-import { Button } from "../button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Flex, Box } from "reflexbox";
 import styled from "styled-components";
@@ -22,12 +21,11 @@ export const HeaderFlex = styled(Flex)`
     min-height: 60px;
     align-items: center;
     justify-content: space-between;
-    background: ${(props) => props.theme.foreground};
     padding: 8px 16px;
     font-size: 20px;
     font-weight: 700;
     color: ${(props) => props.theme.text};
-    transition: color 0.3s ease, background 0.3s ease;
+    transition: color 0.3s ease;
 `;
 
 export const SummaryMessage = styled.span`
@@ -50,22 +48,13 @@ export const CloseIcon = styled(FontAwesomeIcon)`
     cursor: pointer;
 `;
 
-export const FullWidthButton = styled(Button)`
-    width: 100%;
-`;
-export const Divider = styled.div`
-    height: 1px;
-    background: ${(props) => props.theme.border};
-    transition: background 0.3s ease;
-`;
-
 export const ListItemHeader = styled(Box)`
     display: flex;
     align-items: center;
     width: 100%;
     padding: 0 20px;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     color: ${(props) => props.theme.textLight};
     margin-bottom: 16px;
     transition: color 0.3s ease;

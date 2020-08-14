@@ -19,7 +19,7 @@ export const HeaderText = styled(Box)`
 export const Input = styled.input`
     font-size: 32px;
     color: ${(props) => props.theme.text};
-    font-family: "Montserrat", sans-serif;
+    font-family: "Work Sans", sans-serif;
     border: none;
     background: ${(props) => props.theme.background};
     transition: background 0.3s ease, color 0.3s ease;

@@ -10,11 +10,11 @@ const sizeMap = {
         fontSize: 12,
     },
     medium: {
-        height: 44,
+        height: 36,
         fontSize: 16,
     },
     large: {
-        height: 52,
+        height: 48,
         fontSize: 16,
     },
 };
@@ -27,7 +27,7 @@ const commonsStyles = css`
     height: ${(props) => sizeMap[props.size].height}px;
     padding: 0 20px;
     font-size: ${(props) => sizeMap[props.size].fontSize}px;
-    font-family: "Montserrat", sans-serif;
+    font-family: "Work Sans", sans-serif;
     background: ${(props) =>
         props.disabled ? props.theme.disabled : props.theme.primary};
     color: ${(props) =>

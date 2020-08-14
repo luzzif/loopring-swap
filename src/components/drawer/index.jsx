@@ -13,8 +13,6 @@ import {
     RootFlex,
     HeaderFlex,
     Icon,
-    FullWidthButton,
-    Divider,
     EllipsizedBox,
     CloseIcon,
     SummaryMessage,
@@ -24,6 +22,7 @@ import { Support } from "./sections/support";
 import { TechnicalResources } from "./sections/technical-resources";
 import { ExchangeInfo } from "./sections/exchange-info";
 import { Settings } from "./sections/settings";
+import { Button } from "../button";
 
 export const Drawer = ({
     open,
@@ -86,36 +85,31 @@ export const Drawer = ({
                     <FormattedMessage id={summaryMessageKey} />
                 </SummaryMessage>
             </Box>
-            <Box width="100%" px={4} mb={3}>
-                <FullWidthButton
+            <Box px={4} mb={4}>
+                <Button
                     onClick={selectedWeb3Account ? onLogin : onConnectWallet}
                 >
                     <FormattedMessage id={buttonMessageKey} />
-                </FullWidthButton>
+                </Button>
             </Box>
-            <Box width="100%" mb={3}>
-                <Divider />
+            <Box width="100%" mb={2}>
+                <Settings
+                    darkTheme={darkTheme}
+                    onDarkThemeChange={onDarkThemeChange}
+                />
             </Box>
-            <Settings
-                darkTheme={darkTheme}
-                onDarkThemeChange={onDarkThemeChange}
-            />
-            <Box width="100%" mb={3}>
-                <Divider />
+            <Box width="100%" mb={2}>
+                <Lrc />
             </Box>
-            <Lrc />
-            <Box width="100%" mb={3}>
-                <Divider />
+            <Box width="100%" mb={2}>
+                <Support />
             </Box>
-            <Support />
-            <Box width="100%" mb={3}>
-                <Divider />
+            <Box width="100%" mb={2}>
+                <TechnicalResources />
             </Box>
-            <TechnicalResources />
-            <Box width="100%" mb={3}>
-                <Divider />
+            <Box width="100%" mb={2}>
+                <ExchangeInfo />
             </Box>
-            <ExchangeInfo />
         </RootFlex>
     );
 };

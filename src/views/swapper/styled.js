@@ -13,7 +13,3 @@ export const BackgroundFlex = styled(Flex)`
 export const ArrowIcon = styled(FontAwesomeIcon)`
     color: ${(props) => props.theme.primary};
 `;
-
-export const ErrorMessage = styled.span`
-    color: ${(props) => props.theme.error};
-`;

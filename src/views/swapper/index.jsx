@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { Flex, Box } from "reflexbox";
-import { BackgroundFlex, ArrowIcon, ErrorMessage } from "./styled";
+import { BackgroundFlex, ArrowIcon } from "./styled";
 import { TokenSpecifier } from "../../components/token-specifier";
 import { useState } from "react";
 import {
@@ -202,7 +202,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                 >
                     <ArrowIcon icon={faArrowDown} />
                 </Box>
-                <Box mb={3}>
+                <Box mb="12px">
                     <TokenSpecifier
                         variant="to"
                         amount={toAmount}
