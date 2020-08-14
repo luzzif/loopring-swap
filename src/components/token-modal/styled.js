@@ -49,7 +49,6 @@ export const SearchFlex = styled(Flex)`
     padding-right: 20px;
     font-size: 20px;
     color: ${(props) => props.theme.text};
-    border-bottom: solid 1px ${(props) => props.theme.border};
 `;
 
 export const Input = styled.input`

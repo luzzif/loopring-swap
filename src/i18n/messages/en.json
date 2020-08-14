@@ -1,4 +1,5 @@
 {
+    "placeholder": "",
     "toolbar.action.wallet.connect": "Connect wallet",
     "toolbar.action.wallet.login": "Login",
     "drawer.wallet.connect.summary": "Connect to your Ethereum account to start using Loopring Swap.",
@@ -29,9 +30,12 @@
     "swapper.action.swap": "Swap",
     "token.modal.header": "Assets",
     "token.select.action.select": "Select",
+    "swapper.price": "Price",
 
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
     "error.login": "There was an error logging in. Please try again later.",
     "error.supported.tokens": "There was an error fetching the supported tokens. Please try again later.",
-    "error.user.balances": "There was an error fetching your balances. Please try again later."
+    "error.supported.markets": "There was an error fetching the supported markets. Please try again later.",
+    "error.user.balances": "There was an error fetching your balances. Please try again later.",
+    "error.exchange.rate": "There was an error fetching the current exchange rate. Please try again later."
 }

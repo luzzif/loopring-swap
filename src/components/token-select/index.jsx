@@ -5,22 +5,34 @@ import { Box } from "reflexbox";
 import { RootFlex, ChevronIcon } from "./styled";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FormattedMessage } from "react-intl";
+import { Spinner } from "../spinner";
 
-export const TokenSelect = ({ token, onClick }) => (
+export const TokenSelect = ({ token, loading, onClick }) => (
     <RootFlex alignItems="center" onClick={onClick}>
-        {token ? (
-            <>
-                <Box mr={2} display="flex" alignItems="center">
-                    <TokenIcon address={token.address || "ETH"} size={16} />
-                </Box>
-                <Box>{token.symbol}</Box>
-            </>
+        {loading ? (
+            <Box>
+                <Spinner size={16} />
+            </Box>
         ) : (
-            <FormattedMessage id="token.select.action.select" />
+            <>
+                {token ? (
+                    <>
+                        <Box mr={2} display="flex" alignItems="center">
+                            <TokenIcon
+                                address={token.address || "ETH"}
+                                size={16}
+                            />
+                        </Box>
+                        <Box>{token.symbol}</Box>
+                    </>
+                ) : (
+                    <FormattedMessage id="token.select.action.select" />
+                )}
+                <Box ml={2} display="flex" alignItems="center">
+                    <ChevronIcon icon={faChevronDown} />
+                </Box>
+            </>
         )}
-        <Box ml={2} display="flex" alignItems="center">
-            <ChevronIcon icon={faChevronDown} />
-        </Box>
     </RootFlex>
 );
 
@@ -30,4 +42,5 @@ TokenSelect.propTypes = {
         symbol: PropTypes.string.isRequired,
     }),
     onClick: PropTypes.func.isRequired,
+    loading: PropTypes.bool.isRequired,
 };

@@ -10,6 +10,8 @@ import { FormattedMessage } from "react-intl";
 import { getBalances } from "../../lightcone/api/v1/balances/get";
 import { getLoopringApiKey } from "../../utils/loopring";
 import BigNumber from "bignumber.js";
+import { getDepth } from "../../lightcone/api/v1/depth/get";
+import { getMarketInfo } from "../../lightcone/api/v1/marketinfo/get";
 
 // login
 
@@ -68,18 +70,61 @@ export const GET_SUPPORTED_TOKENS_START = "GET_SUPPORTED_TOKENS_START";
 export const GET_SUPPORTED_TOKENS_END = "GET_SUPPORTED_TOKENS_END";
 export const GET_SUPPORTED_TOKENS_SUCCESS = "GET_SUPPORTED_TOKENS_SUCCESS";
 
-export const getSupportedTokens = () => async (dispatch) => {
+export const getSupportedTokens = (supportedMarkets) => async (dispatch) => {
     dispatch({ type: GET_SUPPORTED_TOKENS_START });
     try {
+        const supportedTokens = await getTokenInfo();
+        const filteredSupportedTokens = supportedTokens.reduce(
+            (accumulator, token) => {
+                const { tokenId } = token;
+                const fromToken = supportedMarkets.find(
+                    (market) => market.quoteTokenId === tokenId
+                );
+                if (fromToken) {
+                    accumulator.fromTokens.push(token);
+                }
+                const toToken = supportedMarkets.find(
+                    (market) => market.baseTokenId === tokenId
+                );
+                if (toToken) {
+                    accumulator.toTokens.push(token);
+                }
+                if (fromToken || toToken) {
+                    accumulator.aggregated.push(token);
+                }
+                return accumulator;
+            },
+            { fromTokens: [], toTokens: [], aggregated: [] }
+        );
         dispatch({
             type: GET_SUPPORTED_TOKENS_SUCCESS,
-            supportedTokens: await getTokenInfo(),
+            supportedTokens: filteredSupportedTokens,
         });
     } catch (error) {
-        toast.error(<FormattedMessage id="error.loopring.supported.tokens" />);
+        toast.error(<FormattedMessage id="error.supported.tokens" />);
         console.error("error getting supported tokens", error);
     }
     dispatch({ type: GET_SUPPORTED_TOKENS_END });
+};
+
+// get supported markets
+
+export const GET_SUPPORTED_MARKETS_START = "GET_SUPPORTED_MARKETS_START";
+export const GET_SUPPORTED_MARKETS_END = "GET_SUPPORTED_MARKETS_END";
+export const GET_SUPPORTED_MARKETS_SUCCESS = "GET_SUPPORTED_MARKETS_SUCCESS";
+
+export const getSupportedMarkets = () => async (dispatch) => {
+    dispatch({ type: GET_SUPPORTED_MARKETS_START });
+    try {
+        dispatch({
+            type: GET_SUPPORTED_MARKETS_SUCCESS,
+            supportedMarkets: await getMarketInfo(),
+        });
+    } catch (error) {
+        toast.error(<FormattedMessage id="error.supported.markets" />);
+        console.error("error getting supported markets", error);
+    }
+    dispatch({ type: GET_SUPPORTED_MARKETS_END });
 };
 
 // get user balances
@@ -127,4 +172,30 @@ export const getUserBalances = (account, wallet, supportedTokens) => async (
         console.error("error getting user balances", error);
     }
     dispatch({ type: GET_USER_BALANCES_END });
+};
+
+// get current exchange rate
+
+export const GET_EXCHANGE_RATE_START = "GET_EXCHANGE_RATE_START";
+export const GET_EXCHANGE_RATE_END = "GET_EXCHANGE_RATE_END";
+export const GET_EXCHANGE_RATE_SUCCESS = "GET_EXCHANGE_RATE_SUCCESS";
+
+export const getExchangeRate = (
+    fromSpecification,
+    toSpecification,
+    supportedTokens
+) => async (dispatch) => {
+    dispatch({ type: GET_EXCHANGE_RATE_START });
+    try {
+        const market = `${toSpecification.token.symbol}-${fromSpecification.token.symbol}`;
+        const depth = await getDepth(market, 0, 1, supportedTokens);
+        dispatch({
+            type: GET_EXCHANGE_RATE_SUCCESS,
+            exchangeRate: depth.bids[0],
+        });
+    } catch (error) {
+        toast.error(<FormattedMessage id="error.exchange.rate" />);
+        console.error("error getting exchange rate", error);
+    }
+    dispatch({ type: GET_EXCHANGE_RATE_END });
 };

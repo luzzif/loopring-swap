@@ -15,6 +15,7 @@ import {
     login,
     getSupportedTokens,
     getUserBalances,
+    getSupportedMarkets,
 } from "../../actions/loopring";
 import { Flex, Box } from "reflexbox";
 import { Swapper } from "../swapper";
@@ -93,28 +94,31 @@ export const App = () => {
         loopringAccount,
         loopringWallet,
         supportedTokens,
+        supportedMarkets,
     } = useSelector((state) => ({
         web3Instance: state.web3.instance,
         selectedAccount: state.web3.selectedAccount,
         loopringAccount: state.loopring.account,
         loopringWallet: state.loopring.wallet,
         supportedTokens: state.loopring.supportedTokens.data,
+        supportedMarkets: state.loopring.supportedMarkets.data,
     }));
 
     const [lightTheme, setLightTheme] = useState(true);
     const [authorizing, setAuthorizing] = useState(false);
 
     useEffect(() => {
-        dispatch(getSupportedTokens());
+        dispatch(getSupportedMarkets());
     }, [dispatch]);
 
     useEffect(() => {
-        if (
-            loopringAccount &&
-            loopringWallet &&
-            supportedTokens &&
-            supportedTokens.length > 0
-        ) {
+        if (supportedMarkets && supportedMarkets.length > 0) {
+            dispatch(getSupportedTokens(supportedMarkets));
+        }
+    }, [dispatch, supportedMarkets]);
+
+    useEffect(() => {
+        if (loopringAccount && loopringWallet && supportedTokens) {
             dispatch(
                 getUserBalances(
                     loopringAccount,

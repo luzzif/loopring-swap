@@ -14,6 +14,7 @@ export const TokenSpecifier = ({
     onChange,
     supportedTokens,
     balances,
+    loadingSupportedTokens,
 }) => {
     const { amount, token } = specification;
 
@@ -97,6 +98,7 @@ export const TokenSpecifier = ({
                         <TokenSelect
                             token={token}
                             onClick={handleSelectClick}
+                            loading={loadingSupportedTokens}
                         />
                     </Box>
                 </Flex>
@@ -118,4 +120,5 @@ TokenSpecifier.propTypes = {
     specification: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
     supportedTokens: PropTypes.array.isRequired,
+    loadingSupportedTokens: PropTypes.bool.isRequired,
 };
