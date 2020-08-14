@@ -17,9 +17,6 @@ export const Toolbar = ({
             <Logo src={logo} />
         </Box>
         <Flex alignItems="center" height="100%">
-            <Box mr={3}>
-                <SettingsIcon icon={faCog} />
-            </Box>
             <Box>
                 <Button
                     faIcon={
@@ -40,6 +37,9 @@ export const Toolbar = ({
                         />
                     )}
                 </Button>
+            </Box>
+            <Box ml={3}>
+                <SettingsIcon icon={faCog} />
             </Box>
         </Flex>
     </FlexContainer>
