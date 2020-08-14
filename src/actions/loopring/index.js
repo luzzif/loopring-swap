@@ -191,7 +191,7 @@ export const getExchangeRate = (
         const depth = await getDepth(market, 0, 1, supportedTokens);
         dispatch({
             type: GET_EXCHANGE_RATE_SUCCESS,
-            exchangeRate: depth.bids[0],
+            exchangeRate: depth.asks[0],
         });
     } catch (error) {
         toast.error(<FormattedMessage id="error.exchange.rate" />);
