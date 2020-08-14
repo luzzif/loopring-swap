@@ -144,7 +144,9 @@ export const TokenModal = ({
                                     <RowFlex
                                         key={address}
                                         alignItems="center"
-                                        p={16}
+                                        py={16}
+                                        pl="12px"
+                                        pr="16px"
                                         onClick={getClickHandler(token)}
                                         selected={currentlySelected}
                                     >
@@ -160,7 +162,7 @@ export const TokenModal = ({
                                             flex={1}
                                         >
                                             <Flex flexDirection="column">
-                                                <Box mb="4px">{symbol}</Box>
+                                                <Box mb="2px">{symbol}</Box>
                                                 <SecondaryTextBox
                                                     selected={currentlySelected}
                                                 >
