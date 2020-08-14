@@ -10,8 +10,12 @@ export const RootFlex = styled(Flex)`
     background: transparent;
     justify-content: center;
     align-items: center;
+    opacity: ${(props) => (props.open ? "1" : "0")};
     transform: translateY(${(props) => (props.open ? "0" : "100%")});
-    transition: transform 0.3s ease;
+    transition: ${(props) =>
+        props.open
+            ? "opacity 0.3s ease"
+            : "transform 0.3s ease 0.3s, opacity 0.3s ease"};
 `;
 
 export const ContentFlex = styled(Flex)`
