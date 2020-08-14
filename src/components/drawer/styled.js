@@ -56,6 +56,7 @@ export const FullWidthButton = styled(Button)`
 export const Divider = styled.div`
     height: 1px;
     background: ${(props) => props.theme.border};
+    transition: background 0.3s ease;
 `;
 
 export const ListItemHeader = styled(Box)`

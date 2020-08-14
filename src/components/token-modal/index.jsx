@@ -13,10 +13,16 @@ import {
     CloseBox,
     SearchFlex,
     Input,
+    EmptyIcon,
+    EmptyTextBox,
 } from "./styled";
 import { FullScreenOverlay } from "../full-screen-overlay";
 import { FormattedMessage } from "react-intl";
-import { faTimes, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+    faTimes,
+    faSearch,
+    faExclamationTriangle,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
 
@@ -129,48 +135,62 @@ export const TokenModal = ({
                         </Box>
                     </SearchFlex>
                     <ListFlex flexDirection="column" py="8px" px="12px">
-                        {tokenDataset.length > 0
-                            ? tokenDataset.map((token) => {
-                                  const { address, symbol, name } = token;
-                                  return (
-                                      <RowFlex
-                                          key={address}
-                                          alignItems="center"
-                                          p={16}
-                                          onClick={getClickHandler(token)}
-                                          selected={selected === token}
-                                      >
-                                          <Box mr={3}>
-                                              <TokenIcon
-                                                  address={address}
-                                                  size={32}
-                                              />
-                                          </Box>
-                                          <Flex
-                                              alignItems="center"
-                                              justifyContent="space-between"
-                                              flex={1}
-                                          >
-                                              <Flex flexDirection="column">
-                                                  <Box>{symbol}</Box>
-                                                  <Box>{name}</Box>
-                                              </Flex>
-                                              <Box>
-                                                  {balancesInEther &&
-                                                  balancesInEther[address] &&
-                                                  balancesInEther[
-                                                      address
-                                                  ].isGreaterThan("0.0001")
-                                                      ? balancesInEther[address]
-                                                            .decimalPlaces(4)
-                                                            .toString()
-                                                      : "-"}
-                                              </Box>
-                                          </Flex>
-                                      </RowFlex>
-                                  );
-                              })
-                            : null}
+                        {tokenDataset.length > 0 ? (
+                            tokenDataset.map((token) => {
+                                const { address, symbol, name } = token;
+                                return (
+                                    <RowFlex
+                                        key={address}
+                                        alignItems="center"
+                                        p={16}
+                                        onClick={getClickHandler(token)}
+                                        selected={selected === token}
+                                    >
+                                        <Box mr={3}>
+                                            <TokenIcon
+                                                address={address}
+                                                size={32}
+                                            />
+                                        </Box>
+                                        <Flex
+                                            alignItems="center"
+                                            justifyContent="space-between"
+                                            flex={1}
+                                        >
+                                            <Flex flexDirection="column">
+                                                <Box>{symbol}</Box>
+                                                <Box>{name}</Box>
+                                            </Flex>
+                                            <Box>
+                                                {balancesInEther &&
+                                                balancesInEther[address] &&
+                                                balancesInEther[
+                                                    address
+                                                ].isGreaterThan("0.0001")
+                                                    ? balancesInEther[address]
+                                                          .decimalPlaces(4)
+                                                          .toString()
+                                                    : "-"}
+                                            </Box>
+                                        </Flex>
+                                    </RowFlex>
+                                );
+                            })
+                        ) : (
+                            <Flex
+                                flexDirection="column"
+                                alignItems="center"
+                                my={3}
+                                px={3}
+                            >
+                                <Box mb={3}>
+                                    <EmptyIcon icon={faExclamationTriangle} />
+                                </Box>
+                                <EmptyTextBox textAlign="center" mb={3}>
+                                    <FormattedMessage id="token.modal.empty" />
+                                </EmptyTextBox>
+                            </Flex>
+                        )}
                     </ListFlex>
                 </ContentFlex>
             </RootFlex>

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Flex, Box } from "reflexbox";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const RootFlex = styled(Flex)`
     position: fixed;
@@ -36,11 +37,10 @@ export const HeaderFlex = styled(Flex)`
     align-items: center;
     justify-content: space-between;
     background: ${(props) => props.theme.foreground};
-    padding-top: 12px;
-    padding-left: 28px;
-    padding-right: 20px;
+    padding: 12px 24px;
     font-size: 20px;
     font-weight: 700;
+    margin-bottom: 8px;
     color: ${(props) => props.theme.text};
     transition: color 0.3s ease, background 0.3s ease;
 `;
@@ -50,7 +50,7 @@ export const SearchFlex = styled(Flex)`
     height: 52px;
     min-height: 52px;
     align-items: center;
-    background: ${(props) => props.theme.foreground};
+    background: ${(props) => props.theme.background};
     padding-left: 28px;
     padding-right: 28px;
     font-size: 20px;
@@ -63,7 +63,7 @@ export const Input = styled.input`
     color: ${(props) => props.theme.text};
     font-family: "Montserrat", sans-serif;
     border: none;
-    background: ${(props) => props.theme.foreground};
+    background: ${(props) => props.theme.background};
     outline: none;
     width: 100%;
     transition: color 0.3s ease, background 0.3s ease;
@@ -85,4 +85,15 @@ export const RowFlex = styled(Flex)`
 
 export const CloseBox = styled(Box)`
     cursor: pointer;
+    display: flex;
+    align-items: center;
+`;
+
+export const EmptyIcon = styled(FontAwesomeIcon)`
+    font-size: 60px;
+    color: ${(props) => props.theme.error};
+`;
+
+export const EmptyTextBox = styled(Box)`
+    color: ${(props) => props.theme.error};
 `;
