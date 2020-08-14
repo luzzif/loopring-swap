@@ -7,7 +7,7 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 export const Toolbar = ({ onDrawerOpenClick }) => (
     <FlexContainer>
-        <Box height={28}>
+        <Box height={36}>
             <Logo src={logo} />
         </Box>
         <Flex alignItems="center" height="100%">
