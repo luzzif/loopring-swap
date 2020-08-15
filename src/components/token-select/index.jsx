@@ -11,7 +11,7 @@ export const TokenSelect = ({ token, loading, onClick }) => (
     <RootFlex alignItems="center" onClick={onClick}>
         {loading ? (
             <Box>
-                <Spinner size={16} />
+                <Spinner size={20} />
             </Box>
         ) : (
             <>
@@ -20,7 +20,7 @@ export const TokenSelect = ({ token, loading, onClick }) => (
                         <Box mr={2} display="flex" alignItems="center">
                             <TokenIcon
                                 address={token.address || "ETH"}
-                                size={16}
+                                size={20}
                             />
                         </Box>
                         <Box>{token.symbol}</Box>

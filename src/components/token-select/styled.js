@@ -5,8 +5,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export const RootFlex = styled(Flex)`
     border: solid 1px ${(props) => props.theme.border};
     border-radius: 12px;
-    padding: 4px 12px;
-    font-size: 16px;
+    padding: 4px 8px;
+    font-size: 20px;
+    line-height: 20px;
     background: ${(props) => props.theme.foreground};
     overflow: hidden;
     text-overflow: ellipsis;
