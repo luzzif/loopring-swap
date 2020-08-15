@@ -3,6 +3,8 @@ import Wallet from "../../lightcone/wallet";
 import {
     lightconeGetAccount,
     getExchangeInfo,
+    getOrderId,
+    submitOrderToLightcone,
 } from "../../lightcone/api/LightconeAPI";
 import { toast } from "react-toastify";
 import { getTokenInfo } from "../../lightcone/api/v1/tokeninfo/get";
@@ -12,6 +14,8 @@ import { getLoopringApiKey } from "../../utils/loopring";
 import BigNumber from "bignumber.js";
 import { getDepth } from "../../lightcone/api/v1/depth/get";
 import { getMarketInfo } from "../../lightcone/api/v1/marketinfo/get";
+import config from "../../lightcone/config";
+import { fromWei } from "web3-utils";
 
 // login
 
@@ -235,5 +239,60 @@ export const getSwapData = (
         console.error("error getting swap data", error);
     } finally {
         dispatch({ type: GET_SWAP_DATA_END });
+    }
+};
+
+// perform swap
+
+export const POST_SWAP_START = "POST_SWAP_START";
+export const POST_SWAP_END = "POST_SWAP_END";
+export const POST_SWAP_SUCCESS = "POST_SWAP_SUCCESS";
+
+export const postSwap = (
+    account,
+    wallet,
+    exchange,
+    fromToken,
+    fromAmount,
+    toToken,
+    toAmount,
+    supportedTokens
+) => async (dispatch) => {
+    dispatch({ type: POST_SWAP_START });
+    try {
+        const apiKey = await getLoopringApiKey(wallet, account);
+        const orderId = await getOrderId(
+            account.accountId,
+            fromToken.tokenId,
+            apiKey
+        );
+        const validSince = new Date().getTime() / 1000 - 3600;
+        const validUntil = new Date().getTime() / 1000 + 3600 * 24 * 10000;
+        const signedOrder = wallet.submitOrder(
+            supportedTokens,
+            exchange.exchangeId,
+            fromToken.address,
+            toToken.address,
+            fromWei(fromAmount),
+            fromWei(toAmount),
+            orderId,
+            validSince,
+            validUntil,
+            config.getLabel(),
+            true,
+            config.getChannelId()
+        );
+        if (!signedOrder) {
+            // the user aborted the signing procedure
+            return;
+        }
+        await submitOrderToLightcone(signedOrder, apiKey);
+        toast.success(<FormattedMessage id="swap.success" />);
+        dispatch({ type: POST_SWAP_SUCCESS });
+    } catch (error) {
+        toast.error(<FormattedMessage id="error.swap" />);
+        console.error("error performing swap", error);
+    } finally {
+        dispatch({ type: POST_SWAP_END });
     }
 };

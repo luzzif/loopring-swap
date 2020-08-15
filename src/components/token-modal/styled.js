@@ -39,8 +39,8 @@ export const SearchFlex = styled(Flex)`
     align-items: center;
     background: ${(props) => props.theme.background};
     margin-top: 28px;
-    padding-left: 28px;
-    padding-right: 28px;
+    padding-left: 24px;
+    padding-right: 24px;
     font-size: 20px;
     color: ${(props) => props.theme.text};
     transition: color 0.3s ease, background 0.3s ease;
@@ -78,7 +78,7 @@ export const RowFlex = styled(Flex)`
         `};
 `;
 
-export const CloseBox = styled(Box)`
+export const PointableBox = styled(Box)`
     cursor: pointer;
     display: flex;
     align-items: center;

@@ -13,17 +13,23 @@ export const TokenSpecifier = ({
     amount,
     token,
     onAmountChange,
+    onBalancesRefresh,
     onTokenChange,
     supportedTokens,
     balances,
     loadingSupportedTokens,
+    loadingBalances,
+    loggedIn,
 }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [stringAmount, setStringAmount] = useState("");
     const [amountError, setAmountError] = useState(false);
 
     useEffect(() => {
-        if (!stringAmount.endsWith(".")) {
+        if (
+            !stringAmount.endsWith(".") &&
+            !new BigNumber(fromWei(amount)).isZero()
+        ) {
             setStringAmount(
                 new BigNumber(fromWei(amount)).decimalPlaces(5).toString()
             );
@@ -44,14 +50,11 @@ export const TokenSpecifier = ({
                 onAmountChange("0");
                 return;
             }
-            if (newAmount.endsWith(".")) {
-                setAmountError(true);
-            } else {
-                setAmountError(false);
-            }
+            setAmountError(newAmount.endsWith("."));
             if (/\.{2,}/.test(newAmount) || newAmount.split(".").length > 2) {
                 return;
             }
+            console.log(newAmount);
             setStringAmount(newAmount);
             let properNumericValue = isNaN(numericAmount)
                 ? "0"
@@ -68,6 +71,7 @@ export const TokenSpecifier = ({
                     userTokenBalance.balance.decimalPlaces(18).toFixed()
                 );
             }
+            console.log(properNumericValue);
             onAmountChange(toWei(properNumericValue));
         },
         [balances, onAmountChange, token]
@@ -118,10 +122,13 @@ export const TokenSpecifier = ({
             <TokenModal
                 open={modalOpen}
                 onClose={handleModalClose}
+                onRefresh={onBalancesRefresh}
                 onChange={handleTokenChange}
                 supportedTokens={supportedTokens}
                 selected={token}
                 balances={balances}
+                loading={loadingBalances || loadingSupportedTokens}
+                loggedIn={loggedIn}
             />
         </>
     );
@@ -130,9 +137,12 @@ export const TokenSpecifier = ({
 TokenSpecifier.propTypes = {
     variant: PropTypes.oneOf(["from", "to"]),
     amount: PropTypes.string.isRequired,
-    token: PropTypes.object.isRequired,
+    token: PropTypes.object,
     onAmountChange: PropTypes.func.isRequired,
+    onBalancesRefresh: PropTypes.func.isRequired,
     onTokenChange: PropTypes.func.isRequired,
     supportedTokens: PropTypes.array.isRequired,
     loadingSupportedTokens: PropTypes.bool.isRequired,
+    loadingBalances: PropTypes.bool.isRequired,
+    loggedIn: PropTypes.bool.isRequired,
 };

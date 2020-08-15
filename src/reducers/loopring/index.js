@@ -12,6 +12,8 @@ import {
     GET_SUPPORTED_MARKETS_START,
     GET_SUPPORTED_MARKETS_END,
     GET_SUPPORTED_MARKETS_SUCCESS,
+    POST_SWAP_START,
+    POST_SWAP_END,
 } from "../../actions/loopring";
 
 const initialState = {
@@ -33,6 +35,9 @@ const initialState = {
     swap: {
         loadings: 0,
         data: {},
+    },
+    swapSubmission: {
+        loadings: 0,
     },
 };
 
@@ -156,6 +161,24 @@ export const loopringReducer = (state = initialState, action) => {
                         slippagePercentage: action.slippagePercentage,
                         maximumAmount: action.maximumAmount,
                     },
+                },
+            };
+        }
+        case POST_SWAP_START: {
+            return {
+                ...state,
+                swapSubmission: {
+                    ...state.swapSubmission,
+                    loadings: state.swapSubmission.loadings + 1,
+                },
+            };
+        }
+        case POST_SWAP_END: {
+            return {
+                ...state,
+                swapSubmission: {
+                    ...state.swapSubmission,
+                    loadings: state.swapSubmission.loadings - 1,
                 },
             };
         }

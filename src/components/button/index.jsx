@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import styled, { css } from "styled-components";
 import { Flex, Box } from "reflexbox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Spinner } from "../spinner";
 
 const sizeMap = {
     small: {
@@ -31,7 +32,7 @@ const commonsStyles = css`
     background: ${(props) =>
         props.disabled ? props.theme.disabled : props.theme.primary};
     color: ${(props) =>
-        props.disabled ? props.theme.textDisabled : "rgba(255, 255, 255, 0.8)"};
+        props.disabled ? props.theme.textDisabled : props.theme.textButton};
     border: none;
     border-radius: 12px;
     font-weight: 600;
@@ -45,15 +46,38 @@ const StyledButton = styled.button`
     ${commonsStyles}
 `;
 
-export const Button = ({ children, faIcon, size, ...rest }) => (
-    <StyledButton size={size} {...rest}>
+export const Button = ({
+    children,
+    faIcon,
+    size,
+    loading,
+    disabled,
+    ...rest
+}) => (
+    <StyledButton size={size} disabled={disabled} {...rest}>
         <Flex>
-            {faIcon && (
-                <Box mr={2}>
-                    <FontAwesomeIcon icon={faIcon} />
+            {loading && !disabled ? (
+                <Box
+                    width="100%"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                >
+                    <Spinner
+                        size={sizeMap[size].fontSize}
+                        variant="buttonText"
+                    />
                 </Box>
+            ) : (
+                <>
+                    {faIcon && (
+                        <Box mr={2}>
+                            <FontAwesomeIcon icon={faIcon} />
+                        </Box>
+                    )}
+                    <Box>{children}</Box>
+                </>
             )}
-            <Box>{children}</Box>
         </Flex>
     </StyledButton>
 );
@@ -61,6 +85,8 @@ export const Button = ({ children, faIcon, size, ...rest }) => (
 Button.propTypes = {
     faIcon: PropTypes.object,
     size: PropTypes.oneOf(["small", "medium", "large"]),
+    loading: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 Button.defaultProps = {

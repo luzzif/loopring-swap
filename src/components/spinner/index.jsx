@@ -14,16 +14,26 @@ const spin = keyframes`
 `;
 
 export const SpinningIcon = styled(FontAwesomeIcon)`
-    color: ${(props) => props.theme.primary};
+    color: ${(props) => {
+        if (props.variant === "primary") {
+            return props.theme.primary;
+        } else if (props.variant === "buttonText") {
+            return props.theme.textButton;
+        }
+    }};
     animation: ${spin} 1s linear 0s infinite;
-    width: ${(props) => props.size}px;
-    height: ${(props) => props.size}px;
+    font-size: ${(props) => props.size}px;
 `;
 
-export const Spinner = ({ size }) => {
-    return <SpinningIcon size={size} icon={faCircleNotch} />;
+export const Spinner = ({ size, variant }) => {
+    return <SpinningIcon size={size} variant={variant} icon={faCircleNotch} />;
 };
 
 Spinner.propTypes = {
     size: PropTypes.number.isRequired,
+    variant: PropTypes.oneOf(["primary", "buttonText"]),
+};
+
+Spinner.defaultProps = {
+    variant: "primary",
 };

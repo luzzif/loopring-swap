@@ -37,6 +37,7 @@
     "swapper.slippage": "Estimated slippage",
     "swapper.fee": "Fee",
     "token.modal.empty": "Nothing matches your search...",
+    "swap.success": "The swap was correctly submitted. It should soon be reflected in your balances.",
 
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
     "error.login": "There was an error logging in. Please try again later.",
@@ -44,5 +45,6 @@
     "error.supported.markets": "There was an error fetching the supported markets. Please try again later.",
     "error.user.balances": "There was an error fetching your balances. Please try again later.",
     "error.swap.data": "There was an error fetching the current market swap data. Please try again later.",
-    "error.swap.size": "There's currently not enough liquidity to process the swap. Please try again later."
+    "error.swap.size": "There's currently not enough liquidity to process the swap. Please try again later.",
+    "error.swap": "An error occurred performing the swap. Please try again later"
 }

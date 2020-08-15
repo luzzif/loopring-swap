@@ -10,7 +10,8 @@ export const FullScreenOverlay = styled.div`
     opacity: ${(props) => (props.open ? "1" : "0")};
     transform: translateY(${(props) => (props.open ? "0" : "150%")});
     transition: ${(props) =>
-        props.open
-            ? "opacity 0.3s ease"
-            : "transform 0.3s ease 0.3s, opacity 0.3s ease"};
+            props.open
+                ? "opacity 0.3s ease"
+                : "transform 0.3s ease 0.3s, opacity 0.3s ease"},
+        background 0.3s ease;
 `;

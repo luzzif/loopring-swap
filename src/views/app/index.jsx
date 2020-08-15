@@ -28,6 +28,7 @@ const commonColors = {
     success: "#00c853",
     disabled: "rgb(202, 209, 213)",
     textDisabled: "rgba(5, 5, 5, 0.565)",
+    textButton: "#d6e0ff",
 };
 
 const light = {

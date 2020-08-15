@@ -8,7 +8,7 @@ export const RootFlex = styled(Flex)`
     top: 0;
     bottom: 0;
     right: 0;
-    transition: transform 0.3s ease, background 0.3s ease;
+    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
     transform: translateX(${(props) => (props.open ? "0" : "150%")});
     background: ${(props) => props.theme.background};
     box-shadow: 0px 30px 62px 0px ${(props) => props.theme.shadow};

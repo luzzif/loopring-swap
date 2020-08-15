@@ -41,6 +41,7 @@ export const GlobalStyle = createGlobalStyle`
 
     .Toastify__toast {
         min-height: 0;
+        font-family: 'Work Sans', sans-serif;
     }
     
     .Toastify__toast--warning {

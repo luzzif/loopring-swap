@@ -12,7 +12,7 @@ import {
 import { FormattedMessage } from "react-intl";
 import { Button } from "../../components/button";
 import { useSelector, useDispatch } from "react-redux";
-import { getSwapData } from "../../actions/loopring";
+import { getSwapData, postSwap, getUserBalances } from "../../actions/loopring";
 import BigNumber from "bignumber.js";
 import { fromWei, toWei } from "web3-utils";
 import { Spinner } from "../../components/spinner";
@@ -22,8 +22,12 @@ export const Swapper = ({ onConnectWalletClick }) => {
     const dispatch = useDispatch();
 
     const {
+        loopringAccount,
+        loopringExchange,
+        loopringWallet,
         supportedTokens,
         loadingSupportedTokens,
+        loadingBalances,
         supportedFromTokens,
         supportedToTokens,
         supportedMarkets,
@@ -31,10 +35,14 @@ export const Swapper = ({ onConnectWalletClick }) => {
         loggedIn,
         swapData,
         loadingSwapData,
+        loadingSwapSubmission,
     } = useSelector((state) => ({
-        exchange: state.loopring.exchange,
+        loopringAccount: state.loopring.account,
+        loopringExchange: state.loopring.exchange,
+        loopringWallet: state.loopring.wallet,
         supportedTokens: state.loopring.supportedTokens.data.aggregated,
         loadingSupportedTokens: !!state.loopring.supportedTokens.loadings,
+        loadingBalances: !!state.loopring.balances.loadings,
         supportedFromTokens: state.loopring.supportedTokens.data.fromTokens,
         supportedToTokens: state.loopring.supportedTokens.data.toTokens,
         supportedMarkets: state.loopring.supportedMarkets.data,
@@ -42,6 +50,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
         loggedIn: !!state.loopring.account,
         swapData: state.loopring.swap.data,
         loadingSwapData: !!state.loopring.swap.loadings,
+        loadingSwapSubmission: !!state.loopring.swapSubmission.loadings,
     }));
 
     const [fromToken, setFromToken] = useState(null);
@@ -242,6 +251,43 @@ export const Swapper = ({ onConnectWalletClick }) => {
         setToAmount(amount);
     }, []);
 
+    const handleSwap = useCallback(() => {
+        dispatch(
+            postSwap(
+                loopringAccount,
+                loopringWallet,
+                loopringExchange,
+                fromToken,
+                fromAmount,
+                toToken,
+                toAmount,
+                supportedTokens
+            )
+        );
+    }, [
+        dispatch,
+        fromAmount,
+        fromToken,
+        loopringAccount,
+        loopringExchange,
+        loopringWallet,
+        supportedTokens,
+        toAmount,
+        toToken,
+    ]);
+
+    const handleBalancesRefresh = useCallback(() => {
+        if (loggedIn) {
+            dispatch(
+                getUserBalances(
+                    loopringAccount,
+                    loopringWallet,
+                    supportedTokens
+                )
+            );
+        }
+    }, [dispatch, loggedIn, loopringAccount, loopringWallet, supportedTokens]);
+
     return (
         <Flex flexDirection="column">
             <BackgroundFlex flexDirection="column" mb={4}>
@@ -251,10 +297,13 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         amount={fromAmount}
                         token={fromToken}
                         onAmountChange={handleFromAmountChange}
+                        onBalancesRefresh={handleBalancesRefresh}
                         onTokenChange={handleFromTokenChange}
                         supportedTokens={supportedFromTokens}
                         balances={balances}
                         loadingSupportedTokens={loadingSupportedTokens}
+                        loadingBalances={loadingBalances}
+                        loggedIn={loggedIn}
                     />
                 </Box>
                 <Box
@@ -271,10 +320,13 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         amount={toAmount}
                         token={toToken}
                         onAmountChange={handleToAmountChange}
+                        onBalancesRefresh={handleBalancesRefresh}
                         onTokenChange={handleToTokenChange}
                         supportedTokens={filteredToTokens}
                         balances={balances}
                         loadingSupportedTokens={loadingSupportedTokens}
+                        loadingBalances={loadingBalances}
+                        loggedIn={loggedIn}
                     />
                 </Box>
                 <Flex
@@ -334,15 +386,17 @@ export const Swapper = ({ onConnectWalletClick }) => {
                 <Button
                     faIcon={loggedIn ? faExchangeAlt : faLockOpen}
                     size="large"
+                    loading={loggedIn && loadingSwapSubmission}
                     disabled={
                         loggedIn &&
                         (!fromToken ||
-                            !fromAmount === "0" ||
+                            !fromAmount ||
+                            fromAmount === "0" ||
                             !toToken ||
-                            !toAmount === "0")
+                            !toAmount ||
+                            toAmount === "0")
                     }
-                    /* TODO: add proper onClick when actually swapping */
-                    onClick={loggedIn ? () => {} : onConnectWalletClick}
+                    onClick={loggedIn ? handleSwap : onConnectWalletClick}
                 >
                     <FormattedMessage
                         id={`swapper.action.${loggedIn ? "swap" : "connect"}`}
