@@ -6,9 +6,9 @@ import {
     GET_USER_BALANCES_SUCCESS,
     GET_USER_BALANCES_START,
     GET_USER_BALANCES_END,
-    GET_EXCHANGE_RATE_START,
-    GET_EXCHANGE_RATE_END,
-    GET_EXCHANGE_RATE_SUCCESS,
+    GET_SWAP_DATA_START,
+    GET_SWAP_DATA_END,
+    GET_SWAP_DATA_SUCCESS,
     GET_SUPPORTED_MARKETS_START,
     GET_SUPPORTED_MARKETS_END,
     GET_SUPPORTED_MARKETS_SUCCESS,
@@ -30,7 +30,7 @@ const initialState = {
         loadings: 0,
         data: [],
     },
-    exchangeRate: {
+    swap: {
         loadings: 0,
         data: {},
     },
@@ -128,30 +128,34 @@ export const loopringReducer = (state = initialState, action) => {
                 },
             };
         }
-        case GET_EXCHANGE_RATE_START: {
+        case GET_SWAP_DATA_START: {
             return {
                 ...state,
-                exchangeRate: {
-                    ...state.exchangeRate,
-                    loadings: state.exchangeRate.loadings + 1,
+                swap: {
+                    ...state.swap,
+                    loadings: state.swap.loadings + 1,
                 },
             };
         }
-        case GET_EXCHANGE_RATE_END: {
+        case GET_SWAP_DATA_END: {
             return {
                 ...state,
-                exchangeRate: {
-                    ...state.exchangeRate,
-                    loadings: state.exchangeRate.loadings - 1,
+                swap: {
+                    ...state.swap,
+                    loadings: state.swap.loadings - 1,
                 },
             };
         }
-        case GET_EXCHANGE_RATE_SUCCESS: {
+        case GET_SWAP_DATA_SUCCESS: {
             return {
                 ...state,
-                exchangeRate: {
-                    ...state.exchangeRate,
-                    data: action.exchangeRate,
+                swap: {
+                    ...state.swap,
+                    data: {
+                        averageFillPrice: action.averageFillPrice,
+                        slippagePercentage: action.slippagePercentage,
+                        maximumAmount: action.maximumAmount,
+                    },
                 },
             };
         }

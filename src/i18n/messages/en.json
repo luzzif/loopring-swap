@@ -33,7 +33,8 @@
     "swapper.action.connect": "Authenticate",
     "token.modal.header": "Assets",
     "token.select.action.select": "Select",
-    "swapper.price": "Price",
+    "swapper.price": "Estimated price",
+    "swapper.slippage": "Estimated slippage",
     "token.modal.empty": "Nothing matches your search...",
 
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
@@ -41,5 +42,6 @@
     "error.supported.tokens": "There was an error fetching the supported tokens. Please try again later.",
     "error.supported.markets": "There was an error fetching the supported markets. Please try again later.",
     "error.user.balances": "There was an error fetching your balances. Please try again later.",
-    "error.exchange.rate": "There was an error fetching the current exchange rate. Please try again later."
+    "error.swap.data": "There was an error fetching the current market swap data. Please try again later.",
+    "error.swap.size": "There's currently not enough liquidity to process the swap. Please try again later."
 }

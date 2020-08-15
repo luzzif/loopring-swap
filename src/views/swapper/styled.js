@@ -13,3 +13,7 @@ export const BackgroundFlex = styled(Flex)`
 export const ArrowIcon = styled(FontAwesomeIcon)`
     color: ${(props) => props.theme.primary};
 `;
+
+export const SlippageText = styled.span`
+    color: ${(props) => props.theme.error};
+`;

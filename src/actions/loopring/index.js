@@ -176,25 +176,64 @@ export const getUserBalances = (account, wallet, supportedTokens) => async (
 
 // get current exchange rate
 
-export const GET_EXCHANGE_RATE_START = "GET_EXCHANGE_RATE_START";
-export const GET_EXCHANGE_RATE_END = "GET_EXCHANGE_RATE_END";
-export const GET_EXCHANGE_RATE_SUCCESS = "GET_EXCHANGE_RATE_SUCCESS";
+export const GET_SWAP_DATA_START = "GET_SWAP_DATA_START";
+export const GET_SWAP_DATA_END = "GET_SWAP_DATA_END";
+export const GET_SWAP_DATA_SUCCESS = "GET_SWAP_DATA_SUCCESS";
 
-// TODO: debounce call to avoid hitting the rate limiting
-export const getExchangeRate = (fromToken, toToken, supportedTokens) => async (
-    dispatch
-) => {
-    dispatch({ type: GET_EXCHANGE_RATE_START });
+export const getSwapData = (
+    fromToken,
+    toToken,
+    fromAmount,
+    supportedTokens
+) => async (dispatch) => {
+    dispatch({ type: GET_SWAP_DATA_START });
     try {
         const market = `${toToken.symbol}-${fromToken.symbol}`;
-        const depth = await getDepth(market, 0, 1, supportedTokens);
+        const { asks } = await getDepth(market, 0, 200, supportedTokens);
+        const bestPrice = asks[0].price;
+        const estimatedToAmount = new BigNumber(fromAmount).dividedBy(
+            bestPrice
+        );
+
+        // fetching all the orders required to fill the requested size
+        const requiredOrders = [];
+        let totalOrdersSize = new BigNumber("0");
+        for (let i = 0; i < asks.length; i++) {
+            const ask = asks[i];
+            requiredOrders.push(ask);
+            totalOrdersSize = totalOrdersSize.plus(ask.size);
+            if (totalOrdersSize.isGreaterThanOrEqualTo(estimatedToAmount)) {
+                break;
+            }
+        }
+        if (totalOrdersSize.isLessThan(estimatedToAmount)) {
+            toast.error(<FormattedMessage id="error.swap.size" />);
+            console.error("the swap size is too much");
+            return;
+        }
+        const averageFillPrice = requiredOrders
+            .reduce(
+                (pricesSum, { price }) => pricesSum.plus(price),
+                new BigNumber("0")
+            )
+            .dividedBy(requiredOrders.length);
+
         dispatch({
-            type: GET_EXCHANGE_RATE_SUCCESS,
-            exchangeRate: depth.asks[0],
+            type: GET_SWAP_DATA_SUCCESS,
+            averageFillPrice: averageFillPrice,
+            slippagePercentage: new BigNumber(averageFillPrice)
+                .minus(bestPrice)
+                .dividedBy(averageFillPrice)
+                .multipliedBy("100"),
+            maximumAmount: asks.reduce(
+                (totalSize, ask) => totalSize.plus(ask.size),
+                new BigNumber("0")
+            ),
         });
     } catch (error) {
-        toast.error(<FormattedMessage id="error.exchange.rate" />);
-        console.error("error getting exchange rate", error);
+        toast.error(<FormattedMessage id="error.swap.data" />);
+        console.error("error getting swap data", error);
+    } finally {
+        dispatch({ type: GET_SWAP_DATA_END });
     }
-    dispatch({ type: GET_EXCHANGE_RATE_END });
 };

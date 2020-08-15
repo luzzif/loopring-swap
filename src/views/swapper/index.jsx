@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { Flex, Box } from "reflexbox";
-import { BackgroundFlex, ArrowIcon } from "./styled";
+import { BackgroundFlex, ArrowIcon, SlippageText } from "./styled";
 import { TokenSpecifier } from "../../components/token-specifier";
 import { useState } from "react";
 import {
@@ -12,10 +12,11 @@ import {
 import { FormattedMessage } from "react-intl";
 import { Button } from "../../components/button";
 import { useSelector, useDispatch } from "react-redux";
-import { getExchangeRate } from "../../actions/loopring";
+import { getSwapData } from "../../actions/loopring";
 import BigNumber from "bignumber.js";
 import { fromWei, toWei } from "web3-utils";
 import { Spinner } from "../../components/spinner";
+import { useDebouncedCallback } from "use-debounce";
 
 export const Swapper = ({ onConnectWalletClick }) => {
     const dispatch = useDispatch();
@@ -28,8 +29,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
         supportedMarkets,
         balances,
         loggedIn,
-        exchangeRate,
-        loadingExchangeRate,
+        swapData,
+        loadingSwapData,
     } = useSelector((state) => ({
         supportedTokens: state.loopring.supportedTokens.data.aggregated,
         loadingSupportedTokens: !!state.loopring.supportedTokens.loadings,
@@ -38,8 +39,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
         supportedMarkets: state.loopring.supportedMarkets.data,
         balances: state.loopring.balances.data,
         loggedIn: !!state.loopring.account,
-        exchangeRate: state.loopring.exchangeRate.data,
-        loadingExchangeRate: !!state.loopring.exchangeRate.loadings,
+        swapData: state.loopring.swap.data,
+        loadingSwapData: !!state.loopring.swap.loadings,
     }));
 
     const [fromToken, setFromToken] = useState(null);
@@ -49,6 +50,15 @@ export const Swapper = ({ onConnectWalletClick }) => {
     const [filteredToTokens, setFilteredToTokens] = useState([]);
     const [compatibleMarkets, setCompatibleMarkets] = useState([]);
     const [changingTo, setChangingTo] = useState(false);
+
+    const [debouncedGetSwapData] = useDebouncedCallback(
+        (fromToken, toToken, fromAmount, supportedTokens) => {
+            dispatch(
+                getSwapData(fromToken, toToken, fromAmount, supportedTokens)
+            );
+        },
+        500
+    );
 
     // set ether as the default "from" token
     useEffect(() => {
@@ -106,6 +116,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
             supportedTokens &&
             supportedTokens.length > 0 &&
             fromToken &&
+            fromAmount &&
             toToken &&
             !!compatibleMarkets.find(
                 (market) =>
@@ -113,16 +124,30 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     market.quoteTokenId === fromToken.tokenId
             )
         ) {
-            dispatch(getExchangeRate(fromToken, toToken, supportedTokens));
+            debouncedGetSwapData(
+                fromToken,
+                toToken,
+                fromAmount,
+                supportedTokens
+            );
         }
-    }, [compatibleMarkets, dispatch, fromToken, supportedTokens, toToken]);
+    }, [
+        compatibleMarkets,
+        debouncedGetSwapData,
+        dispatch,
+        fromAmount,
+        fromToken,
+        supportedTokens,
+        toAmount,
+        toToken,
+    ]);
 
     // when the exchange rate is fetched, we need to calculate the expected
     // token amount to receive based on it
     useEffect(() => {
         if (
-            exchangeRate &&
-            exchangeRate.price &&
+            swapData &&
+            swapData.averageFillPrice &&
             fromToken &&
             fromAmount &&
             toToken
@@ -130,26 +155,72 @@ export const Swapper = ({ onConnectWalletClick }) => {
             const referenceAmount = changingTo ? toAmount : fromAmount;
             let partialAmount = new BigNumber(fromWei(referenceAmount));
             if (changingTo) {
-                partialAmount = partialAmount.multipliedBy(exchangeRate.price);
+                partialAmount = partialAmount.multipliedBy(
+                    swapData.averageFillPrice
+                );
             } else {
-                partialAmount = partialAmount.dividedBy(exchangeRate.price);
+                partialAmount = partialAmount.dividedBy(
+                    swapData.averageFillPrice
+                );
             }
             const newAmount = toWei(partialAmount.decimalPlaces(18).toString());
             if (changingTo && newAmount !== fromAmount) {
-                setFromAmount(newAmount);
+                // if the updated to amount is more than the maximum one based on
+                // the order book, the maximum possible value is set
+                if (
+                    swapData.maximumAmount &&
+                    new BigNumber(newAmount)
+                        .dividedBy(swapData.averageFillPrice)
+                        .isGreaterThan(swapData.maximumAmount)
+                ) {
+                    // FIXME: this could cause problems if a given market is particularily illuquid.
+                    // In some cases from amount will not have a significant decimal in the first 5 spots,
+                    // and since the UI doesn't support this, chances are the user will see 0 in the from
+                    // amount from the app, while the internal component state has a minuscule but present
+                    // from amount. It should only happen in extreme cases.
+                    setFromAmount(
+                        swapData.maximumAmount
+                            .multipliedBy(swapData.averageFillPrice)
+                            .decimalPlaces(0)
+                            .toFixed()
+                    );
+                } else {
+                    setFromAmount(newAmount);
+                }
             } else if (!changingTo && newAmount !== toAmount) {
-                setToAmount(newAmount);
+                // If the new from amount would bring, based on the current average
+                // fill price, the to token amount to be bigger than the maximum allowed
+                // quantity, the from amount is adjusted accordingly
+                if (
+                    swapData.maximumAmount &&
+                    swapData.maximumAmount.isLessThan(newAmount)
+                ) {
+                    // FIXME: this could cause problems if a given market is particularily illuquid.
+                    // In some cases from amount will not have a significant decimal in the first 5 spots,
+                    // and since the UI doesn't support this, chances are the user will see 0 in the from
+                    // amount from the app, while the internal component state has a minuscule but present
+                    // from amount. It should only happen in extreme cases.
+                    setFromAmount(
+                        swapData.maximumAmount
+                            .multipliedBy(swapData.averageFillPrice)
+                            .decimalPlaces(0)
+                            .toFixed()
+                    );
+                    setToAmount(swapData.maximumAmount.toFixed());
+                } else {
+                    setToAmount(newAmount);
+                }
             }
         }
     }, [
         compatibleMarkets,
         dispatch,
-        exchangeRate,
         changingTo,
         fromToken,
         fromAmount,
         toToken,
         toAmount,
+        swapData,
     ]);
 
     const handleFromTokenChange = useCallback((token) => {
@@ -205,15 +276,41 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         loadingSupportedTokens={loadingSupportedTokens}
                     />
                 </Box>
-                <Flex justifyContent="space-between" alignItems="center" px={2}>
+                <Flex
+                    mb="8px"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    px={2}
+                >
                     <Box>
                         <FormattedMessage id="swapper.price" />
                     </Box>
                     <Box>
-                        {loadingExchangeRate ? (
+                        {loadingSwapData ? (
                             <Spinner size={16} />
-                        ) : exchangeRate && exchangeRate.price ? (
-                            `${exchangeRate.price} ${fromToken.symbol}`
+                        ) : swapData && swapData.averageFillPrice ? (
+                            `${swapData.averageFillPrice
+                                .decimalPlaces(4)
+                                .toString()} ${fromToken.symbol}`
+                        ) : (
+                            "-"
+                        )}
+                    </Box>
+                </Flex>
+                <Flex justifyContent="space-between" alignItems="center" px={2}>
+                    <Box>
+                        <FormattedMessage id="swapper.slippage" />
+                    </Box>
+                    <Box>
+                        {loadingSwapData ? (
+                            <Spinner size={16} />
+                        ) : swapData && swapData.slippagePercentage ? (
+                            <SlippageText>
+                                {swapData.slippagePercentage
+                                    .decimalPlaces(2)
+                                    .toString()}
+                                %
+                            </SlippageText>
                         ) : (
                             "-"
                         )}
