@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { Flex, Box } from "reflexbox";
-import { BackgroundFlex, ArrowIcon, SlippageText } from "./styled";
+import { BackgroundFlex, ArrowIcon, SlippageText, FeeTextBox } from "./styled";
 import { TokenSpecifier } from "../../components/token-specifier";
 import { useState } from "react";
 import {
@@ -32,6 +32,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
         swapData,
         loadingSwapData,
     } = useSelector((state) => ({
+        exchange: state.loopring.exchange,
         supportedTokens: state.loopring.supportedTokens.data.aggregated,
         loadingSupportedTokens: !!state.loopring.supportedTokens.loadings,
         supportedFromTokens: state.loopring.supportedTokens.data.fromTokens,
@@ -277,7 +278,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     />
                 </Box>
                 <Flex
-                    mb="8px"
+                    mb="12px"
                     justifyContent="space-between"
                     alignItems="center"
                     px={2}
@@ -297,7 +298,12 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         )}
                     </Box>
                 </Flex>
-                <Flex justifyContent="space-between" alignItems="center" px={2}>
+                <Flex
+                    mb="12px"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    px={2}
+                >
                     <Box>
                         <FormattedMessage id="swapper.slippage" />
                     </Box>
@@ -315,6 +321,13 @@ export const Swapper = ({ onConnectWalletClick }) => {
                             "-"
                         )}
                     </Box>
+                </Flex>
+                <Flex justifyContent="space-between" alignItems="center" px={2}>
+                    <Box>
+                        <FormattedMessage id="swapper.fee" />
+                    </Box>
+                    {/* TODO: this should be dynamically fetched */}
+                    <FeeTextBox>0</FeeTextBox>
                 </Flex>
             </BackgroundFlex>
             <Box display="flex" justifyContent="center" mb={4}>

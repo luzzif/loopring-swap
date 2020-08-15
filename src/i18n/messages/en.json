@@ -35,6 +35,7 @@
     "token.select.action.select": "Select",
     "swapper.price": "Estimated price",
     "swapper.slippage": "Estimated slippage",
+    "swapper.fee": "Fee",
     "token.modal.empty": "Nothing matches your search...",
 
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
