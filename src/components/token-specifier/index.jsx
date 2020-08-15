@@ -54,7 +54,6 @@ export const TokenSpecifier = ({
             if (/\.{2,}/.test(newAmount) || newAmount.split(".").length > 2) {
                 return;
             }
-            console.log(newAmount);
             setStringAmount(newAmount);
             let properNumericValue = isNaN(numericAmount)
                 ? "0"
@@ -71,7 +70,6 @@ export const TokenSpecifier = ({
                     userTokenBalance.balance.decimalPlaces(18).toFixed()
                 );
             }
-            console.log(properNumericValue);
             onAmountChange(toWei(properNumericValue));
         },
         [balances, onAmountChange, token]
