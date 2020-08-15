@@ -12,7 +12,7 @@ export const RootFlex = styled(Flex)`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, border 0.3s ease;
     cursor: pointer;
 `;
 

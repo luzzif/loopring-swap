@@ -32,24 +32,13 @@ export const ListFlex = styled(Flex)`
     overflow: auto;
 `;
 
-export const HeaderFlex = styled(Flex)`
-    width: 100%;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px 0px 24px;
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: ${(props) => props.theme.text};
-    transition: color 0.3s ease;
-`;
-
 export const SearchFlex = styled(Flex)`
     width: 100%;
     height: 52px;
     min-height: 52px;
     align-items: center;
     background: ${(props) => props.theme.background};
+    margin-top: 28px;
     padding-left: 28px;
     padding-right: 28px;
     font-size: 20px;

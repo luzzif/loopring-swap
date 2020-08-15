@@ -117,23 +117,20 @@ export const TokenModal = ({
                     width={["90%", "60%", "50%", "30%"]}
                     flexDirection="column"
                 >
-                    <HeaderFlex>
-                        <FormattedMessage id="token.modal.header" />
-                        <CloseBox ml={3} p={2}>
-                            <FontAwesomeIcon icon={faTimes} onClick={onClose} />
-                        </CloseBox>
-                    </HeaderFlex>
-                    <SearchFlex>
+                    <SearchFlex mt="8px">
                         <Box mr={3}>
                             <FontAwesomeIcon icon={faSearch} />
                         </Box>
-                        <Box>
+                        <Box flex={1}>
                             <Input
                                 value={searchTerm}
                                 onChange={handleSearchTermChange}
                                 placeholder="Search"
                             />
                         </Box>
+                        <CloseBox ml={3} p={2}>
+                            <FontAwesomeIcon icon={faTimes} onClick={onClose} />
+                        </CloseBox>
                     </SearchFlex>
                     <ListFlex flexDirection="column" py="8px" px="12px">
                         {tokenDataset.length > 0 ? (
