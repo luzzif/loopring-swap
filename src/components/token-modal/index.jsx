@@ -9,7 +9,6 @@ import {
     RootFlex,
     ContentFlex,
     ListFlex,
-    HeaderFlex,
     CloseBox,
     SearchFlex,
     Input,
