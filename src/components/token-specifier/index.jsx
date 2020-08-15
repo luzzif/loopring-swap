@@ -31,7 +31,9 @@ export const TokenSpecifier = ({
             !new BigNumber(fromWei(amount)).isZero()
         ) {
             setStringAmount(
-                new BigNumber(fromWei(amount)).decimalPlaces(5).toString()
+                stringAmount !== "0" && amount === "0"
+                    ? "0"
+                    : new BigNumber(fromWei(amount)).decimalPlaces(5).toString()
             );
         }
     }, [amount, stringAmount]);
