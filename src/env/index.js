@@ -17,3 +17,8 @@ export const CHAIN_ID = env("REACT_APP_CHAIN_ID", {
 export const LOOPRING_API_HOST = `${
     CHAIN_ID === 1 ? "api" : "uat"
 }.loopring.io`;
+
+export const DEX_SMART_CONTRACT_ADDRESS = env(
+    "REACT_APP_DEX_SMART_CONTRACT_ADDRESS",
+    { required: true }
+);
