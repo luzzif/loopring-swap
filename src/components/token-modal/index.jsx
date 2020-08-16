@@ -17,7 +17,7 @@ import {
     PointableBox,
 } from "./styled";
 import { FullScreenOverlay } from "../full-screen-overlay";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import {
     faTimes,
     faSearch,
@@ -43,6 +43,7 @@ export const TokenModal = ({
     selected,
     loggedIn,
 }) => {
+    const { formatMessage } = useIntl();
     const contentRef = useRef(null);
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -120,7 +121,7 @@ export const TokenModal = ({
                     width={["90%", "60%", "50%", "30%"]}
                     flexDirection="column"
                 >
-                    <SearchFlex mt="8px">
+                    <SearchFlex my="8px">
                         <Box mr={3}>
                             <FontAwesomeIcon icon={faSearch} />
                         </Box>
@@ -128,7 +129,9 @@ export const TokenModal = ({
                             <Input
                                 value={searchTerm}
                                 onChange={handleSearchTermChange}
-                                placeholder="Search"
+                                placeholder={formatMessage({
+                                    id: "token.modal.searchbar.placeholder",
+                                })}
                             />
                         </Box>
                         {loggedIn && (
@@ -151,7 +154,7 @@ export const TokenModal = ({
                         </Flex>
                     ) : (
                         <>
-                            <ListFlex flexDirection="column" py="8px" px="12px">
+                            <ListFlex flexDirection="column" px="12px" pb="12px">
                                 {tokenDataset.length > 0 ? (
                                     tokenDataset.map((token) => {
                                         const { address, symbol, name } = token;

@@ -38,7 +38,6 @@ export const SearchFlex = styled(Flex)`
     min-height: 52px;
     align-items: center;
     background: ${(props) => props.theme.background};
-    margin-top: 28px;
     padding-left: 24px;
     padding-right: 24px;
     font-size: 20px;

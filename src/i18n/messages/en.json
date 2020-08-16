@@ -1,7 +1,5 @@
 {
     "placeholder": "foo",
-    "toolbar.action.wallet.connect": "Connect wallet",
-    "toolbar.action.wallet.login": "Login",
     "drawer.wallet.connect.summary": "Connect to your Ethereum account to start using Loopring Swap.",
     "drawer.wallet.connect.header.connect": "Connect wallet",
     "drawer.wallet.connect.action.connect": "Connect wallet",
@@ -32,12 +30,12 @@
     "token.specifier.to": "To",
     "swapper.action.swap": "Swap",
     "swapper.action.connect": "Authenticate",
-    "token.modal.header": "Assets",
     "token.select.action.select": "Select",
     "swapper.price": "Estimated price",
     "swapper.slippage": "Estimated slippage",
-    "swapper.fee": "Fee",
+    "swapper.fee": "Fees",
     "token.modal.empty": "Nothing matches your search...",
+    "token.modal.searchbar.placeholder": "Search...",
     "swap.success": "The swap was correctly submitted. It should soon be reflected in your balances.",
 
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
@@ -47,5 +45,5 @@
     "error.user.balances": "There was an error fetching your balances. Please try again later.",
     "error.swap.data": "There was an error fetching the current market swap data. Please try again later.",
     "error.swap.size": "There's currently not enough liquidity to process the swap. Please try again later.",
-    "error.swap": "An error occurred performing the swap. Please try again later"
+    "error.swap": "An error occurred performing the swap. Please try again later."
 }
