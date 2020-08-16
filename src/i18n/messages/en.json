@@ -26,6 +26,7 @@
     "drawer.wallet.connect.list.item.fee.schedule": "Fee schedule",
     "drawer.wallet.connect.list.item.token.listing": "Token listing",
     "drawer.wallet.connect.list.item.terms.privacy": "Terms and privacy",
+    "drawer.wallet.connect.list.item.source.code": "Source code",
     "drawer.wallet.connect.list.settings.theme.dark": "Dark theme",
     "token.specifier.from": "From",
     "token.specifier.to": "To",

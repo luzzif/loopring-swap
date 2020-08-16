@@ -5,6 +5,7 @@ import {
     faFile,
     faPencilRuler,
     faRulerCombined,
+    faCode,
 } from "@fortawesome/free-solid-svg-icons";
 import { UndecoratedLink } from "../../../undecorated-link";
 import { getEtherscanLink } from "../../../../lightcone/api/localStorgeAPI";
@@ -46,6 +47,16 @@ export const TechnicalResources = () => {
                 <ListItemBox>
                     <ListItemIcon icon={faRulerCombined} />{" "}
                     <FormattedMessage id="drawer.wallet.connect.list.item.loopring.protocol" />
+                </ListItemBox>
+            </UndecoratedLink>
+            <UndecoratedLink
+                href="https://github.com/luzzif/loopring-swap"
+                target="_blank"
+                rel="noreferrer noopener"
+            >
+                <ListItemBox>
+                    <ListItemIcon icon={faCode} />{" "}
+                    <FormattedMessage id="drawer.wallet.connect.list.item.source.code" />
                 </ListItemBox>
             </UndecoratedLink>
         </>
