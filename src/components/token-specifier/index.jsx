@@ -23,7 +23,6 @@ export const TokenSpecifier = ({
 }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [stringAmount, setStringAmount] = useState("");
-    const [amountError, setAmountError] = useState(false);
 
     useEffect(() => {
         const rollingCommaStringAmount = /^[0-9]*?\.0*$/.test(stringAmount);
@@ -78,11 +77,9 @@ export const TokenSpecifier = ({
                 newAmount.indexOf(" ") >= 0 ||
                 newAmount.indexOf("-") >= 0
             ) {
-                setAmountError(newAmount);
                 onAmountChange("0");
                 return;
             }
-            setAmountError(newAmount.endsWith("."));
             if (/\.{2,}/.test(newAmount) || newAmount.split(".").length > 2) {
                 return;
             }
@@ -126,7 +123,7 @@ export const TokenSpecifier = ({
 
     return (
         <>
-            <RootFlex error={amountError}>
+            <RootFlex>
                 <HeaderText width="100%" mb={2}>
                     <FormattedMessage id={`token.specifier.${variant}`} />
                 </HeaderText>
