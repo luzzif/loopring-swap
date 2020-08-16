@@ -9,10 +9,7 @@ export const Chip = ({ selected, onClick, children }) => (
 );
 
 Chip.propTypes = {
-    token: PropTypes.shape({
-        address: PropTypes.string,
-        symbol: PropTypes.string.isRequired,
-    }),
+    children: PropTypes.node.isRequired,
+    selected: PropTypes.bool.isRequired,
     onClick: PropTypes.func.isRequired,
-    loading: PropTypes.bool.isRequired,
 };

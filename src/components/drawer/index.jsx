@@ -75,7 +75,7 @@ export const Drawer = ({
                         <FormattedMessage id="drawer.wallet.connect.header.connect" />
                     )}
                 </EllipsizedBox>
-                <Box ml={3}>
+                <Box ml={3} minWidth="auto">
                     <CloseIcon icon={faTimes} onClick={onClose} />
                 </Box>
             </HeaderFlex>

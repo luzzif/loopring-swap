@@ -17,7 +17,7 @@ export const TokenSelect = ({ token, loading, onClick }) => (
             <>
                 {token ? (
                     <>
-                        <Box mr={2} display="flex" alignItems="center">
+                        <Box mr="4px" display="flex" alignItems="center">
                             <TokenIcon
                                 address={token.address || "ETH"}
                                 size={20}

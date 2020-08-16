@@ -135,7 +135,7 @@ export const TokenModal = ({
                             />
                         </Box>
                         {loggedIn && (
-                            <PointableBox ml={3} p={2}>
+                            <PointableBox ml={3} p={2} minWidth="auto">
                                 <FontAwesomeIcon
                                     icon={faSync}
                                     onClick={onRefresh}
@@ -154,7 +154,11 @@ export const TokenModal = ({
                         </Flex>
                     ) : (
                         <>
-                            <ListFlex flexDirection="column" px="12px" pb="12px">
+                            <ListFlex
+                                flexDirection="column"
+                                px="12px"
+                                pb="12px"
+                            >
                                 {tokenDataset.length > 0 ? (
                                     tokenDataset.map((token) => {
                                         const { address, symbol, name } = token;

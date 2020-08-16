@@ -27,16 +27,39 @@ export const TokenSpecifier = ({
 
     useEffect(() => {
         if (
-            !stringAmount.endsWith(".") &&
-            !new BigNumber(fromWei(amount)).isZero()
+            stringAmount.indexOf(".") < 0 &&
+            stringAmount !== "0" &&
+            amount === "0"
         ) {
+            setStringAmount("0");
+        } else if (
+            (!stringAmount.endsWith(".") &&
+                !new BigNumber(fromWei(amount)).isZero()) ||
+            (!/^0?\.0*/.test(stringAmount) &&
+                stringAmount !== "0" &&
+                amount === "0")
+        ) {
+            if (stringAmount !== "0" && amount === "0") {
+                setStringAmount("0");
+                return;
+            }
+            let weiAmount = new BigNumber(amount).decimalPlaces(5);
+            const exchangeBalance = balances.find(
+                (balance) => balance.id === token.tokenId
+            );
+            const tokenMaximumExchangeBalance =
+                exchangeBalance && exchangeBalance.balance;
+            if (weiAmount.isGreaterThan(tokenMaximumExchangeBalance)) {
+                weiAmount = tokenMaximumExchangeBalance;
+                onAmountChange(weiAmount.toFixed());
+            }
             setStringAmount(
-                stringAmount !== "0" && amount === "0"
-                    ? "0"
-                    : new BigNumber(fromWei(amount)).decimalPlaces(5).toString()
+                new BigNumber(fromWei(weiAmount.decimalPlaces(0).toFixed()))
+                    .decimalPlaces(5)
+                    .toString()
             );
         }
-    }, [amount, stringAmount]);
+    }, [amount, balances, onAmountChange, stringAmount, token]);
 
     const handleAmountChange = useCallback(
         (event) => {
