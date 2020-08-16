@@ -43,7 +43,7 @@ export const TokenSpecifier = ({
                 setStringAmount("0");
                 return;
             }
-            let weiAmount = new BigNumber(amount).decimalPlaces(5);
+            let weiAmount = new BigNumber(amount);
             const exchangeBalance = balances.find(
                 (balance) => balance.id === token.tokenId
             );
@@ -82,7 +82,9 @@ export const TokenSpecifier = ({
             setStringAmount(newAmount);
             let properNumericValue = isNaN(numericAmount)
                 ? "0"
-                : numericAmount.toString();
+                : new BigNumber(numericAmount.toString())
+                      .decimalPlaces(18)
+                      .toString();
             const userTokenBalance =
                 token &&
                 balances.find((balance) => balance.id === token.tokenId);
