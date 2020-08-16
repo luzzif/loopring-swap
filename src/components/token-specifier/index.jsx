@@ -26,15 +26,15 @@ export const TokenSpecifier = ({
     const [amountError, setAmountError] = useState(false);
 
     useEffect(() => {
-        const rollingZeroCommaStringAmount = /^0?\.0*$/.test(stringAmount);
+        const rollingCommaStringAmount = /^[0-9]*?\.0*$/.test(stringAmount);
         if (
-            (!rollingZeroCommaStringAmount && amount === "0") ||
-            (!rollingZeroCommaStringAmount &&
+            (!rollingCommaStringAmount && amount === "0") ||
+            (!rollingCommaStringAmount &&
                 stringAmount === "." &&
                 amount === "0")
         ) {
             setStringAmount("0");
-        } else if (!rollingZeroCommaStringAmount || stringAmount === "0") {
+        } else if (!rollingCommaStringAmount) {
             // the balance check only applies to the from field, and when the user is logged in
             let weiAmount = new BigNumber(amount);
             if (variant === "from" && loggedIn) {
