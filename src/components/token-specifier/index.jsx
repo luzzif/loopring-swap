@@ -26,38 +26,31 @@ export const TokenSpecifier = ({
     const [amountError, setAmountError] = useState(false);
 
     useEffect(() => {
+        const rollingZeroCommaStringAmount = /^0?\.0*$/.test(stringAmount);
         if (
-            stringAmount.indexOf(".") < 0 &&
-            stringAmount !== "0" &&
-            amount === "0"
-        ) {
-            setStringAmount("0");
-        } else if (
-            (!stringAmount.endsWith(".") &&
-                !new BigNumber(fromWei(amount)).isZero()) ||
-            (!/^0?\.0*/.test(stringAmount) &&
-                stringAmount !== "0" &&
+            (!rollingZeroCommaStringAmount && amount === "0") ||
+            (!rollingZeroCommaStringAmount &&
+                stringAmount === "." &&
                 amount === "0")
         ) {
-            if (stringAmount !== "0" && amount === "0") {
-                console.log("wat");
-                setStringAmount("0");
-                return;
-            }
+            setStringAmount("0");
+        } else if (!rollingZeroCommaStringAmount || stringAmount === "0") {
+            // the balance check only applies to the from field, and when the user is logged in
             let weiAmount = new BigNumber(amount);
-            const exchangeBalance = balances.find(
-                (balance) => balance.id === token.tokenId
-            );
-            const tokenMaximumExchangeBalance =
-                exchangeBalance && exchangeBalance.balance;
-            // the balance check only applies to the from field
-            if (
-                variant === "from" &&
-                weiAmount.isGreaterThan(tokenMaximumExchangeBalance)
-            ) {
-                weiAmount = tokenMaximumExchangeBalance;
-                onAmountChange(weiAmount.toFixed());
-                console.log("wei amount baibiiiii", weiAmount.toString());
+            if (variant === "from" && loggedIn) {
+                const exchangeBalance = balances.find(
+                    (balance) => balance.id === token.tokenId
+                );
+                const tokenMaximumExchangeBalance =
+                    exchangeBalance && exchangeBalance.balance;
+                if (
+                    variant === "from" &&
+                    tokenMaximumExchangeBalance &&
+                    weiAmount.isGreaterThan(tokenMaximumExchangeBalance)
+                ) {
+                    weiAmount = tokenMaximumExchangeBalance;
+                    onAmountChange(weiAmount.toFixed());
+                }
             }
             setStringAmount(
                 new BigNumber(fromWei(weiAmount.decimalPlaces(0).toFixed()))
@@ -65,7 +58,15 @@ export const TokenSpecifier = ({
                     .toString()
             );
         }
-    }, [amount, balances, onAmountChange, stringAmount, token, variant]);
+    }, [
+        amount,
+        balances,
+        loggedIn,
+        onAmountChange,
+        stringAmount,
+        token,
+        variant,
+    ]);
 
     const handleAmountChange = useCallback(
         (event) => {

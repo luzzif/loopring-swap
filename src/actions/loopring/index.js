@@ -206,11 +206,6 @@ export const getSwapData = (
                 break;
             }
         }
-        if (totalOrdersSize.isLessThan(estimatedToAmount)) {
-            toast.error(<FormattedMessage id="error.swap.size" />);
-            console.error("the swap size is too much");
-            return;
-        }
         const averageFillPrice = requiredOrders
             .reduce(
                 (pricesSum, { price }) => pricesSum.plus(price),

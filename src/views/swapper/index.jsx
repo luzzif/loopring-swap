@@ -188,14 +188,14 @@ export const Swapper = ({ onConnectWalletClick }) => {
         ) {
             const referenceAmount = changingTo ? toAmount : fromAmount;
             let partialAmount = new BigNumber(fromWei(referenceAmount));
-            if (changingTo || selling) {
-                partialAmount = partialAmount.multipliedBy(
-                    swapData.averageFillPrice
-                );
+            if (changingTo) {
+                partialAmount = selling
+                    ? partialAmount.dividedBy(swapData.averageFillPrice)
+                    : partialAmount.multipliedBy(swapData.averageFillPrice);
             } else {
-                partialAmount = partialAmount.dividedBy(
-                    swapData.averageFillPrice
-                );
+                partialAmount = selling
+                    ? partialAmount.multipliedBy(swapData.averageFillPrice)
+                    : partialAmount.dividedBy(swapData.averageFillPrice);
             }
             const newAmount = toWei(partialAmount.decimalPlaces(18).toString());
             if (changingTo && newAmount !== fromAmount) {
@@ -212,11 +212,18 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     // and since the UI doesn't support this, chances are the user will see 0 in the from
                     // amount from the app, while the internal component state has a minuscule but present
                     // from amount. It should only happen in extreme cases.
+                    let adjustedFromAmount = swapData.maximumAmount;
+                    if (selling) {
+                        adjustedFromAmount = adjustedFromAmount.dividedBy(
+                            swapData.averageFillPrice
+                        );
+                    } else {
+                        adjustedFromAmount = adjustedFromAmount.multipliedBy(
+                            swapData.averageFillPrice
+                        );
+                    }
                     setFromAmount(
-                        swapData.maximumAmount
-                            .multipliedBy(swapData.averageFillPrice)
-                            .decimalPlaces(0)
-                            .toFixed()
+                        adjustedFromAmount.decimalPlaces(0).toFixed()
                     );
                 } else {
                     setFromAmount(newAmount);
@@ -234,11 +241,18 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     // and since the UI doesn't support this, chances are the user will see 0 in the from
                     // amount from the app, while the internal component state has a minuscule but present
                     // from amount. It should only happen in extreme cases.
+                    let adjustedFromAmount = swapData.maximumAmount;
+                    if (selling) {
+                        adjustedFromAmount = adjustedFromAmount.dividedBy(
+                            swapData.averageFillPrice
+                        );
+                    } else {
+                        adjustedFromAmount = adjustedFromAmount.multipliedBy(
+                            swapData.averageFillPrice
+                        );
+                    }
                     setFromAmount(
-                        swapData.maximumAmount
-                            .multipliedBy(swapData.averageFillPrice)
-                            .decimalPlaces(0)
-                            .toFixed()
+                        adjustedFromAmount.decimalPlaces(0).toFixed()
                     );
                     setToAmount(swapData.maximumAmount.toFixed());
                 } else {
@@ -330,10 +344,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
 
     const handleSwitchSwapAttributes = useCallback(() => {
         setFromToken(toToken);
-        setFromAmount(toAmount);
         setToToken(fromToken);
-        setToAmount(fromAmount);
-    }, [fromAmount, fromToken, toAmount, toToken]);
+    }, [fromToken, toToken]);
 
     return (
         <Flex flexDirection="column">
