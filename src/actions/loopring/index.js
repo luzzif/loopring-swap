@@ -15,7 +15,7 @@ import BigNumber from "bignumber.js";
 import { getDepth } from "../../lightcone/api/v1/depth/get";
 import { getMarketInfo } from "../../lightcone/api/v1/marketinfo/get";
 import config from "../../lightcone/config";
-import { fromWei } from "web3-utils";
+import { fromWei, toWei } from "web3-utils";
 
 // login
 
@@ -194,14 +194,13 @@ export const getSwapData = (
         const estimatedToAmount = selling
             ? new BigNumber(fromAmount).multipliedBy(bestPrice)
             : new BigNumber(fromAmount).dividedBy(bestPrice);
-
         // fetching all the orders required to fill the requested size
         const requiredOrders = [];
         let totalOrdersSize = new BigNumber("0");
         for (let i = 0; i < orders.length; i++) {
             const order = orders[i];
             requiredOrders.push(order);
-            totalOrdersSize = totalOrdersSize.plus(order.size);
+            totalOrdersSize = totalOrdersSize.plus(toWei(order.aggregatedSize));
             if (totalOrdersSize.isGreaterThanOrEqualTo(estimatedToAmount)) {
                 break;
             }
@@ -224,7 +223,8 @@ export const getSwapData = (
             averageFillPrice: averageFillPrice,
             slippagePercentage,
             maximumAmount: orders.reduce(
-                (totalSize, order) => totalSize.plus(order.size),
+                (totalSize, order) =>
+                    totalSize.plus(toWei(order.aggregatedSize)),
                 new BigNumber("0")
             ),
         });
