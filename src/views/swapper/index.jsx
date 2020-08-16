@@ -314,7 +314,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                 >
                     <ArrowIcon icon={faArrowDown} />
                 </Box>
-                <Box mb="16px">
+                <Box mb="12px">
                     <TokenSpecifier
                         variant="to"
                         amount={toAmount}
@@ -330,7 +330,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     />
                 </Box>
                 <Flex
-                    mb="12px"
+                    mb="8px"
                     justifyContent="space-between"
                     alignItems="center"
                     px={2}
@@ -351,7 +351,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     </Box>
                 </Flex>
                 <Flex
-                    mb="12px"
+                    mb="8px"
                     justifyContent="space-between"
                     alignItems="center"
                     px={2}

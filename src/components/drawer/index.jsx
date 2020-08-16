@@ -69,7 +69,7 @@ export const Drawer = ({
             open={open}
             ref={container}
         >
-            <HeaderFlex mb={4}>
+            <HeaderFlex mb={3}>
                 <EllipsizedBox>
                     {selectedWeb3Account || (
                         <FormattedMessage id="drawer.wallet.connect.header.connect" />
