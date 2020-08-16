@@ -79,26 +79,20 @@ export const getSupportedTokens = (supportedMarkets) => async (dispatch) => {
     try {
         const supportedTokens = await getTokenInfo();
         const filteredSupportedTokens = supportedTokens.reduce(
-            (accumulator, token) => {
-                const { tokenId } = token;
-                const fromToken = supportedMarkets.find(
-                    (market) => market.quoteTokenId === tokenId
-                );
-                if (fromToken) {
-                    accumulator.fromTokens.push(token);
-                }
-                const toToken = supportedMarkets.find(
-                    (market) => market.baseTokenId === tokenId
-                );
-                if (toToken) {
-                    accumulator.toTokens.push(token);
-                }
-                if (fromToken || toToken) {
-                    accumulator.aggregated.push(token);
+            (accumulator, supportedToken) => {
+                const { tokenId } = supportedToken;
+                if (
+                    supportedMarkets.find(
+                        (market) =>
+                            market.quoteTokenId === tokenId ||
+                            market.baseTokenId === tokenId
+                    )
+                ) {
+                    accumulator.push(supportedToken);
                 }
                 return accumulator;
             },
-            { fromTokens: [], toTokens: [], aggregated: [] }
+            []
         );
         dispatch({
             type: GET_SUPPORTED_TOKENS_SUCCESS,
@@ -185,27 +179,29 @@ export const GET_SWAP_DATA_END = "GET_SWAP_DATA_END";
 export const GET_SWAP_DATA_SUCCESS = "GET_SWAP_DATA_SUCCESS";
 
 export const getSwapData = (
-    fromToken,
-    toToken,
+    baseToken,
+    quoteToken,
     fromAmount,
-    supportedTokens
+    supportedTokens,
+    selling
 ) => async (dispatch) => {
     dispatch({ type: GET_SWAP_DATA_START });
     try {
-        const market = `${toToken.symbol}-${fromToken.symbol}`;
-        const { asks } = await getDepth(market, 0, 200, supportedTokens);
-        const bestPrice = asks[0].price;
-        const estimatedToAmount = new BigNumber(fromAmount).dividedBy(
-            bestPrice
-        );
+        const market = `${baseToken.symbol}-${quoteToken.symbol}`;
+        const { asks, bids } = await getDepth(market, 0, 200, supportedTokens);
+        const orders = selling ? bids : asks;
+        const bestPrice = orders[0].price;
+        const estimatedToAmount = selling
+            ? new BigNumber(fromAmount).multipliedBy(bestPrice)
+            : new BigNumber(fromAmount).dividedBy(bestPrice);
 
         // fetching all the orders required to fill the requested size
         const requiredOrders = [];
         let totalOrdersSize = new BigNumber("0");
-        for (let i = 0; i < asks.length; i++) {
-            const ask = asks[i];
-            requiredOrders.push(ask);
-            totalOrdersSize = totalOrdersSize.plus(ask.size);
+        for (let i = 0; i < orders.length; i++) {
+            const order = orders[i];
+            requiredOrders.push(order);
+            totalOrdersSize = totalOrdersSize.plus(order.size);
             if (totalOrdersSize.isGreaterThanOrEqualTo(estimatedToAmount)) {
                 break;
             }
@@ -221,16 +217,19 @@ export const getSwapData = (
                 new BigNumber("0")
             )
             .dividedBy(requiredOrders.length);
-
+        let slippagePercentage = new BigNumber(averageFillPrice)
+            .minus(bestPrice)
+            .dividedBy(averageFillPrice)
+            .multipliedBy("100");
+        if (selling) {
+            slippagePercentage = slippagePercentage.negated();
+        }
         dispatch({
             type: GET_SWAP_DATA_SUCCESS,
             averageFillPrice: averageFillPrice,
-            slippagePercentage: new BigNumber(averageFillPrice)
-                .minus(bestPrice)
-                .dividedBy(averageFillPrice)
-                .multipliedBy("100"),
-            maximumAmount: asks.reduce(
-                (totalSize, ask) => totalSize.plus(ask.size),
+            slippagePercentage,
+            maximumAmount: orders.reduce(
+                (totalSize, order) => totalSize.plus(order.size),
                 new BigNumber("0")
             ),
         });
@@ -256,7 +255,8 @@ export const postSwap = (
     fromAmount,
     toToken,
     toAmount,
-    supportedTokens
+    supportedTokens,
+    selling
 ) => async (dispatch) => {
     dispatch({ type: POST_SWAP_START });
     try {
@@ -279,7 +279,7 @@ export const postSwap = (
             validSince,
             validUntil,
             config.getLabel(),
-            true,
+            !selling,
             config.getChannelId()
         );
         if (!signedOrder) {

@@ -1,7 +1,13 @@
 import React, { useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { Flex, Box } from "reflexbox";
-import { BackgroundFlex, ArrowIcon, SlippageText, FeeTextBox } from "./styled";
+import {
+    BackgroundFlex,
+    ArrowIcon,
+    SlippageText,
+    FeeTextBox,
+    PointableBox,
+} from "./styled";
 import { TokenSpecifier } from "../../components/token-specifier";
 import { useState } from "react";
 import {
@@ -28,8 +34,6 @@ export const Swapper = ({ onConnectWalletClick }) => {
         supportedTokens,
         loadingSupportedTokens,
         loadingBalances,
-        supportedFromTokens,
-        supportedToTokens,
         supportedMarkets,
         balances,
         loggedIn,
@@ -40,11 +44,9 @@ export const Swapper = ({ onConnectWalletClick }) => {
         loopringAccount: state.loopring.account,
         loopringExchange: state.loopring.exchange,
         loopringWallet: state.loopring.wallet,
-        supportedTokens: state.loopring.supportedTokens.data.aggregated,
+        supportedTokens: state.loopring.supportedTokens.data,
         loadingSupportedTokens: !!state.loopring.supportedTokens.loadings,
         loadingBalances: !!state.loopring.balances.loadings,
-        supportedFromTokens: state.loopring.supportedTokens.data.fromTokens,
-        supportedToTokens: state.loopring.supportedTokens.data.toTokens,
         supportedMarkets: state.loopring.supportedMarkets.data,
         balances: state.loopring.balances.data,
         loggedIn: !!state.loopring.account,
@@ -60,11 +62,18 @@ export const Swapper = ({ onConnectWalletClick }) => {
     const [filteredToTokens, setFilteredToTokens] = useState([]);
     const [compatibleMarkets, setCompatibleMarkets] = useState([]);
     const [changingTo, setChangingTo] = useState(false);
+    const [selling, setSelling] = useState(false);
 
     const [debouncedGetSwapData] = useDebouncedCallback(
-        (fromToken, toToken, fromAmount, supportedTokens) => {
+        (fromToken, toToken, fromAmount, supportedTokens, selling) => {
             dispatch(
-                getSwapData(fromToken, toToken, fromAmount, supportedTokens)
+                getSwapData(
+                    fromToken,
+                    toToken,
+                    fromAmount,
+                    supportedTokens,
+                    selling
+                )
             );
         },
         500
@@ -84,7 +93,9 @@ export const Swapper = ({ onConnectWalletClick }) => {
         if (supportedMarkets && supportedMarkets.length > 0 && fromToken) {
             setCompatibleMarkets(
                 supportedMarkets.filter(
-                    (market) => market.quoteTokenId === fromToken.tokenId
+                    (market) =>
+                        market.quoteTokenId === fromToken.tokenId ||
+                        market.baseTokenId === fromToken.tokenId
                 )
             );
         }
@@ -94,10 +105,14 @@ export const Swapper = ({ onConnectWalletClick }) => {
     // Plus, we reset the currently selected "to" token if it's not compatible with the current "from" one.
     useEffect(() => {
         if (supportedMarkets && supportedMarkets.length > 0 && fromToken) {
-            const filteredToTokens = supportedToTokens.filter((token) =>
-                compatibleMarkets.find(
-                    (market) => market.baseTokenId === token.tokenId
-                )
+            const filteredToTokens = supportedTokens.filter(
+                (token) =>
+                    token.tokenId !== fromToken.tokenId &&
+                    compatibleMarkets.find(
+                        (market) =>
+                            market.baseTokenId === token.tokenId ||
+                            market.quoteTokenId === token.tokenId
+                    )
             );
             if (
                 filteredToTokens &&
@@ -116,7 +131,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
         compatibleMarkets,
         fromToken,
         supportedMarkets,
-        supportedToTokens,
+        supportedTokens,
         toToken,
     ]);
 
@@ -127,28 +142,37 @@ export const Swapper = ({ onConnectWalletClick }) => {
             supportedTokens.length > 0 &&
             fromToken &&
             fromAmount &&
-            toToken &&
-            !!compatibleMarkets.find(
-                (market) =>
-                    market.baseTokenId === toToken.tokenId &&
-                    market.quoteTokenId === fromToken.tokenId
-            )
+            toToken
         ) {
+            const tradedMarket = compatibleMarkets.find(
+                (market) =>
+                    (market.baseTokenId === toToken.tokenId &&
+                        market.quoteTokenId === fromToken.tokenId) ||
+                    (market.baseTokenId === fromToken.tokenId &&
+                        market.quoteTokenId === toToken.tokenId)
+            );
+            if (!tradedMarket) {
+                return;
+            }
             debouncedGetSwapData(
-                fromToken,
-                toToken,
+                supportedTokens.find(
+                    (token) => token.tokenId === tradedMarket.baseTokenId
+                ),
+                supportedTokens.find(
+                    (token) => token.tokenId === tradedMarket.quoteTokenId
+                ),
                 fromAmount,
-                supportedTokens
+                supportedTokens,
+                selling
             );
         }
     }, [
         compatibleMarkets,
         debouncedGetSwapData,
-        dispatch,
         fromAmount,
         fromToken,
+        selling,
         supportedTokens,
-        toAmount,
         toToken,
     ]);
 
@@ -164,7 +188,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
         ) {
             const referenceAmount = changingTo ? toAmount : fromAmount;
             let partialAmount = new BigNumber(fromWei(referenceAmount));
-            if (changingTo) {
+            if (changingTo || selling) {
                 partialAmount = partialAmount.multipliedBy(
                     swapData.averageFillPrice
                 );
@@ -223,15 +247,29 @@ export const Swapper = ({ onConnectWalletClick }) => {
             }
         }
     }, [
-        compatibleMarkets,
-        dispatch,
         changingTo,
-        fromToken,
         fromAmount,
-        toToken,
-        toAmount,
+        fromToken,
+        selling,
         swapData,
+        toAmount,
+        toToken,
     ]);
+
+    // on "from" or "to" token changes, we need to determine if the user is buying or selling a given market.
+    // We do this by checking if the corresponding market has the "from" token as a base or quote currency.
+    // If the "from" token is a quote currency, the user is buying, and vice-versa.
+    useEffect(() => {
+        if (fromToken && toToken) {
+            setSelling(
+                !!compatibleMarkets.find(
+                    (market) =>
+                        market.baseTokenId === fromToken.tokenId &&
+                        market.quoteTokenId === toToken.tokenId
+                )
+            );
+        }
+    }, [compatibleMarkets, fromToken, toToken]);
 
     const handleFromTokenChange = useCallback((token) => {
         setFromToken(token);
@@ -261,7 +299,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
                 fromAmount,
                 toToken,
                 toAmount,
-                supportedTokens
+                supportedTokens,
+                selling
             )
         );
     }, [
@@ -271,6 +310,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
         loopringAccount,
         loopringExchange,
         loopringWallet,
+        selling,
         supportedTokens,
         toAmount,
         toToken,
@@ -288,9 +328,16 @@ export const Swapper = ({ onConnectWalletClick }) => {
         }
     }, [dispatch, loggedIn, loopringAccount, loopringWallet, supportedTokens]);
 
+    const handleSwitchSwapAttributes = useCallback(() => {
+        setFromToken(toToken);
+        setFromAmount(toAmount);
+        setToToken(fromToken);
+        setToAmount(fromAmount);
+    }, [fromAmount, fromToken, toAmount, toToken]);
+
     return (
         <Flex flexDirection="column">
-            <BackgroundFlex flexDirection="column" mb={4}>
+            <BackgroundFlex flexDirection="column" alignItems="center" mb={4}>
                 <Box>
                     <TokenSpecifier
                         variant="from"
@@ -299,21 +346,23 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         onAmountChange={handleFromAmountChange}
                         onBalancesRefresh={handleBalancesRefresh}
                         onTokenChange={handleFromTokenChange}
-                        supportedTokens={supportedFromTokens}
+                        supportedTokens={supportedTokens}
                         balances={balances}
                         loadingSupportedTokens={loadingSupportedTokens}
                         loadingBalances={loadingBalances}
                         loggedIn={loggedIn}
                     />
                 </Box>
-                <Box
+                <PointableBox
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
                     height={36}
+                    onClick={handleSwitchSwapAttributes}
+                    p={2}
                 >
                     <ArrowIcon icon={faArrowDown} />
-                </Box>
+                </PointableBox>
                 <Box mb="12px">
                     <TokenSpecifier
                         variant="to"
@@ -334,6 +383,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     justifyContent="space-between"
                     alignItems="center"
                     px={2}
+                    width="100%"
                 >
                     <Box>
                         <FormattedMessage id="swapper.price" />
@@ -342,9 +392,14 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         {loadingSwapData ? (
                             <Spinner size={16} />
                         ) : swapData && swapData.averageFillPrice ? (
-                            `${swapData.averageFillPrice
+                            `${(selling
+                                ? swapData.averageFillPrice
+                                : new BigNumber("1").dividedBy(
+                                      swapData.averageFillPrice
+                                  )
+                            )
                                 .decimalPlaces(4)
-                                .toString()} ${fromToken.symbol}`
+                                .toString()} ${toToken.symbol}`
                         ) : (
                             "-"
                         )}
@@ -355,6 +410,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     justifyContent="space-between"
                     alignItems="center"
                     px={2}
+                    width="100%"
                 >
                     <Box>
                         <FormattedMessage id="swapper.slippage" />
@@ -374,7 +430,12 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         )}
                     </Box>
                 </Flex>
-                <Flex justifyContent="space-between" alignItems="center" px={2}>
+                <Flex
+                    justifyContent="space-between"
+                    alignItems="center"
+                    px={2}
+                    width="100%"
+                >
                     <Box>
                         <FormattedMessage id="swapper.fee" />
                     </Box>

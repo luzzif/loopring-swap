@@ -22,7 +22,7 @@ const initialState = {
     exchange: null,
     supportedTokens: {
         loadings: 0,
-        data: { fromTokens: [], toTokens: [], aggregated: [] },
+        data: [],
     },
     supportedMarkets: {
         loadings: 0,

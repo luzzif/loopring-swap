@@ -40,6 +40,7 @@ export const TokenSpecifier = ({
                 amount === "0")
         ) {
             if (stringAmount !== "0" && amount === "0") {
+                console.log("wat");
                 setStringAmount("0");
                 return;
             }
@@ -49,9 +50,14 @@ export const TokenSpecifier = ({
             );
             const tokenMaximumExchangeBalance =
                 exchangeBalance && exchangeBalance.balance;
-            if (weiAmount.isGreaterThan(tokenMaximumExchangeBalance)) {
+            // the balance check only applies to the from field
+            if (
+                variant === "from" &&
+                weiAmount.isGreaterThan(tokenMaximumExchangeBalance)
+            ) {
                 weiAmount = tokenMaximumExchangeBalance;
                 onAmountChange(weiAmount.toFixed());
+                console.log("wei amount baibiiiii", weiAmount.toString());
             }
             setStringAmount(
                 new BigNumber(fromWei(weiAmount.decimalPlaces(0).toFixed()))
@@ -59,7 +65,7 @@ export const TokenSpecifier = ({
                     .toString()
             );
         }
-    }, [amount, balances, onAmountChange, stringAmount, token]);
+    }, [amount, balances, onAmountChange, stringAmount, token, variant]);
 
     const handleAmountChange = useCallback(
         (event) => {

@@ -17,6 +17,7 @@ export const RootFlex = styled(Flex)`
         props.open
             ? "opacity 0.3s ease"
             : "transform 0.3s ease 0.3s, opacity 0.3s ease"};
+    z-index: 20;
 `;
 
 export const ContentFlex = styled(Flex)`
