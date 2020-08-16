@@ -188,7 +188,7 @@ export const getSwapData = (
     dispatch({ type: GET_SWAP_DATA_START });
     try {
         const market = `${baseToken.symbol}-${quoteToken.symbol}`;
-        const { asks, bids } = await getDepth(market, 0, 200, supportedTokens);
+        const { asks, bids } = await getDepth(market, 0, 1000, supportedTokens);
         const orders = selling ? bids : asks;
         const bestPrice = orders[0].price;
         const estimatedToAmount = selling
