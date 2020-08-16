@@ -181,11 +181,9 @@ export function saveLanguage(value) {
 export function getLanguage() {
   let language = localStorage.getItem("language") || getLanguageFromBrowser();
   if (language === "zh") {
-    document.title = "路印去中心化交易所";
     language = "zh";
   } else {
     language = "en";
-    document.title = "Loopring Exchange (DEX)";
   }
   return language;
 }
