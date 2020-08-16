@@ -33,6 +33,8 @@ export const Drawer = ({
     loggedIn,
     darkTheme,
     onDarkThemeChange,
+    selectedLanguage,
+    onSelectedLanguageChange,
 }) => {
     const container = useRef(null);
 
@@ -96,6 +98,8 @@ export const Drawer = ({
                 <Settings
                     darkTheme={darkTheme}
                     onDarkThemeChange={onDarkThemeChange}
+                    selectedLanguage={selectedLanguage}
+                    onSelectedLanguageChange={onSelectedLanguageChange}
                 />
             </Box>
             <Box width="100%" mb={2}>
@@ -123,4 +127,6 @@ Drawer.propTypes = {
     loggedIn: PropTypes.bool.isRequired,
     darkTheme: PropTypes.bool.isRequired,
     onDarkThemeChange: PropTypes.func.isRequired,
+    selectedLanguage: PropTypes.string.isRequired,
+    onSelectedLanguageChange: PropTypes.func.isRequired,
 };

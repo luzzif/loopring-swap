@@ -20,6 +20,16 @@ import {
 import { Flex, Box } from "reflexbox";
 import { Swapper } from "../swapper";
 import { FullScreenOverlay } from "../../components/full-screen-overlay";
+import moment from "moment";
+import momentIt from "moment/locale/it";
+import { IntlProvider } from "react-intl";
+import en from "../../i18n/messages/en.json";
+import it from "../../i18n/messages/it.json";
+import { switchLanguage } from "../../actions/i18n";
+
+// setting up moment locales
+moment.locale("it", momentIt);
+const localizedMessages = { en, it };
 
 const commonColors = {
     error: "#c62828",
@@ -91,6 +101,7 @@ export const App = () => {
     const dispatch = useDispatch();
 
     const {
+        selectedLanguage,
         web3Instance,
         selectedAccount: selectedWeb3Account,
         loopringAccount,
@@ -98,6 +109,7 @@ export const App = () => {
         supportedTokens,
         supportedMarkets,
     } = useSelector((state) => ({
+        selectedLanguage: state.i18n.selectedLanguage,
         web3Instance: state.web3.instance,
         selectedAccount: state.web3.selectedAccount,
         loopringAccount: state.loopring.account,
@@ -142,6 +154,14 @@ export const App = () => {
             : darkWeb3ModalTheme;
     }, [dispatch]);
 
+    // setting up local storage-saved language
+    useEffect(() => {
+        const cachedLanguage = localStorage.getItem("loopring-swap-language");
+        if (cachedLanguage && cachedLanguage in localizedMessages) {
+            dispatch(switchLanguage(cachedLanguage));
+        }
+    }, [dispatch]);
+
     const handleDrawerOpenClick = useCallback(() => {
         setDrawerOpen(true);
     }, []);
@@ -173,45 +193,65 @@ export const App = () => {
         selectedTheme = newLightTheme ? light : dark;
     }, [lightTheme]);
 
+    const handleSelectedLanguageChange = useCallback(
+        (language) => {
+            localStorage.setItem("loopring-swap-language", language);
+            dispatch(switchLanguage(language));
+        },
+        [dispatch]
+    );
+
     return (
-        <ThemeProvider theme={lightTheme ? light : dark}>
-            <GlobalStyle />
-            <Layout
-                onDrawerOpenClick={handleDrawerOpenClick}
-                selectedWeb3Account={selectedWeb3Account}
-                loggedIn={!!loopringAccount}
-            >
-                <Flex
-                    width="100%"
-                    height="100%"
-                    justifyContent="center"
-                    alignItems="center"
+        <IntlProvider
+            locale={selectedLanguage}
+            messages={localizedMessages[selectedLanguage]}
+        >
+            <ThemeProvider theme={lightTheme ? light : dark}>
+                <GlobalStyle />
+                <Layout
+                    onDrawerOpenClick={handleDrawerOpenClick}
+                    selectedWeb3Account={selectedWeb3Account}
+                    loggedIn={!!loopringAccount}
                 >
-                    <Box width={["90%", "60%", "50%", "24%"]}>
-                        <Swapper onConnectWalletClick={handleDrawerOpenClick} />
-                    </Box>
-                </Flex>
-            </Layout>
-            <FullScreenOverlay open={drawerOpen} onClick={handleOverlayClick} />
-            <Drawer
-                open={drawerOpen}
-                onClose={handleDrawerClose}
-                onConnectWallet={handleConnectWallet}
-                selectedWeb3Account={selectedWeb3Account}
-                onLogin={handleLogin}
-                loggedIn={!!loopringAccount}
-                darkTheme={!lightTheme}
-                onDarkThemeChange={handleThemeChange}
-            />
-            <ToastContainer
-                className="custom-toast-root"
-                toastClassName="custom-toast-container"
-                bodyClassName="custom-toast-body"
-                position="top-right"
-                closeButton={false}
-                transition={Slide}
-                limit={3}
-            />
-        </ThemeProvider>
+                    <Flex
+                        width="100%"
+                        height="100%"
+                        justifyContent="center"
+                        alignItems="center"
+                    >
+                        <Box width={["90%", "60%", "50%", "24%"]}>
+                            <Swapper
+                                onConnectWalletClick={handleDrawerOpenClick}
+                            />
+                        </Box>
+                    </Flex>
+                </Layout>
+                <FullScreenOverlay
+                    open={drawerOpen}
+                    onClick={handleOverlayClick}
+                />
+                <Drawer
+                    open={drawerOpen}
+                    onClose={handleDrawerClose}
+                    onConnectWallet={handleConnectWallet}
+                    selectedWeb3Account={selectedWeb3Account}
+                    onLogin={handleLogin}
+                    loggedIn={!!loopringAccount}
+                    darkTheme={!lightTheme}
+                    onDarkThemeChange={handleThemeChange}
+                    selectedLanguage={selectedLanguage}
+                    onSelectedLanguageChange={handleSelectedLanguageChange}
+                />
+                <ToastContainer
+                    className="custom-toast-root"
+                    toastClassName="custom-toast-container"
+                    bodyClassName="custom-toast-body"
+                    position="top-right"
+                    closeButton={false}
+                    transition={Slide}
+                    limit={3}
+                />
+            </ThemeProvider>
+        </IntlProvider>
     );
 };

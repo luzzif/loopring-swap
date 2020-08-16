@@ -37,6 +37,7 @@
     "token.modal.empty": "Nothing matches your search...",
     "token.modal.searchbar.placeholder": "Search...",
     "swap.success": "The swap was correctly submitted. It should soon be reflected in your balances.",
+    "drawer.wallet.connect.list.settings.language": "Language",
 
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
     "error.login": "There was an error logging in. Please try again later.",
