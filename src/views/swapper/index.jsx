@@ -61,8 +61,10 @@ export const Swapper = ({ onConnectWalletClick }) => {
     const [toAmount, setToAmount] = useState("0");
     const [filteredToTokens, setFilteredToTokens] = useState([]);
     const [compatibleMarkets, setCompatibleMarkets] = useState([]);
-    const [changingTo, setChangingTo] = useState(false);
-    const [changingFrom, setChangingFrom] = useState(false);
+    const [changingToAmount, setChangingToAmount] = useState(false);
+    const [changingFromAmount, setChangingFromAmount] = useState(false);
+    const [changingToToken, setChangingToToken] = useState(false);
+    const [changingFromToken, setChangingFromToken] = useState(false);
     const [selling, setSelling] = useState(false);
 
     const [debouncedGetSwapData] = useDebouncedCallback(
@@ -143,7 +145,18 @@ export const Swapper = ({ onConnectWalletClick }) => {
             supportedTokens.length > 0 &&
             fromToken &&
             fromAmount &&
-            toToken
+            toToken &&
+            // when the exchange rate is used to calculate the expected to or from token amount,
+            // and that is enforced on the component's state, this effect is invoked again and again
+            // until the currently fetched exchange rate is the same as the previous.
+            // In particularly traded markets, where the order book changes often, this produces an
+            // annoying flickering effect. We avoid it by calculating from and to amounts only if
+            // an actual user interacted with the form (NOT when the app updates the to and
+            // from amounts after swap-details-related calculations)
+            (changingFromAmount ||
+                changingToAmount ||
+                changingFromToken ||
+                changingToToken)
         ) {
             const tradedMarket = compatibleMarkets.find(
                 (market) =>
@@ -168,6 +181,10 @@ export const Swapper = ({ onConnectWalletClick }) => {
             );
         }
     }, [
+        changingFromAmount,
+        changingFromToken,
+        changingToAmount,
+        changingToToken,
         compatibleMarkets,
         debouncedGetSwapData,
         fromAmount,
@@ -185,18 +202,11 @@ export const Swapper = ({ onConnectWalletClick }) => {
             swapData.averageFillPrice &&
             fromToken &&
             fromAmount &&
-            toToken &&
-            // when the exchange rate is used to calculate the expected to or from token amount,
-            // and that is enforced on the component's state, this effect is invoked again and again
-            // until the currently fetched exchange rate is the same as the previous.
-            // In particularly traded markets, where the order book changes often, this produces an
-            // annoying flickering effect. We avoid it by calculating from and to amounts only if
-            // an actual user interacted with the form
-            (changingFrom || changingTo)
+            toToken
         ) {
-            const referenceAmount = changingTo ? toAmount : fromAmount;
+            const referenceAmount = changingToAmount ? toAmount : fromAmount;
             let partialAmount = new BigNumber(fromWei(referenceAmount));
-            if (changingTo) {
+            if (changingToAmount) {
                 partialAmount = selling
                     ? partialAmount.dividedBy(swapData.averageFillPrice)
                     : partialAmount.multipliedBy(swapData.averageFillPrice);
@@ -206,7 +216,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     : partialAmount.dividedBy(swapData.averageFillPrice);
             }
             const newAmount = toWei(partialAmount.decimalPlaces(18).toString());
-            if (changingTo && newAmount !== fromAmount) {
+            if (changingToAmount && newAmount !== fromAmount) {
                 // if the updated to amount is more than the maximum one based on
                 // the order book, the maximum possible value is set
                 if (
@@ -236,7 +246,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                 } else {
                     setFromAmount(newAmount);
                 }
-            } else if (!changingTo && newAmount !== toAmount) {
+            } else if (!changingToAmount && newAmount !== toAmount) {
                 // If the new from amount would bring, based on the current average
                 // fill price, the to token amount to be bigger than the maximum allowed
                 // quantity, the from amount is adjusted accordingly
@@ -267,12 +277,13 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     setToAmount(newAmount);
                 }
             }
-            setChangingTo(false);
-            setChangingFrom(false);
+            setChangingToAmount(false);
+            setChangingFromAmount(false);
+            setChangingToToken(false);
+            setChangingFromToken(false);
         }
     }, [
-        changingFrom,
-        changingTo,
+        changingToAmount,
         fromAmount,
         fromToken,
         selling,
@@ -297,22 +308,26 @@ export const Swapper = ({ onConnectWalletClick }) => {
     }, [compatibleMarkets, fromToken, toToken]);
 
     const handleFromTokenChange = useCallback((token) => {
+        setChangingToToken(false);
+        setChangingFromToken(true);
         setFromToken(token);
     }, []);
 
     const handleFromAmountChange = useCallback((amount) => {
-        setChangingTo(false);
-        setChangingFrom(true);
+        setChangingToAmount(false);
+        setChangingFromAmount(true);
         setFromAmount(amount);
     }, []);
 
     const handleToTokenChange = useCallback((token) => {
+        setChangingToToken(true);
+        setChangingFromToken(false);
         setToToken(token);
     }, []);
 
     const handleToAmountChange = useCallback((amount) => {
-        setChangingTo(true);
-        setChangingFrom(false);
+        setChangingToAmount(true);
+        setChangingFromAmount(false);
         setToAmount(amount);
     }, []);
 
