@@ -35,15 +35,18 @@ export const ListFlex = styled(Flex)`
 
 export const SearchFlex = styled(Flex)`
     width: 100%;
-    height: 52px;
-    min-height: 52px;
+    height: 48px;
+    min-height: 48px;
     align-items: center;
     background: ${(props) => props.theme.background};
+    padding-top: 4px;
     padding-left: 24px;
     padding-right: 24px;
     font-size: 20px;
     color: ${(props) => props.theme.text};
-    transition: color 0.3s ease, background 0.3s ease;
+    box-shadow: 0px 4px 8px 4px ${(props) => props.theme.background};
+    transition: color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    z-index: 12;
 `;
 
 export const Input = styled.input`

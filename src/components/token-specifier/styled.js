@@ -8,7 +8,7 @@ export const RootFlex = styled(Flex)`
     padding: 12px 12px 8px 12px;
     flex-direction: column;
     width: 100%;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, border 0.3s ease;
 `;
 
 export const HeaderText = styled(Box)`

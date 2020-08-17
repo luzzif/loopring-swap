@@ -62,6 +62,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
     const [filteredToTokens, setFilteredToTokens] = useState([]);
     const [compatibleMarkets, setCompatibleMarkets] = useState([]);
     const [changingTo, setChangingTo] = useState(false);
+    const [changingFrom, setChangingFrom] = useState(false);
     const [selling, setSelling] = useState(false);
 
     const [debouncedGetSwapData] = useDebouncedCallback(
@@ -184,7 +185,14 @@ export const Swapper = ({ onConnectWalletClick }) => {
             swapData.averageFillPrice &&
             fromToken &&
             fromAmount &&
-            toToken
+            toToken &&
+            // when the exchange rate is used to calculate the expected to or from token amount,
+            // and that is enforced on the component's state, this effect is invoked again and again
+            // until the currently fetched exchange rate is the same as the previous.
+            // In particularly traded markets, where the order book changes often, this produces an
+            // annoying flickering effect. We avoid it by calculating from and to amounts only if
+            // an actual user interacted with the form
+            (changingFrom || changingTo)
         ) {
             const referenceAmount = changingTo ? toAmount : fromAmount;
             let partialAmount = new BigNumber(fromWei(referenceAmount));
@@ -259,8 +267,11 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     setToAmount(newAmount);
                 }
             }
+            setChangingTo(false);
+            setChangingFrom(false);
         }
     }, [
+        changingFrom,
         changingTo,
         fromAmount,
         fromToken,
@@ -291,6 +302,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
 
     const handleFromAmountChange = useCallback((amount) => {
         setChangingTo(false);
+        setChangingFrom(true);
         setFromAmount(amount);
     }, []);
 
@@ -300,6 +312,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
 
     const handleToAmountChange = useCallback((amount) => {
         setChangingTo(true);
+        setChangingFrom(false);
         setToAmount(amount);
     }, []);
 

@@ -121,7 +121,7 @@ export const TokenModal = ({
                     width={["90%", "60%", "50%", "30%"]}
                     flexDirection="column"
                 >
-                    <SearchFlex my="8px">
+                    <SearchFlex mt="4px">
                         <Box mr={3}>
                             <FontAwesomeIcon icon={faSearch} />
                         </Box>
@@ -157,7 +157,7 @@ export const TokenModal = ({
                             <ListFlex
                                 flexDirection="column"
                                 px="12px"
-                                pb="12px"
+                                py="12px"
                             >
                                 {tokenDataset.length > 0 ? (
                                     tokenDataset.map((token) => {
