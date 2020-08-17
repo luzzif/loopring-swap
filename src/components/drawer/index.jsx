@@ -23,6 +23,7 @@ import { TechnicalResources } from "./sections/technical-resources";
 import { ExchangeInfo } from "./sections/exchange-info";
 import { Settings } from "./sections/settings";
 import { Button } from "../button";
+import { useCallback } from "react";
 
 export const Drawer = ({
     open,
@@ -30,6 +31,7 @@ export const Drawer = ({
     onConnectWallet,
     selectedWeb3Account,
     onLogin,
+    onLogout,
     loggedIn,
     darkTheme,
     onDarkThemeChange,
@@ -62,6 +64,16 @@ export const Drawer = ({
         }
     }, [loggedIn, selectedWeb3Account]);
 
+    const handleButtonClick = useCallback(() => {
+        if (loggedIn) {
+            onLogout();
+        } else if (selectedWeb3Account) {
+            onLogin();
+        } else {
+            onConnectWallet();
+        }
+    }, [loggedIn, onConnectWallet, onLogin, onLogout, selectedWeb3Account]);
+
     return (
         <RootFlex
             flexDirection="column"
@@ -88,9 +100,7 @@ export const Drawer = ({
                 </SummaryMessage>
             </Box>
             <Box px={4} mb={4}>
-                <Button
-                    onClick={selectedWeb3Account ? onLogin : onConnectWallet}
-                >
+                <Button onClick={handleButtonClick}>
                     <FormattedMessage id={buttonMessageKey} />
                 </Button>
             </Box>
@@ -124,6 +134,7 @@ Drawer.propTypes = {
     onConnectWallet: PropTypes.func.isRequired,
     selectedWeb3Account: PropTypes.string,
     onLogin: PropTypes.func.isRequired,
+    onLogout: PropTypes.func.isRequired,
     loggedIn: PropTypes.bool.isRequired,
     darkTheme: PropTypes.bool.isRequired,
     onDarkThemeChange: PropTypes.func.isRequired,

@@ -68,6 +68,12 @@ export const login = (web3Instance, selectedWeb3Account) => async (
     }
 };
 
+// logout
+
+export const LOGOUT = "LOGOUT";
+
+export const logout = () => ({ type: LOGOUT });
+
 // get supported tokens
 
 export const GET_SUPPORTED_TOKENS_START = "GET_SUPPORTED_TOKENS_START";

@@ -16,6 +16,7 @@ import {
     getSupportedTokens,
     getUserBalances,
     getSupportedMarkets,
+    logout,
 } from "../../actions/loopring";
 import { Flex, Box } from "reflexbox";
 import { Swapper } from "../swapper";
@@ -178,6 +179,10 @@ export const App = () => {
         dispatch(login(web3Instance, selectedWeb3Account));
     }, [dispatch, selectedWeb3Account, web3Instance]);
 
+    const handleLogout = useCallback(() => {
+        dispatch(logout());
+    }, [dispatch]);
+
     const handleOverlayClick = useCallback(() => {
         setDrawerOpen(false);
     }, []);
@@ -236,6 +241,7 @@ export const App = () => {
                     onConnectWallet={handleConnectWallet}
                     selectedWeb3Account={selectedWeb3Account}
                     onLogin={handleLogin}
+                    onLogout={handleLogout}
                     loggedIn={!!loopringAccount}
                     darkTheme={!lightTheme}
                     onDarkThemeChange={handleThemeChange}

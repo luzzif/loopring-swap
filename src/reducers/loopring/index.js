@@ -14,6 +14,7 @@ import {
     GET_SUPPORTED_MARKETS_SUCCESS,
     POST_SWAP_START,
     POST_SWAP_END,
+    LOGOUT,
 } from "../../actions/loopring";
 
 const initialState = {
@@ -181,6 +182,9 @@ export const loopringReducer = (state = initialState, action) => {
                     loadings: state.swapSubmission.loadings - 1,
                 },
             };
+        }
+        case LOGOUT: {
+            return { ...state, account: null, wallet: null, exchange: null };
         }
         default: {
             return state;
