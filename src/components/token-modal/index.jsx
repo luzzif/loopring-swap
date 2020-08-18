@@ -15,6 +15,7 @@ import {
     EmptyTextBox,
     SecondaryTextBox,
     PointableBox,
+    OPEN_CLOSE_ANIMATION_DURATION,
 } from "./styled";
 import { FullScreenOverlay } from "../full-screen-overlay";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -94,18 +95,24 @@ export const TokenModal = ({
 
     const getClickHandler = (token) => () => {
         onChange(token);
-        onClose();
+        handleLocalClose();
     };
 
-    const handleLocalClose = useCallback(
+    const handleLocalClose = useCallback(() => {
+        onClose();
+        setTimeout(() => {
+            setTokenDataset(supportedTokens);
+            setSearchTerm("");
+        }, OPEN_CLOSE_ANIMATION_DURATION);
+    }, [onClose, supportedTokens]);
+
+    const handleLocalCloseOnOutsideClick = useCallback(
         (event) => {
             if (!contentRef.current.contains(event.target)) {
-                onClose();
-                setTokenDataset(supportedTokens);
-                setSearchTerm("");
+                handleLocalClose();
             }
         },
-        [onClose, supportedTokens]
+        [handleLocalClose]
     );
 
     const handleSearchTermChange = useCallback((event) => {
@@ -115,7 +122,7 @@ export const TokenModal = ({
     return (
         <>
             <FullScreenOverlay open={open} />
-            <RootFlex open={open} onClick={handleLocalClose}>
+            <RootFlex open={open} onClick={handleLocalCloseOnOutsideClick}>
                 <ContentFlex
                     ref={contentRef}
                     width={["90%", "60%", "50%", "30%"]}
@@ -143,7 +150,10 @@ export const TokenModal = ({
                             </PointableBox>
                         )}
                         <PointableBox ml={3} p={2}>
-                            <FontAwesomeIcon icon={faTimes} onClick={onClose} />
+                            <FontAwesomeIcon
+                                icon={faTimes}
+                                onClick={handleLocalClose}
+                            />
                         </PointableBox>
                     </SearchFlex>
                     {loading ? (

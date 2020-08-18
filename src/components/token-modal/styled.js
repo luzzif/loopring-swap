@@ -2,6 +2,8 @@ import styled, { css } from "styled-components";
 import { Flex, Box } from "reflexbox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+export const OPEN_CLOSE_ANIMATION_DURATION = 300;
+
 export const RootFlex = styled(Flex)`
     position: fixed;
     top: 0;
@@ -15,8 +17,8 @@ export const RootFlex = styled(Flex)`
     transform: translateY(${(props) => (props.open ? "0" : "100%")});
     transition: ${(props) =>
         props.open
-            ? "opacity 0.3s ease"
-            : "transform 0.3s ease 0.3s, opacity 0.3s ease"};
+            ? `opacity ${OPEN_CLOSE_ANIMATION_DURATION}ms ease`
+            : `transform ${OPEN_CLOSE_ANIMATION_DURATION}ms ease ${OPEN_CLOSE_ANIMATION_DURATION}ms, opacity ${OPEN_CLOSE_ANIMATION_DURATION}ms ease`};
     z-index: 20;
 `;
 
