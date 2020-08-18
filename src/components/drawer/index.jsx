@@ -40,7 +40,7 @@ export const Drawer = ({
 }) => {
     const container = useRef(null);
 
-    const [icon, setIcon] = useState(null);
+    const [icon, setIcon] = useState(faLock);
     const [iconColor, setIconColor] = useState("");
     const [summaryMessageKey, setSummaryMessageKey] = useState("placeholder");
     const [buttonMessageKey, setButtonMessageKey] = useState("placeholder");
