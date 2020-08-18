@@ -5,7 +5,7 @@ import { GlobalStyle } from "./styled.js";
 import { useDispatch, useSelector } from "react-redux";
 import MewConnect from "@myetherwallet/mewconnect-web-client";
 import Web3Modal from "web3modal";
-import { INFURA_ID } from "../../env";
+import { INFURA_URL } from "../../env";
 import { useCallback } from "react";
 import { Drawer } from "../../components/drawer";
 import { initializeWeb3 } from "../../actions/web3";
@@ -88,7 +88,7 @@ const web3ModalOptions = {
         mewconnect: {
             package: MewConnect,
             options: {
-                infuraId: INFURA_ID,
+                infuraId: INFURA_URL,
             },
         },
     },
