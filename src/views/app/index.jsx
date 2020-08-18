@@ -47,12 +47,11 @@ const light = {
     background: "#edf2f7",
     foreground: "#dfe6ef",
     border: "#b9ccdf",
-    textLight: "#808080",
+    textLight: "#999999",
     text: "#0e062d",
     textInverted: "#F1F9D2",
     shadow: "rgba(0, 0, 0, 0.4)",
-    placeholder: "#b3b3b3",
-    loader: "#a6a6a6",
+    placeholder: "#999999"
 };
 
 const dark = {
@@ -64,8 +63,7 @@ const dark = {
     text: "#F1F9D2",
     textInverted: "#0e062d",
     shadow: "rgba(255, 255, 255, 0.1)",
-    placeholder: "#666666",
-    loader: "#595959",
+    placeholder: "#737373"
 };
 
 const lightWeb3ModalTheme = {
