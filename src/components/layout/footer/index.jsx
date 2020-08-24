@@ -20,7 +20,7 @@ export const Footer = () => (
             </UndecoratedLink>
         </Box>
          <Box height={36}>
-         (This opensourced UI has not been audited by Loopring, Use it at your own risk!)
+         (This opensourced UI has not been audited by Loopring. Use it at your own risk!)
          </Box>
     </FlexContainer>
 );
