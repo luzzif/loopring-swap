@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { FlexContainer, Logo, PointableIcon } from "./styled";
 import { Box, Flex } from "reflexbox";
-import logo from "../../../images/logo.svg";
+import logo from "../../../images/logo.png";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 export const Toolbar = ({ onDrawerOpenClick }) => (

@@ -28,7 +28,7 @@ export const TokenIcon = ({ address, size }) => {
         }
     };
 
-    return <StyledImage alt="Icon" size={size} src={getIconSource()} />;
+    return <StyledImage alt="" size={size} src={getIconSource()} />;
 };
 
 TokenIcon.propTypes = {

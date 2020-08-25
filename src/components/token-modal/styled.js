@@ -54,14 +54,14 @@ export const SearchFlex = styled(Flex)`
 export const Input = styled.input`
     font-size: 16px;
     color: ${(props) => props.theme.text};
-    font-family: "Work Sans", sans-serif;
+    font-family: Montserrat, sans-serif;
     border: none;
     background: ${(props) => props.theme.background};
     outline: none;
     width: 100%;
     transition: color 0.3s ease, background 0.3s ease;
     ::placeholder {
-        font-family: "Work Sans", sans-serif;
+        font-family: Montserrat, sans-serif;
         color: ${(props) => props.theme.placeholder};
     }
 `;

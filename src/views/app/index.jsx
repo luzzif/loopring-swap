@@ -27,6 +27,7 @@ import { IntlProvider } from "react-intl";
 import en from "../../i18n/messages/en.json";
 import it from "../../i18n/messages/it.json";
 import { switchLanguage } from "../../actions/i18n";
+import BrowserGlobalStyles from "../../BrowserGlobalStyles";
 
 // setting up moment locales
 moment.locale("it", momentIt);
@@ -97,6 +98,7 @@ export const getWeb3Modal = () => new Web3Modal(web3ModalOptions);
 export let selectedTheme = light;
 
 export const App = () => {
+
     const dispatch = useDispatch();
 
     const {
@@ -209,6 +211,7 @@ export const App = () => {
             locale={selectedLanguage}
             messages={localizedMessages[selectedLanguage]}
         >
+        <BrowserGlobalStyles/>
             <ThemeProvider theme={lightTheme ? light : dark}>
                 <GlobalStyle />
                 <Layout
