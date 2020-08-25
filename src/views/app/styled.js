@@ -3,7 +3,7 @@ import { createGlobalStyle } from "styled-components";
 export const GlobalStyle = createGlobalStyle`
     html {
         height: 100%;
-        font-family: 'Work Sans', sans-serif;
+        font-family: Montserrat, sans-serif;;
     }
 
     body {
@@ -41,13 +41,13 @@ export const GlobalStyle = createGlobalStyle`
 
     .Toastify__toast {
         min-height: 0;
-        font-family: 'Work Sans', sans-serif;
+        font-family: Montserrat, sans-serif;;
     }
-    
+
     .Toastify__toast--warning {
         background: ${(props) => props.theme.warning} !important;
     }
-    
+
     .Toastify__toast--error {
         background: ${(props) => props.theme.error} !important;
     }

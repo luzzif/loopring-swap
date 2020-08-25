@@ -29,7 +29,7 @@ export const HeaderFlex = styled(Flex)`
 `;
 
 export const SummaryMessage = styled.span`
-    font-size: 16px;
+    font-size: 13px;
     color: ${(props) => props.theme.text};
     transition: color 0.3s ease;
 `;
@@ -68,7 +68,7 @@ export const ListItemBox = styled(Box)`
     padding: 0 20px;
     min-height: 44px;
     height: 44px;
-    font-size: 16px;
+    font-size: 13px;
     color: ${(props) => props.theme.text};
     background: ${(props) => props.theme.background};
     :hover {

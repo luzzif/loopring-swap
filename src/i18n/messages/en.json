@@ -1,8 +1,8 @@
 {
     "placeholder": "foo",
     "drawer.wallet.connect.summary": "Connect to your Ethereum account to start using Loopring Swap.",
-    "drawer.wallet.connect.header.connect": "Connect wallet",
-    "drawer.wallet.connect.action.connect": "Connect wallet",
+    "drawer.wallet.connect.header.connect": "Connect Wallet",
+    "drawer.wallet.connect.action.connect": "Connect Wallet",
     "drawer.wallet.connect.action.login": "Login",
     "drawer.wallet.connect.action.logout": "Logout",
     "drawer.wallet.connect.login": "You need to log in to start swapping.",
