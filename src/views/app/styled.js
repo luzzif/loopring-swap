@@ -3,7 +3,7 @@ import { createGlobalStyle } from "styled-components";
 export const GlobalStyle = createGlobalStyle`
     html {
         height: 100%;
-        font-family: Montserrat, sans-serif;;
+        font-family: Montserrat, sans-serif;
     }
 
     body {
@@ -41,7 +41,7 @@ export const GlobalStyle = createGlobalStyle`
 
     .Toastify__toast {
         min-height: 0;
-        font-family: Montserrat, sans-serif;;
+        font-family: Montserrat, sans-serif;
     }
 
     .Toastify__toast--warning {

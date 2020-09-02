@@ -430,7 +430,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     </Box>
                     <Box>
                         {loadingSwapData ? (
-                            <Spinner size={16} />
+                            <Spinner size={12} />
                         ) : swapData && swapData.averageFillPrice ? (
                             `${(selling
                                 ? swapData.averageFillPrice
@@ -457,7 +457,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     </Box>
                     <Box>
                         {loadingSwapData ? (
-                            <Spinner size={16} />
+                            <Spinner size={12} />
                         ) : swapData && swapData.slippagePercentage ? (
                             <SlippageText>
                                 {swapData.slippagePercentage

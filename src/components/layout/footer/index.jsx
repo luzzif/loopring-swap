@@ -1,16 +1,16 @@
 import React from "react";
-import { FlexContainer } from "./styled";
-import { Box } from "reflexbox";
+import { FlexContainer, WarningText } from "./styled";
 import { version } from "../../../../package.json";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEthereum, faGithub } from "@fortawesome/free-brands-svg-icons";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { UndecoratedLink } from "../../undecorated-link";
+import { FormattedMessage } from "react-intl";
+import { Box } from "reflexbox";
 
 export const Footer = () => (
-    <div>
-    <FlexContainer>
-            Powered by Ethereum & Loopring &middot;
-           - {version} &middot;{" "}
+    <FlexContainer flexDirection="column" pb="8px">
+        <Box mb="4px" textAlign="center">
+            Powered by Ethereum & Loopring &middot; v{version} &middot;{"  "}
             <UndecoratedLink
                 href="https://github.com/luzzif/loopring-swap"
                 target="_blank"
@@ -18,10 +18,11 @@ export const Footer = () => (
             >
                 <FontAwesomeIcon icon={faGithub} />
             </UndecoratedLink>
-
+        </Box>
+        <Box textAlign="center">
+            <WarningText>
+                <FormattedMessage id="footer.warning" />
+            </WarningText>
+        </Box>
     </FlexContainer>
-    <FlexContainer>
-     Source code not audited by Loopring. Use it at your own risk!
-    </FlexContainer>
-    </div>
 );
