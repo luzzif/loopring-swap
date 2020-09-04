@@ -2,18 +2,14 @@ import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { RootFlex, HeaderText, Input } from "./styled";
 import { Box, Flex } from "reflexbox";
-import { toWei, fromWei } from "web3-utils";
 import { FormattedMessage } from "react-intl";
 import { TokenSelect } from "../token-select";
 import { TokenModal } from "../token-modal";
-import { useEffect } from "react";
-import BigNumber from "bignumber.js";
 
 export const TokenSpecifier = ({
     variant,
     amount,
     token,
-    changing,
     onAmountChange,
     onBalancesRefresh,
     onTokenChange,
@@ -24,54 +20,17 @@ export const TokenSpecifier = ({
     loggedIn,
 }) => {
     const [modalOpen, setModalOpen] = useState(false);
-    const [stringAmount, setStringAmount] = useState("");
-
-    useEffect(() => {
-        if (changing && stringAmount.includes(".")) {
-            return;
-        }
-        if (
-            (amount === "0" && amount !== stringAmount) ||
-            (!changing &&
-                amount === "0" &&
-                (!stringAmount || stringAmount === "0"))
-        ) {
-            setStringAmount("");
-        } else if (
-            (!changing && amount && amount !== "0" && !stringAmount) ||
-            (stringAmount && toWei(stringAmount) !== amount) ||
-            (changing && !stringAmount && amount === "0")
-        ) {
-            setStringAmount(
-                new BigNumber(fromWei(amount)).decimalPlaces(4).toFixed()
-            );
-        }
-    }, [amount, changing, stringAmount]);
 
     const handleAmountChange = useCallback(
         (event) => {
             const newAmount = event.target.value;
             if (/^\d+(\.\d*)?$/.test(newAmount)) {
-                setStringAmount(newAmount);
-                let newAmountWei = toWei(event.target.value);
-                const userTokenBalance =
-                    token &&
-                    balances.find((balance) => balance.id === token.tokenId);
-                if (
-                    userTokenBalance &&
-                    userTokenBalance.balance &&
-                    userTokenBalance.balance.isLessThan(newAmountWei)
-                ) {
-                    newAmountWei = userTokenBalance.balance
-                        .decimalPlaces(18)
-                        .toFixed();
-                }
-                onAmountChange(newAmountWei);
+                onAmountChange(newAmount);
             } else {
-                onAmountChange("0");
+                onAmountChange("");
             }
         },
-        [balances, onAmountChange, token]
+        [onAmountChange]
     );
 
     const handleSelectClick = useCallback(() => {
@@ -99,7 +58,7 @@ export const TokenSpecifier = ({
                     <Box flex="1">
                         <Input
                             placeholder="0.0"
-                            value={stringAmount}
+                            value={amount}
                             onChange={handleAmountChange}
                         />
                     </Box>
