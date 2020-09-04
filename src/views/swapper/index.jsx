@@ -56,15 +56,13 @@ export const Swapper = ({ onConnectWalletClick }) => {
     }));
 
     const [fromToken, setFromToken] = useState(null);
-    const [fromAmount, setFromAmount] = useState("0");
+    const [fromAmount, setFromAmount] = useState("");
     const [toToken, setToToken] = useState(null);
-    const [toAmount, setToAmount] = useState("0");
+    const [toAmount, setToAmount] = useState("");
     const [filteredToTokens, setFilteredToTokens] = useState([]);
     const [compatibleMarkets, setCompatibleMarkets] = useState([]);
     const [changingToAmount, setChangingToAmount] = useState(false);
     const [changingFromAmount, setChangingFromAmount] = useState(false);
-    const [changingToToken, setChangingToToken] = useState(false);
-    const [changingFromToken, setChangingFromToken] = useState(false);
     const [selling, setSelling] = useState(false);
 
     const [debouncedGetSwapData] = useDebouncedCallback(
@@ -144,7 +142,6 @@ export const Swapper = ({ onConnectWalletClick }) => {
             supportedTokens &&
             supportedTokens.length > 0 &&
             fromToken &&
-            fromAmount &&
             toToken &&
             // when the exchange rate is used to calculate the expected to or from token amount,
             // and that is enforced on the component's state, this effect is invoked again and again
@@ -153,10 +150,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
             // annoying flickering effect. We avoid it by calculating from and to amounts only if
             // an actual user interacted with the form (NOT when the app updates the to and
             // from amounts after swap-details-related calculations)
-            (changingFromAmount ||
-                changingToAmount ||
-                changingFromToken ||
-                changingToToken)
+            ((changingFromAmount && fromAmount) ||
+                (changingToAmount && toAmount))
         ) {
             const tradedMarket = compatibleMarkets.find(
                 (market) =>
@@ -182,15 +177,14 @@ export const Swapper = ({ onConnectWalletClick }) => {
         }
     }, [
         changingFromAmount,
-        changingFromToken,
         changingToAmount,
-        changingToToken,
         compatibleMarkets,
         debouncedGetSwapData,
         fromAmount,
         fromToken,
         selling,
         supportedTokens,
+        toAmount,
         toToken,
     ]);
 
@@ -201,8 +195,9 @@ export const Swapper = ({ onConnectWalletClick }) => {
             swapData &&
             swapData.averageFillPrice &&
             fromToken &&
-            fromAmount &&
-            toToken
+            toToken &&
+            ((changingFromAmount && fromAmount) ||
+                (changingToAmount && toAmount))
         ) {
             const referenceAmount = changingToAmount ? toAmount : fromAmount;
             let partialAmount = new BigNumber(fromWei(referenceAmount));
@@ -215,7 +210,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     ? partialAmount.multipliedBy(swapData.averageFillPrice)
                     : partialAmount.dividedBy(swapData.averageFillPrice);
             }
-            const newAmount = toWei(partialAmount.decimalPlaces(18).toString());
+            const newAmount = partialAmount.decimalPlaces(18).toString();
             if (changingToAmount && newAmount !== fromAmount) {
                 // if the updated to amount is more than the maximum one based on
                 // the order book, the maximum possible value is set
@@ -241,10 +236,10 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         );
                     }
                     setFromAmount(
-                        adjustedFromAmount.decimalPlaces(0).toFixed()
+                        toWei(adjustedFromAmount.decimalPlaces(0).toFixed())
                     );
                 } else {
-                    setFromAmount(newAmount);
+                    setFromAmount(toWei(newAmount));
                 }
             } else if (!changingToAmount && newAmount !== toAmount) {
                 // If the new from amount would bring, based on the current average
@@ -270,19 +265,18 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         );
                     }
                     setFromAmount(
-                        adjustedFromAmount.decimalPlaces(0).toFixed()
+                        toWei(adjustedFromAmount.decimalPlaces(0).toFixed())
                     );
-                    setToAmount(swapData.maximumAmount.toFixed());
+                    setToAmount(toWei(swapData.maximumAmount.toFixed()));
                 } else {
-                    setToAmount(newAmount);
+                    setToAmount(toWei(newAmount));
                 }
             }
             setChangingToAmount(false);
             setChangingFromAmount(false);
-            setChangingToToken(false);
-            setChangingFromToken(false);
         }
     }, [
+        changingFromAmount,
         changingToAmount,
         fromAmount,
         fromToken,
@@ -307,28 +301,30 @@ export const Swapper = ({ onConnectWalletClick }) => {
         }
     }, [compatibleMarkets, fromToken, toToken]);
 
-    const handleFromTokenChange = useCallback((token) => {
-        setChangingToToken(false);
-        setChangingFromToken(true);
-        setFromToken(token);
-    }, []);
+    const handleFromAmountChange = useCallback(
+        (weiAmount) => {
+            const exchangeBalance = balances.find(
+                (balance) => balance.id === fromToken.tokenId
+            );
+            const tokenMaximumExchangeBalance =
+                exchangeBalance && exchangeBalance.balance;
+            if (
+                tokenMaximumExchangeBalance &&
+                weiAmount.isGreaterThan(tokenMaximumExchangeBalance)
+            ) {
+                weiAmount = tokenMaximumExchangeBalance;
+            }
+            setChangingToAmount(false);
+            setChangingFromAmount(true);
+            setFromAmount(weiAmount);
+        },
+        [balances, fromToken]
+    );
 
-    const handleFromAmountChange = useCallback((amount) => {
-        setChangingToAmount(false);
-        setChangingFromAmount(true);
-        setFromAmount(amount);
-    }, []);
-
-    const handleToTokenChange = useCallback((token) => {
-        setChangingToToken(true);
-        setChangingFromToken(false);
-        setToToken(token);
-    }, []);
-
-    const handleToAmountChange = useCallback((amount) => {
+    const handleToAmountChange = useCallback((weiAmount) => {
         setChangingToAmount(true);
         setChangingFromAmount(false);
-        setToAmount(amount);
+        setToAmount(weiAmount);
     }, []);
 
     const handleSwap = useCallback(() => {
@@ -383,9 +379,10 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         variant="from"
                         amount={fromAmount}
                         token={fromToken}
+                        changing={changingFromAmount}
                         onAmountChange={handleFromAmountChange}
                         onBalancesRefresh={handleBalancesRefresh}
-                        onTokenChange={handleFromTokenChange}
+                        onTokenChange={setFromToken}
                         supportedTokens={supportedTokens}
                         balances={balances}
                         loadingSupportedTokens={loadingSupportedTokens}
@@ -408,9 +405,10 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         variant="to"
                         amount={toAmount}
                         token={toToken}
+                        changing={changingToAmount}
                         onAmountChange={handleToAmountChange}
                         onBalancesRefresh={handleBalancesRefresh}
-                        onTokenChange={handleToTokenChange}
+                        onTokenChange={setToToken}
                         supportedTokens={filteredToTokens}
                         balances={balances}
                         loadingSupportedTokens={loadingSupportedTokens}

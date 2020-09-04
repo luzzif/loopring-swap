@@ -1,17 +1,19 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { RootFlex, HeaderText, Input } from "./styled";
 import { Box, Flex } from "reflexbox";
-import BigNumber from "bignumber.js";
-import { fromWei, toWei } from "web3-utils";
+import { toWei, fromWei } from "web3-utils";
 import { FormattedMessage } from "react-intl";
 import { TokenSelect } from "../token-select";
 import { TokenModal } from "../token-modal";
+import { useEffect } from "react";
+import BigNumber from "bignumber.js";
 
 export const TokenSpecifier = ({
     variant,
     amount,
     token,
+    changing,
     onAmountChange,
     onBalancesRefresh,
     onTokenChange,
@@ -25,83 +27,49 @@ export const TokenSpecifier = ({
     const [stringAmount, setStringAmount] = useState("");
 
     useEffect(() => {
-        const rollingCommaStringAmount = /^[0-9]*?\.0*$/.test(stringAmount);
+        if (changing && stringAmount.includes(".")) {
+            return;
+        }
         if (
-            (!rollingCommaStringAmount && amount === "0") ||
-            (!rollingCommaStringAmount &&
-                stringAmount === "." &&
-                amount === "0")
+            (amount === "0" && amount !== stringAmount) ||
+            (!changing &&
+                amount === "0" &&
+                (!stringAmount || stringAmount === "0"))
         ) {
-            setStringAmount("0");
-        } else if (!rollingCommaStringAmount) {
-            // the balance check only applies to the from field, and when the user is logged in
-            let weiAmount = new BigNumber(amount);
-            if (variant === "from" && loggedIn) {
-                const exchangeBalance = balances.find(
-                    (balance) => balance.id === token.tokenId
-                );
-                const tokenMaximumExchangeBalance =
-                    exchangeBalance && exchangeBalance.balance;
-                if (
-                    variant === "from" &&
-                    tokenMaximumExchangeBalance &&
-                    weiAmount.isGreaterThan(tokenMaximumExchangeBalance)
-                ) {
-                    weiAmount = tokenMaximumExchangeBalance;
-                    onAmountChange(weiAmount.toFixed());
-                }
-            }
+            setStringAmount("");
+        } else if (
+            (!changing && amount && amount !== "0" && !stringAmount) ||
+            (stringAmount && toWei(stringAmount) !== amount) ||
+            (changing && !stringAmount && amount === "0")
+        ) {
             setStringAmount(
-                new BigNumber(fromWei(weiAmount.decimalPlaces(0).toFixed()))
-                    .decimalPlaces(5)
-                    .toString()
+                new BigNumber(fromWei(amount)).decimalPlaces(4).toFixed()
             );
         }
-    }, [
-        amount,
-        balances,
-        loggedIn,
-        onAmountChange,
-        stringAmount,
-        token,
-        variant,
-    ]);
+    }, [amount, changing, stringAmount]);
 
     const handleAmountChange = useCallback(
         (event) => {
             const newAmount = event.target.value;
-            let numericAmount = parseFloat(newAmount);
-            if (
-                !newAmount ||
-                newAmount.indexOf(",") >= 0 ||
-                newAmount.indexOf(" ") >= 0 ||
-                newAmount.indexOf("-") >= 0
-            ) {
+            if (/^\d+(\.\d*)?$/.test(newAmount)) {
+                setStringAmount(newAmount);
+                let newAmountWei = toWei(event.target.value);
+                const userTokenBalance =
+                    token &&
+                    balances.find((balance) => balance.id === token.tokenId);
+                if (
+                    userTokenBalance &&
+                    userTokenBalance.balance &&
+                    userTokenBalance.balance.isLessThan(newAmountWei)
+                ) {
+                    newAmountWei = userTokenBalance.balance
+                        .decimalPlaces(18)
+                        .toFixed();
+                }
+                onAmountChange(newAmountWei);
+            } else {
                 onAmountChange("0");
-                return;
             }
-            if (/\.{2,}/.test(newAmount) || newAmount.split(".").length > 2) {
-                return;
-            }
-            setStringAmount(newAmount);
-            let properNumericValue = isNaN(numericAmount)
-                ? "0"
-                : new BigNumber(numericAmount.toString())
-                      .decimalPlaces(18)
-                      .toString();
-            const userTokenBalance =
-                token &&
-                balances.find((balance) => balance.id === token.tokenId);
-            if (
-                userTokenBalance &&
-                userTokenBalance.balance &&
-                userTokenBalance.balance.isLessThan(toWei(properNumericValue))
-            ) {
-                properNumericValue = fromWei(
-                    userTokenBalance.balance.decimalPlaces(18).toFixed()
-                );
-            }
-            onAmountChange(toWei(properNumericValue));
         },
         [balances, onAmountChange, token]
     );
@@ -131,11 +99,7 @@ export const TokenSpecifier = ({
                     <Box flex="1">
                         <Input
                             placeholder="0.0"
-                            value={
-                                stringAmount && stringAmount !== "0"
-                                    ? stringAmount
-                                    : ""
-                            }
+                            value={stringAmount}
                             onChange={handleAmountChange}
                         />
                     </Box>
@@ -167,6 +131,7 @@ TokenSpecifier.propTypes = {
     variant: PropTypes.oneOf(["from", "to"]),
     amount: PropTypes.string.isRequired,
     token: PropTypes.object,
+    changing: PropTypes.bool,
     onAmountChange: PropTypes.func.isRequired,
     onBalancesRefresh: PropTypes.func.isRequired,
     onTokenChange: PropTypes.func.isRequired,
