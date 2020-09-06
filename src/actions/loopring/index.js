@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import { getTokenInfo } from "../../lightcone/api/v1/tokeninfo/get";
 import { FormattedMessage } from "react-intl";
 import { getBalances } from "../../lightcone/api/v1/balances/get";
-import { getLoopringApiKey } from "../../utils/loopring";
+import { getLoopringApiKey } from "../../utils";
 import BigNumber from "bignumber.js";
 import { getDepth } from "../../lightcone/api/v1/depth/get";
 import { getMarketInfo } from "../../lightcone/api/v1/marketinfo/get";

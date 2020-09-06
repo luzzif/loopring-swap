@@ -27,6 +27,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
 import { Spinner } from "../spinner";
+import { formatBigNumber } from "../../utils";
 
 export const TokenModal = ({
     loading,
@@ -214,11 +215,9 @@ export const TokenModal = ({
                                                     <Box>
                                                         {etherBalance.isZero()
                                                             ? "-"
-                                                            : etherBalance
-                                                                  .decimalPlaces(
-                                                                      4
-                                                                  )
-                                                                  .toString()}
+                                                            : formatBigNumber(
+                                                                  etherBalance
+                                                              )}
                                                     </Box>
                                                 </Flex>
                                             </RowFlex>

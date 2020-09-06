@@ -27,6 +27,7 @@ import {
 import BigNumber from "bignumber.js";
 import { Spinner } from "../../components/spinner";
 import { useDebouncedCallback } from "use-debounce";
+import { formatBigNumber } from "../../utils";
 
 export const Swapper = ({ onConnectWalletClick }) => {
     const dispatch = useDispatch();
@@ -447,14 +448,13 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         {loadingSwapData ? (
                             <Spinner size={12} />
                         ) : swapData && swapData.averageFillPrice ? (
-                            `${(selling
-                                ? swapData.averageFillPrice
-                                : new BigNumber("1").dividedBy(
-                                      swapData.averageFillPrice
-                                  )
-                            )
-                                .decimalPlaces(4)
-                                .toString()} ${toToken.symbol}`
+                            `${formatBigNumber(
+                                selling
+                                    ? swapData.averageFillPrice
+                                    : new BigNumber("1").dividedBy(
+                                          swapData.averageFillPrice
+                                      )
+                            )} ${toToken.symbol}`
                         ) : (
                             "-"
                         )}
@@ -475,10 +475,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                             <Spinner size={12} />
                         ) : swapData && swapData.slippagePercentage ? (
                             <SlippageText>
-                                {swapData.slippagePercentage
-                                    .decimalPlaces(2)
-                                    .toString()}
-                                %
+                                {formatBigNumber(swapData.slippagePercentage)}%
                             </SlippageText>
                         ) : (
                             "-"
