@@ -5,13 +5,14 @@ import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { FormattedMessage } from "react-intl";
 import { useState } from "react";
 import { useEffect } from "react";
+import { CHAIN_ID } from "../../env";
 
-export const InvalidChainId = ({ chainId }) => {
+export const InvalidChainId = () => {
     const [chainName, setChainName] = useState("");
 
     useEffect(() => {
         let chainName;
-        switch (chainId) {
+        switch (CHAIN_ID) {
             case 1: {
                 chainName = "mainnet";
                 break;
@@ -25,7 +26,7 @@ export const InvalidChainId = ({ chainId }) => {
             }
         }
         setChainName(chainName);
-    }, [chainId]);
+    }, []);
 
     return (
         <Flex flexDirection="column" alignItems="center">
