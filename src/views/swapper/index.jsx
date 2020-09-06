@@ -381,7 +381,13 @@ export const Swapper = ({ onConnectWalletClick }) => {
     ]);
 
     const handleBalancesRefresh = useCallback(() => {
-        if (loggedIn) {
+        if (
+            loggedIn &&
+            loopringAccount &&
+            loopringWallet &&
+            supportedTokens &&
+            supportedTokens.length > 0
+        ) {
             dispatch(
                 getUserBalances(
                     loopringAccount,

@@ -134,7 +134,12 @@ export const App = () => {
     }, [dispatch, supportedMarkets]);
 
     useEffect(() => {
-        if (loopringAccount && loopringWallet && supportedTokens) {
+        if (
+            loopringAccount &&
+            loopringWallet &&
+            supportedTokens &&
+            supportedTokens.length > 0
+        ) {
             dispatch(
                 getUserBalances(
                     loopringAccount,
@@ -207,6 +212,8 @@ export const App = () => {
         [dispatch]
     );
 
+    console.log(CHAIN_ID, chainId);
+
     return (
         <IntlProvider
             locale={selectedLanguage}
@@ -227,7 +234,7 @@ export const App = () => {
                                     onConnectWalletClick={handleDrawerOpenClick}
                                 />
                             ) : (
-                                <InvalidChainId chainId={chainId} />
+                                <InvalidChainId />
                             )}
                         </Box>
                     </Flex>

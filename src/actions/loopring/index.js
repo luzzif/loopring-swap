@@ -150,10 +150,14 @@ export const getUserBalances = (account, wallet, supportedTokens) => async (
         // we process the tokens with no balance too,
         // saving them with a 0 balance if necessary
         const allBalances = supportedTokens
-            .filter((supportedToken) => supportedToken.enabled)
+            .filter((supportedToken) => !!supportedToken)
             .reduce((allBalances, supportedToken) => {
-                const supportedTokenId = supportedToken.tokenId;
-                const supportedTokenSymbol = supportedToken.symbol;
+                const {
+                    tokenId: supportedTokenId,
+                    symbol: supportedTokenSymbol,
+                    name: supportedTokenName,
+                    address: supportedTokenAddress,
+                } = supportedToken;
                 const matchingBalance = partialBalances.find(
                     (balance) => balance.tokenId === supportedTokenId
                 );
@@ -163,8 +167,8 @@ export const getUserBalances = (account, wallet, supportedTokens) => async (
                 allBalances.push({
                     id: supportedTokenId,
                     symbol: supportedTokenSymbol,
-                    name: supportedToken.name,
-                    address: supportedToken.address,
+                    name: supportedTokenName,
+                    address: supportedTokenAddress,
                     balance,
                 });
                 return allBalances;
