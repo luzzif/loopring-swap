@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Layout } from "../../components/layout";
 import { ThemeProvider } from "styled-components";
-import { GlobalStyle } from "./styled.js";
+import { GlobalStyle } from "./styled";
 import { useDispatch, useSelector } from "react-redux";
 import MewConnect from "@myetherwallet/mewconnect-web-client";
 import Web3Modal from "web3modal";
-import { INFURA_URL } from "../../env";
+import { INFURA_URL, CHAIN_ID } from "../../env";
 import { useCallback } from "react";
 import { Drawer } from "../../components/drawer";
 import { initializeWeb3 } from "../../actions/web3";
@@ -27,7 +27,7 @@ import { IntlProvider } from "react-intl";
 import en from "../../i18n/messages/en.json";
 import it from "../../i18n/messages/it.json";
 import { switchLanguage } from "../../actions/i18n";
-import BrowserGlobalStyles from "../../BrowserGlobalStyles";
+import { InvalidChainId } from "../../components/invalid-chain-id";
 
 // setting up moment locales
 moment.locale("it", momentIt);
@@ -52,7 +52,7 @@ const light = {
     text: "#0e062d",
     textInverted: "#F1F9D2",
     shadow: "rgba(0, 0, 0, 0.4)",
-    placeholder: "#999999"
+    placeholder: "#999999",
 };
 
 const dark = {
@@ -64,7 +64,7 @@ const dark = {
     text: "#F1F9D2",
     textInverted: "#0e062d",
     shadow: "rgba(255, 255, 255, 0.1)",
-    placeholder: "#737373"
+    placeholder: "#737373",
 };
 
 const lightWeb3ModalTheme = {
@@ -98,12 +98,12 @@ export const getWeb3Modal = () => new Web3Modal(web3ModalOptions);
 export let selectedTheme = light;
 
 export const App = () => {
-
     const dispatch = useDispatch();
 
     const {
         selectedLanguage,
         web3Instance,
+        chainId,
         selectedAccount: selectedWeb3Account,
         loopringAccount,
         loopringWallet,
@@ -112,6 +112,7 @@ export const App = () => {
     } = useSelector((state) => ({
         selectedLanguage: state.i18n.selectedLanguage,
         web3Instance: state.web3.instance,
+        chainId: state.web3.chainId,
         selectedAccount: state.web3.selectedAccount,
         loopringAccount: state.loopring.account,
         loopringWallet: state.loopring.wallet,
@@ -211,14 +212,9 @@ export const App = () => {
             locale={selectedLanguage}
             messages={localizedMessages[selectedLanguage]}
         >
-        <BrowserGlobalStyles/>
             <ThemeProvider theme={lightTheme ? light : dark}>
                 <GlobalStyle />
-                <Layout
-                    onDrawerOpenClick={handleDrawerOpenClick}
-                    selectedWeb3Account={selectedWeb3Account}
-                    loggedIn={!!loopringAccount}
-                >
+                <Layout onDrawerOpenClick={handleDrawerOpenClick}>
                     <Flex
                         width="100%"
                         height="100%"
@@ -226,9 +222,13 @@ export const App = () => {
                         alignItems="center"
                     >
                         <Box width={["90%", "60%", "50%", "24%"]}>
-                            <Swapper
-                                onConnectWalletClick={handleDrawerOpenClick}
-                            />
+                            {!chainId || chainId === CHAIN_ID ? (
+                                <Swapper
+                                    onConnectWalletClick={handleDrawerOpenClick}
+                                />
+                            ) : (
+                                <InvalidChainId chainId={chainId} />
+                            )}
                         </Box>
                     </Flex>
                 </Layout>
