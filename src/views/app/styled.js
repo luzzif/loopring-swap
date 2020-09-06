@@ -5,7 +5,7 @@ export const GlobalStyle = createGlobalStyle`
         font-family: 'Montserrat-Regular';
         font-weight: 500;
         src: local('Montserrat-Regular'), 
-            url('/assets/fonts/Montserrat/Montserrat-Regular.ttf'),
+            url('/assets/fonts/Montserrat-Regular.ttf'),
             format('truetype');
     }
 
@@ -14,7 +14,7 @@ export const GlobalStyle = createGlobalStyle`
         font-weight: 600;
         src: 
             local('Montserrat-Medium'),
-            url('/assets/fonts/Montserrat/Montserrat-Medium.ttf'),
+            url('/assets/fonts/Montserrat-SemiBold.ttf'),
             format('truetype');
     }
 
@@ -22,7 +22,7 @@ export const GlobalStyle = createGlobalStyle`
         font-family: 'Montserrat-Bold';
         font-weight: 700;
         src: local('Montserrat-Bold'),
-            url('/assets/fonts/Montserrat/Montserrat-Bold.ttf'),
+            url('/assets/fonts/Montserrat-Bold.ttf'),
             format('truetype');
     }
 
