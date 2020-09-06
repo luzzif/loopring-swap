@@ -1,31 +1,10 @@
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
-    @font-face {
-        font-family: 'Montserrat';
-        font-weight: 500;
-        src: url('../../fonts/Montserrat-Regular.ttf'),
-            format('truetype');
-    }
-
-    @font-face {
-        font-family: 'Montserrat';
-        font-weight: 600;
-        src: url('../../fonts/Montserrat-SemiBold.ttf'),
-            format('truetype');
-    }
-
-    @font-face {
-        font-family: 'Montserrat';
-        font-weight: 700;
-        src: url('../../fonts/Montserrat-Bold.ttf'),
-            format('truetype');
-    }
-
     html {
         height: 100%;
         font-family: Montserrat, sans-serif;
-        font-size: 13px;
+        font-size: 12px;
     }
 
     body {
