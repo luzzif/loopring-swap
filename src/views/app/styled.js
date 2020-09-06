@@ -2,27 +2,23 @@ import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
     @font-face {
-        font-family: 'Montserrat-Regular';
+        font-family: 'Montserrat';
         font-weight: 500;
-        src: local('Montserrat-Regular'), 
-            url('/assets/fonts/Montserrat-Regular.ttf'),
+        src: url('../../fonts/Montserrat-Regular.ttf'),
             format('truetype');
     }
 
     @font-face {
-        font-family: 'Montserrat-Medium';
+        font-family: 'Montserrat';
         font-weight: 600;
-        src: 
-            local('Montserrat-Medium'),
-            url('/assets/fonts/Montserrat-SemiBold.ttf'),
+        src: url('../../fonts/Montserrat-SemiBold.ttf'),
             format('truetype');
     }
 
     @font-face {
-        font-family: 'Montserrat-Bold';
+        font-family: 'Montserrat';
         font-weight: 700;
-        src: local('Montserrat-Bold'),
-            url('/assets/fonts/Montserrat-Bold.ttf'),
+        src: url('../../fonts/Montserrat-Bold.ttf'),
             format('truetype');
     }
 
