@@ -1,9 +1,35 @@
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
+    @font-face {
+        font-family: 'Montserrat-Regular';
+        font-weight: 500;
+        src: local('Montserrat-Regular'), 
+            url('/assets/fonts/Montserrat/Montserrat-Regular.ttf'),
+            format('truetype');
+    }
+
+    @font-face {
+        font-family: 'Montserrat-Medium';
+        font-weight: 600;
+        src: 
+            local('Montserrat-Medium'),
+            url('/assets/fonts/Montserrat/Montserrat-Medium.ttf'),
+            format('truetype');
+    }
+
+    @font-face {
+        font-family: 'Montserrat-Bold';
+        font-weight: 700;
+        src: local('Montserrat-Bold'),
+            url('/assets/fonts/Montserrat/Montserrat-Bold.ttf'),
+            format('truetype');
+    }
+
     html {
         height: 100%;
         font-family: Montserrat, sans-serif;
+        font-size: 13px;
     }
 
     body {
