@@ -162,7 +162,11 @@ export const Swapper = ({ onConnectWalletClick }) => {
             // annoying flickering effect. We avoid it by calculating from and to amounts only if
             // an actual user interacted with the form (NOT when the app updates the to and
             // from amounts after swap-details-related calculations)
-            ((changingFromAmount && fromAmount) ||
+            ((!changingFromAmount &&
+                !changingToAmount &&
+                fromAmount &&
+                toAmount) ||
+                (changingFromAmount && fromAmount) ||
                 (changingToAmount && toAmount))
         ) {
             const tradedMarket = compatibleMarkets.find(
@@ -208,7 +212,11 @@ export const Swapper = ({ onConnectWalletClick }) => {
             swapData.averageFillPrice &&
             fromToken &&
             toToken &&
-            ((changingFromAmount && fromAmount) ||
+            ((!changingFromAmount &&
+                !changingToAmount &&
+                fromAmount &&
+                toAmount) ||
+                (changingFromAmount && fromAmount) ||
                 (changingToAmount && toAmount))
         ) {
             const referenceAmount = changingToAmount ? toAmount : fromAmount;
@@ -398,6 +406,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         variant="from"
                         amount={fromAmount}
                         token={fromToken}
+                        changing={changingFromAmount}
                         onAmountChange={handleFromAmountChange}
                         onBalancesRefresh={handleBalancesRefresh}
                         onTokenChange={setFromToken}
@@ -422,6 +431,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         variant="to"
                         amount={toAmount}
                         token={toToken}
+                        changing={changingToAmount}
                         onAmountChange={handleToAmountChange}
                         onBalancesRefresh={handleBalancesRefresh}
                         onTokenChange={setToToken}
