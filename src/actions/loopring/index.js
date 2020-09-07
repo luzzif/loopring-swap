@@ -14,7 +14,8 @@ import BigNumber from "bignumber.js";
 import { getDepth } from "../../lightcone/api/v1/depth/get";
 import { getMarketInfo } from "../../lightcone/api/v1/marketinfo/get";
 import config from "../../lightcone/config";
-import { getBalances } from "loopring-lightcone/lib/api/v2/balances";
+import { getBalances } from "../../lightcone/api/v1/balances";
+import { fromWei } from "web3-utils";
 
 // login
 
@@ -155,15 +156,15 @@ export const getUserBalances = (account, wallet, supportedTokens) => async (
                 const matchingBalance = partialBalances.find(
                     (balance) => balance.tokenId === supportedTokenId
                 );
-                const balance = new BigNumber(
-                    matchingBalance ? matchingBalance.totalAmount : "0"
-                );
+                const balance = matchingBalance
+                    ? matchingBalance.totalAmount
+                    : "0";
                 allBalances.push({
                     id: supportedTokenId,
                     symbol: supportedTokenSymbol,
                     name: supportedToken.name,
                     address: supportedToken.address,
-                    balance,
+                    balance: new BigNumber(fromWei(balance)),
                     decimals: supportedToken.decimals,
                 });
                 return allBalances;

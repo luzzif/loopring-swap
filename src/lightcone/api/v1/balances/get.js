@@ -1,7 +1,7 @@
 import { request } from "../../../common";
 
 // tokenIds is skip to get all tokens
-export async function getBalances(accountId, apiKey, tokens, skip, limit) {
+export async function getBalances(accountId, apiKey, skip, limit) {
     const params = {
         accountId,
         skip,
