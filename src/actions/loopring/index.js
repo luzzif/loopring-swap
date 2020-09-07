@@ -9,13 +9,12 @@ import {
 import { toast } from "react-toastify";
 import { getTokenInfo } from "../../lightcone/api/v1/tokeninfo/get";
 import { FormattedMessage } from "react-intl";
-import { getBalances } from "../../lightcone/api/v1/balances/get";
 import { getLoopringApiKey } from "../../utils";
 import BigNumber from "bignumber.js";
 import { getDepth } from "../../lightcone/api/v1/depth/get";
 import { getMarketInfo } from "../../lightcone/api/v1/marketinfo/get";
 import config from "../../lightcone/config";
-import { fromWei } from "web3-utils";
+import { getBalances } from "loopring-lightcone/lib/api/v2/balances";
 
 // login
 
@@ -144,32 +143,28 @@ export const getUserBalances = (account, wallet, supportedTokens) => async (
     try {
         const partialBalances = await getBalances(
             account.accountId,
-            await getLoopringApiKey(wallet, account),
-            supportedTokens
+            await getLoopringApiKey(wallet, account)
         );
         // we process the tokens with no balance too,
         // saving them with a 0 balance if necessary
         const allBalances = supportedTokens
-            .filter((supportedToken) => !!supportedToken)
+            .filter((supportedToken) => supportedToken.enabled)
             .reduce((allBalances, supportedToken) => {
-                const {
-                    tokenId: supportedTokenId,
-                    symbol: supportedTokenSymbol,
-                    name: supportedTokenName,
-                    address: supportedTokenAddress,
-                } = supportedToken;
+                const supportedTokenId = supportedToken.tokenId;
+                const supportedTokenSymbol = supportedToken.symbol;
                 const matchingBalance = partialBalances.find(
                     (balance) => balance.tokenId === supportedTokenId
                 );
                 const balance = new BigNumber(
-                    matchingBalance ? fromWei(matchingBalance.totalAmount) : "0"
+                    matchingBalance ? matchingBalance.totalAmount : "0"
                 );
                 allBalances.push({
                     id: supportedTokenId,
                     symbol: supportedTokenSymbol,
-                    name: supportedTokenName,
-                    address: supportedTokenAddress,
+                    name: supportedToken.name,
+                    address: supportedToken.address,
                     balance,
+                    decimals: supportedToken.decimals,
                 });
                 return allBalances;
             }, [])

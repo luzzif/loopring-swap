@@ -219,8 +219,6 @@ export const App = () => {
         [dispatch]
     );
 
-    console.log(CHAIN_ID, chainId);
-
     return (
         <IntlProvider
             locale={selectedLanguage}
