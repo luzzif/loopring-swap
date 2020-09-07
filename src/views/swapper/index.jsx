@@ -222,7 +222,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     ? partialAmount.multipliedBy(swapData.averageFillPrice)
                     : partialAmount.dividedBy(swapData.averageFillPrice);
             }
-            const newAmount = partialAmount.decimalPlaces(4).toString();
+            const newAmount = partialAmount.toFixed();
             if (changingToAmount && newAmount !== fromAmount) {
                 // if the updated to amount is more than the maximum one based on
                 // the order book, the maximum possible value is set
@@ -247,9 +247,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                             swapData.averageFillPrice
                         );
                     }
-                    setFromAmount(
-                        adjustedFromAmount.decimalPlaces(4).toString()
-                    );
+                    setFromAmount(adjustedFromAmount.toFixed());
                 } else {
                     setFromAmount(newAmount);
                 }
@@ -276,12 +274,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
                             swapData.averageFillPrice
                         );
                     }
-                    setFromAmount(
-                        adjustedFromAmount.decimalPlaces(4).toString()
-                    );
-                    setToAmount(
-                        swapData.maximumAmount.decimalPlaces(4).toString()
-                    );
+                    setFromAmount(adjustedFromAmount.toFixed());
+                    setToAmount(swapData.maximumAmount.toFixed());
                 } else {
                     setToAmount(newAmount);
                 }
@@ -336,9 +330,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                 tokenMaximumExchangeBalance &&
                 new BigNumber(amount).isGreaterThan(tokenMaximumExchangeBalance)
             ) {
-                amount = new BigNumber(tokenMaximumExchangeBalance)
-                    .decimalPlaces(4)
-                    .toString();
+                amount = new BigNumber(tokenMaximumExchangeBalance).toFixed();
             }
             setChangingToAmount(false);
             setChangingFromAmount(true);

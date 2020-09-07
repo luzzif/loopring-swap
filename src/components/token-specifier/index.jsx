@@ -5,6 +5,8 @@ import { Box, Flex } from "reflexbox";
 import { FormattedMessage } from "react-intl";
 import { TokenSelect } from "../token-select";
 import { TokenModal } from "../token-modal";
+import { formatBigNumber } from "../../utils";
+import BigNumber from "bignumber.js";
 
 export const TokenSpecifier = ({
     variant,
@@ -58,7 +60,11 @@ export const TokenSpecifier = ({
                     <Box flex="1">
                         <Input
                             placeholder="0.0"
-                            value={amount}
+                            value={
+                                amount
+                                    ? formatBigNumber(new BigNumber(amount))
+                                    : ""
+                            }
                             onChange={handleAmountChange}
                         />
                     </Box>
