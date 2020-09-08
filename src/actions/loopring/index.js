@@ -16,6 +16,7 @@ import { getMarketInfo } from "../../lightcone/api/v1/marketinfo/get";
 import config from "../../lightcone/config";
 import { getBalances } from "../../lightcone/api/v1/balances";
 import { fromWei } from "web3-utils";
+import { getFeeRates } from "../../lightcone/api/v1/fee-rates";
 
 // login
 
@@ -185,6 +186,8 @@ export const GET_SWAP_DATA_END = "GET_SWAP_DATA_END";
 export const GET_SWAP_DATA_SUCCESS = "GET_SWAP_DATA_SUCCESS";
 
 export const getSwapData = (
+    wallet,
+    account,
     baseToken,
     quoteToken,
     fromAmount,
@@ -194,6 +197,15 @@ export const getSwapData = (
     dispatch({ type: GET_SWAP_DATA_START });
     try {
         const market = `${baseToken.symbol}-${quoteToken.symbol}`;
+        let fees = null;
+        if (wallet && account) {
+            fees = await getFeeRates(
+                [market],
+                account.accountId,
+                await getLoopringApiKey(wallet, account)
+            );
+        }
+        console.log(fees);
         const { asks, bids } = await getDepth(market, 0, 1000, supportedTokens);
         const orders = selling ? bids : asks;
         const bestPrice = orders[0].price;
@@ -280,7 +292,7 @@ export const postSwap = (
             validUntil,
             config.getLabel(),
             !selling,
-            config.getChannelId()
+            "swap-ui"
         );
         if (!signedOrder) {
             // the user aborted the signing procedure
