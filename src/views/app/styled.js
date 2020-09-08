@@ -4,7 +4,6 @@ export const GlobalStyle = createGlobalStyle`
     html {
         height: 100%;
         font-family: Montserrat, sans-serif;
-        font-size: 12px;
     }
 
     body {

@@ -6,4 +6,5 @@ export const TextBox = styled(Box)`
     transition: color 0.3s ease;
     display: flex;
     align-items: center;
+    font-size: 12px;
 `;
