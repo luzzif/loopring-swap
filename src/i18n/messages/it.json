@@ -40,6 +40,7 @@
     "swap.success": "Lo swap è stato sottoposto correttamente. Tra poco dovrebbe essere riflettuto nei tuoi bilanci.",
     "drawer.wallet.connect.list.settings.language": "Lingua",
     "footer.warning": "Codice sorgente non verificato da Loopring, usa a tuo rischio.",
+    "invalid.chain.id.message": "La rete Ethereum non è valida. È richiesto essere su {chainName}",
 
     "warn.account.not.found": "Sembra che questo account non sia ancora sulla nostra piattaforma. Per favore, registrati.",
     "error.login": "Si è verificato un errore durante l'autenticatione. Per favore riprova più tardi.",
