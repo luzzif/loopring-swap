@@ -9,13 +9,13 @@ import {
 import { toast } from "react-toastify";
 import { getTokenInfo } from "../../lightcone/api/v1/tokeninfo/get";
 import { FormattedMessage } from "react-intl";
-import { getBalances } from "../../lightcone/api/v1/balances/get";
-import { getLoopringApiKey } from "../../utils/loopring";
+import { getLoopringApiKey } from "../../utils";
 import BigNumber from "bignumber.js";
 import { getDepth } from "../../lightcone/api/v1/depth/get";
 import { getMarketInfo } from "../../lightcone/api/v1/marketinfo/get";
 import config from "../../lightcone/config";
-import { fromWei, toWei } from "web3-utils";
+import { getBalances } from "../../lightcone/api/v1/balances";
+import { fromWei } from "web3-utils";
 
 // login
 
@@ -144,8 +144,7 @@ export const getUserBalances = (account, wallet, supportedTokens) => async (
     try {
         const partialBalances = await getBalances(
             account.accountId,
-            await getLoopringApiKey(wallet, account),
-            supportedTokens
+            await getLoopringApiKey(wallet, account)
         );
         // we process the tokens with no balance too,
         // saving them with a 0 balance if necessary
@@ -157,15 +156,16 @@ export const getUserBalances = (account, wallet, supportedTokens) => async (
                 const matchingBalance = partialBalances.find(
                     (balance) => balance.tokenId === supportedTokenId
                 );
-                const balance = new BigNumber(
-                    matchingBalance ? matchingBalance.totalAmount : "0"
-                );
+                const balance = matchingBalance
+                    ? matchingBalance.totalAmount
+                    : "0";
                 allBalances.push({
                     id: supportedTokenId,
                     symbol: supportedTokenSymbol,
                     name: supportedToken.name,
                     address: supportedToken.address,
-                    balance,
+                    balance: new BigNumber(fromWei(balance)),
+                    decimals: supportedToken.decimals,
                 });
                 return allBalances;
             }, [])
@@ -206,7 +206,7 @@ export const getSwapData = (
         for (let i = 0; i < orders.length; i++) {
             const order = orders[i];
             requiredOrders.push(order);
-            totalOrdersSize = totalOrdersSize.plus(toWei(order.aggregatedSize));
+            totalOrdersSize = totalOrdersSize.plus(order.sizeInNumber);
             if (totalOrdersSize.isGreaterThanOrEqualTo(estimatedToAmount)) {
                 break;
             }
@@ -229,8 +229,7 @@ export const getSwapData = (
             averageFillPrice: averageFillPrice,
             slippagePercentage,
             maximumAmount: orders.reduce(
-                (totalSize, order) =>
-                    totalSize.plus(toWei(order.aggregatedSize)),
+                (totalSize, order) => totalSize.plus(order.sizeInNumber),
                 new BigNumber("0")
             ),
         });
@@ -274,8 +273,8 @@ export const postSwap = (
             exchange.exchangeId,
             fromToken.address,
             toToken.address,
-            fromWei(fromAmount),
-            fromWei(toAmount),
+            fromAmount,
+            toAmount,
             orderId,
             validSince,
             validUntil,
@@ -297,3 +296,11 @@ export const postSwap = (
         dispatch({ type: POST_SWAP_END });
     }
 };
+
+// reset swap data
+
+export const RESET_SWAP_DATA = "RESET_SWAP_DATA";
+
+export const resetSwapData = () => ({
+    type: RESET_SWAP_DATA,
+});

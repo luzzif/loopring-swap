@@ -15,6 +15,7 @@ import {
     POST_SWAP_START,
     POST_SWAP_END,
     LOGOUT,
+    RESET_SWAP_DATA,
 } from "../../actions/loopring";
 
 const initialState = {
@@ -183,8 +184,21 @@ export const loopringReducer = (state = initialState, action) => {
                 },
             };
         }
+        case RESET_SWAP_DATA: {
+            return {
+                ...state,
+                swap: {
+                    loadings: 0,
+                    data: {},
+                },
+            };
+        }
         case LOGOUT: {
-            return { ...state, account: null, wallet: null, exchange: null };
+            return {
+                ...initialState,
+                supportedTokens: state.supportedTokens,
+                supportedMarkets: state.supportedMarkets,
+            };
         }
         default: {
             return state;

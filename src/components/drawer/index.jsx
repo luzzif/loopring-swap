@@ -24,6 +24,7 @@ import { ExchangeInfo } from "./sections/exchange-info";
 import { Settings } from "./sections/settings";
 import { Button } from "../button";
 import { useCallback } from "react";
+import { getShortenedEthereumAddress } from "../../utils";
 
 export const Drawer = ({
     open,
@@ -83,7 +84,9 @@ export const Drawer = ({
         >
             <HeaderFlex mb={3}>
                 <EllipsizedBox>
-                    {selectedWeb3Account || (
+                    {selectedWeb3Account ? (
+                        getShortenedEthereumAddress(selectedWeb3Account)
+                    ) : (
                         <FormattedMessage id="drawer.wallet.connect.header.connect" />
                     )}
                 </EllipsizedBox>

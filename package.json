@@ -12,6 +12,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "@walletconnect/web3-provider": "^1.2.2",
     "async-validator": "^3.4.0",
     "axios": "^0.19.2",
     "bignumber.js": "^9.0.0",
@@ -31,6 +32,7 @@
     "redux-thunk": "^2.3.0",
     "reflexbox": "^4.0.6",
     "snarkjs": "0.1.20",
+    "styled-components": "^5.2.0",
     "use-debounce": "^3.4.3",
     "web3": "^1.2.11",
     "web3-utils": "^1.2.11",
@@ -38,7 +40,7 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "start": "HTTPS=true react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build && copy _redirects ./build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -66,7 +68,7 @@
     "@commitlint/config-conventional": "^9.1.1",
     "copy": "^0.3.2",
     "dotenv": "^8.2.0",
-    "husky": "^4.2.5",
-    "gh-pages": "^2.1.1"
+    "gh-pages": "^2.1.1",
+    "husky": "^4.2.5"
   }
 }

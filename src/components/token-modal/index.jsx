@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import Web3 from "web3";
 import BigNumber from "bignumber.js";
 import { Flex, Box } from "reflexbox";
 import { TokenIcon } from "../token-icon";
@@ -28,10 +27,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
 import { Spinner } from "../spinner";
-
-const {
-    utils: { fromWei },
-} = Web3;
+import { formatBigNumber } from "../../utils";
 
 export const TokenModal = ({
     loading,
@@ -49,7 +45,6 @@ export const TokenModal = ({
 
     const [searchTerm, setSearchTerm] = useState("");
     const [tokenDataset, setTokenDataset] = useState(supportedTokens);
-    const [balancesInEther, setBalancesInEther] = useState({});
 
     useEffect(() => {
         let dataset = supportedTokens;
@@ -63,35 +58,35 @@ export const TokenModal = ({
                 );
             });
         }
-        if (balancesInEther) {
+        if (balances) {
             dataset = dataset.sort(
                 ({ address: firstAddress }, { address: secondAddress }) => {
-                    const firstTokenBalance = balancesInEther[firstAddress];
-                    const secondTokenBalance = balancesInEther[secondAddress];
-                    return firstTokenBalance && secondTokenBalance
-                        ? secondTokenBalance.minus(firstTokenBalance).toNumber()
-                        : 0;
+                    const wrappedFirstTokenBalance = balances.find(
+                        (balance) => balance.address === firstAddress
+                    );
+                    const wrappedSecondTokenBalance = balances.find(
+                        (balance) => balance.address === secondAddress
+                    );
+                    const firstTokenBalance = new BigNumber(
+                        wrappedFirstTokenBalance &&
+                        wrappedFirstTokenBalance.balance
+                            ? wrappedFirstTokenBalance.balance
+                            : "0"
+                    );
+                    const secondTokenBalance = new BigNumber(
+                        wrappedSecondTokenBalance &&
+                        wrappedSecondTokenBalance.balance
+                            ? wrappedSecondTokenBalance.balance
+                            : "0"
+                    );
+                    return secondTokenBalance
+                        .minus(firstTokenBalance)
+                        .toNumber();
                 }
             );
         }
         setTokenDataset(dataset);
-    }, [searchTerm, balancesInEther, supportedTokens]);
-
-    useEffect(() => {
-        if (!balances || balances.length === 0) {
-            return;
-        }
-        const balancesInEther = balances.reduce(
-            (balancesInEther, { address, balance }) => {
-                balancesInEther[address] = new BigNumber(
-                    fromWei(balance.toFixed())
-                );
-                return balancesInEther;
-            },
-            {}
-        );
-        setBalancesInEther(balancesInEther);
-    }, [balances]);
+    }, [searchTerm, supportedTokens, balances]);
 
     const getClickHandler = (token) => () => {
         onChange(token);
@@ -174,6 +169,16 @@ export const TokenModal = ({
                                         const { address, symbol, name } = token;
                                         const currentlySelected =
                                             selected === token;
+                                        const wrappedBalance = balances.find(
+                                            (balance) =>
+                                                balance.address === address
+                                        );
+                                        const etherBalance = new BigNumber(
+                                            wrappedBalance &&
+                                            wrappedBalance.balance
+                                                ? wrappedBalance.balance
+                                                : "0"
+                                        );
                                         return (
                                             <RowFlex
                                                 key={address}
@@ -208,23 +213,11 @@ export const TokenModal = ({
                                                         </SecondaryTextBox>
                                                     </Flex>
                                                     <Box>
-                                                        {balancesInEther &&
-                                                        balancesInEther[
-                                                            address
-                                                        ] &&
-                                                        balancesInEther[
-                                                            address
-                                                        ].isGreaterThan(
-                                                            "0.0001"
-                                                        )
-                                                            ? balancesInEther[
-                                                                  address
-                                                              ]
-                                                                  .decimalPlaces(
-                                                                      4
-                                                                  )
-                                                                  .toString()
-                                                            : "-"}
+                                                        {etherBalance.isZero()
+                                                            ? "-"
+                                                            : formatBigNumber(
+                                                                  etherBalance
+                                                              )}
                                                     </Box>
                                                 </Flex>
                                             </RowFlex>

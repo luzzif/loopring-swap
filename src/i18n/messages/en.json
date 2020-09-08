@@ -39,6 +39,7 @@
     "swap.success": "The swap was correctly submitted. It should soon be reflected in your balances.",
     "drawer.wallet.connect.list.settings.language": "Language",
     "footer.warning": "Source code not audited by Loopring, use at your own risk.",
+    "invalid.chain.id.message": "You're currently on an invalid network. Please switch to {chainName}",
 
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
     "error.login": "There was an error logging in. Please try again later.",
