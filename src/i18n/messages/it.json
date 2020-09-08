@@ -31,6 +31,7 @@
     "swapper.action.swap": "Swap",
     "swapper.action.connect": "Autenticati",
     "token.select.action.select": "Seleziona",
+    "token.select.loading": "Caricamento",
     "swapper.price": "Prezzo stimato",
     "swapper.slippage": "Slippage stimato",
     "swapper.fee": "Commissioni",

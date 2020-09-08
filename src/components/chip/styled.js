@@ -4,9 +4,8 @@ import { Flex } from "reflexbox";
 export const RootFlex = styled(Flex)`
     border: solid 1px ${(props) => props.theme.border};
     border-radius: 12px;
-    padding: 4px 8px;
-    font-size: 16px;
-    line-height: 16px;
+    padding: 2px 8px;
+    font-size: 12px;
     background: ${(props) =>
         props.selected ? props.theme.primary : props.theme.foreground};
     color: ${(props) =>

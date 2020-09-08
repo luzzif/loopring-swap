@@ -461,7 +461,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
                                     ? swapData.averageFillPrice
                                     : new BigNumber("1").dividedBy(
                                           swapData.averageFillPrice
-                                      )
+                                      ),
+                                4
                             )} ${toToken.symbol}`
                         ) : (
                             "-"
