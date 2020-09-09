@@ -98,6 +98,13 @@ export const EmptyTextBox = styled(Box)`
     color: ${(props) => props.theme.error};
 `;
 
+export const PrimaryTextBox = styled(Box)`
+    font-size: 12px;
+    color: ${(props) =>
+        props.selected ? props.theme.textInverted : props.theme.text};
+    transition: color 0.3s ease;
+`;
+
 export const SecondaryTextBox = styled(Box)`
     font-size: 12px;
     color: ${(props) =>

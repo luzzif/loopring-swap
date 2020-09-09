@@ -338,7 +338,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                 tokenMaximumExchangeBalance &&
                 new BigNumber(amount).isGreaterThan(tokenMaximumExchangeBalance)
             ) {
-                amount = new BigNumber(tokenMaximumExchangeBalance).toFixed();
+                amount = new BigNumber(tokenMaximumExchangeBalance).toNumber();
             }
             setChangingToAmount(false);
             setChangingFromAmount(true);
@@ -461,7 +461,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
                                     ? swapData.averageFillPrice
                                     : new BigNumber("1").dividedBy(
                                           swapData.averageFillPrice
-                                      )
+                                      ),
+                                4
                             )} ${toToken.symbol}`
                         ) : (
                             "-"

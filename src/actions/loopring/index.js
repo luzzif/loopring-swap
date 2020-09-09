@@ -280,7 +280,7 @@ export const postSwap = (
             validUntil,
             config.getLabel(),
             !selling,
-            config.getChannelId()
+            "swap-ui"
         );
         if (!signedOrder) {
             // the user aborted the signing procedure

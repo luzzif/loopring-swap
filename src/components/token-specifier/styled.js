@@ -23,9 +23,9 @@ export const Input = styled.input`
     background: ${(props) => props.theme.background};
     transition: background 0.3s ease, color 0.3s ease;
     outline: none;
-    line-height: 40px;
+    line-height: 32px;
     width: 100%;
-    height: 40px;
+    height: 32px;
     ::placeholder {
         transition: color 0.3s ease;
         color: ${(props) => props.theme.placeholder};

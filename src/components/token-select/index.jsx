@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { TokenIcon } from "../token-icon";
 import { Box } from "reflexbox";
-import { RootFlex, ChevronIcon } from "./styled";
+import { RootFlex, ChevronIcon, LabelBox } from "./styled";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FormattedMessage } from "react-intl";
 import { Spinner } from "../spinner";
@@ -10,9 +10,14 @@ import { Spinner } from "../spinner";
 export const TokenSelect = ({ token, loading, onClick }) => (
     <RootFlex alignItems="center" onClick={onClick}>
         {loading ? (
-            <Box>
-                <Spinner size={20} />
-            </Box>
+            <>
+                <Box mr="4px">
+                    <Spinner size={16} />
+                </Box>
+                <LabelBox>
+                    <FormattedMessage id="token.select.loading" />
+                </LabelBox>
+            </>
         ) : (
             <>
                 {token ? (
@@ -20,15 +25,17 @@ export const TokenSelect = ({ token, loading, onClick }) => (
                         <Box mr="4px" display="flex" alignItems="center">
                             <TokenIcon
                                 address={token.address || "ETH"}
-                                size={20}
+                                size={16}
                             />
                         </Box>
-                        <Box>{token.symbol}</Box>
+                        <LabelBox>{token.symbol}</LabelBox>
                     </>
                 ) : (
-                    <FormattedMessage id="token.select.action.select" />
+                    <LabelBox>
+                        <FormattedMessage id="token.select.action.select" />
+                    </LabelBox>
                 )}
-                <Box ml={2} display="flex" alignItems="center">
+                <Box ml="4px" display="flex" alignItems="center">
                     <ChevronIcon icon={faChevronDown} />
                 </Box>
             </>

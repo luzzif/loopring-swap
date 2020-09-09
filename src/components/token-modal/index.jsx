@@ -15,6 +15,7 @@ import {
     SecondaryTextBox,
     PointableBox,
     OPEN_CLOSE_ANIMATION_DURATION,
+    PrimaryTextBox,
 } from "./styled";
 import { FullScreenOverlay } from "../full-screen-overlay";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -201,9 +202,14 @@ export const TokenModal = ({
                                                     flex={1}
                                                 >
                                                     <Flex flexDirection="column">
-                                                        <Box mb="2px">
+                                                        <PrimaryTextBox
+                                                            mb="2px"
+                                                            selected={
+                                                                currentlySelected
+                                                            }
+                                                        >
                                                             {symbol}
-                                                        </Box>
+                                                        </PrimaryTextBox>
                                                         <SecondaryTextBox
                                                             selected={
                                                                 currentlySelected

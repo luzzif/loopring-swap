@@ -57,7 +57,7 @@ export const TokenSpecifier = ({
                 <HeaderText width="100%" mb={2}>
                     <FormattedMessage id={`token.specifier.${variant}`} />
                 </HeaderText>
-                <Flex width="100%">
+                <Flex width="100%" alignItems="flex-end">
                     <Box flex="1">
                         <Input
                             placeholder="0.0"
@@ -69,7 +69,7 @@ export const TokenSpecifier = ({
                             onChange={handleAmountChange}
                         />
                     </Box>
-                    <Box display="flex" alignItems="center" ml={2}>
+                    <Box display="flex" alignItems="center" ml={2} mb="2px">
                         <TokenSelect
                             token={token}
                             onClick={handleSelectClick}
