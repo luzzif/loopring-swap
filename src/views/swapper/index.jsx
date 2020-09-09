@@ -1,13 +1,7 @@
 import React, { useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { Flex, Box } from "reflexbox";
-import {
-    BackgroundFlex,
-    ArrowIcon,
-    SlippageText,
-    FeeTextBox,
-    PointableBox,
-} from "./styled";
+import { BackgroundFlex, ArrowIcon, SlippageText } from "./styled";
 import { TokenSpecifier } from "../../components/token-specifier";
 import { useState } from "react";
 import {
@@ -64,6 +58,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
     const [fromAmount, setFromAmount] = useState("");
     const [toToken, setToToken] = useState(null);
     const [toAmount, setToAmount] = useState("");
+    const [feeAmount, setFeeAmount] = useState("");
     const [filteredToTokens, setFilteredToTokens] = useState([]);
     const [compatibleMarkets, setCompatibleMarkets] = useState([]);
     const [changingToAmount, setChangingToAmount] = useState(false);
@@ -71,9 +66,19 @@ export const Swapper = ({ onConnectWalletClick }) => {
     const [selling, setSelling] = useState(false);
 
     const [debouncedGetSwapData] = useDebouncedCallback(
-        (fromToken, toToken, fromAmount, supportedTokens, selling) => {
+        (
+            wallet,
+            account,
+            fromToken,
+            toToken,
+            fromAmount,
+            supportedTokens,
+            selling
+        ) => {
             dispatch(
                 getSwapData(
+                    wallet,
+                    account,
                     fromToken,
                     toToken,
                     fromAmount,
@@ -180,6 +185,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
                 return;
             }
             debouncedGetSwapData(
+                loopringWallet,
+                loopringAccount,
                 supportedTokens.find(
                     (token) => token.tokenId === tradedMarket.baseTokenId
                 ),
@@ -192,6 +199,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
             );
         }
     }, [
+        loopringWallet,
+        loopringAccount,
         changingFromAmount,
         changingToAmount,
         compatibleMarkets,
@@ -231,6 +240,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     : partialAmount.dividedBy(swapData.averageFillPrice);
             }
             const newAmount = partialAmount.toFixed();
+            let newFromAmount = fromAmount;
+            let newToAmount = toAmount;
             if (changingToAmount && newAmount !== fromAmount) {
                 // if the updated to amount is more than the maximum one based on
                 // the order book, the maximum possible value is set
@@ -255,9 +266,9 @@ export const Swapper = ({ onConnectWalletClick }) => {
                             swapData.averageFillPrice
                         );
                     }
-                    setFromAmount(adjustedFromAmount.toFixed());
+                    newFromAmount = adjustedFromAmount.toFixed();
                 } else {
-                    setFromAmount(newAmount);
+                    newFromAmount = newAmount;
                 }
             } else if (!changingToAmount && newAmount !== toAmount) {
                 // If the new from amount would bring, based on the current average
@@ -282,12 +293,18 @@ export const Swapper = ({ onConnectWalletClick }) => {
                             swapData.averageFillPrice
                         );
                     }
-                    setFromAmount(adjustedFromAmount.toFixed());
-                    setToAmount(swapData.maximumAmount.toFixed());
+                    newFromAmount = adjustedFromAmount.toFixed();
+                    newToAmount = swapData.maximumAmount.toFixed();
                 } else {
-                    setToAmount(newAmount);
+                    newToAmount = newAmount;
                 }
             }
+            setFromAmount(newFromAmount);
+            const feeAmount = new BigNumber(newToAmount).multipliedBy(
+                swapData.feePercentage
+            );
+            setToAmount(new BigNumber(newToAmount).minus(feeAmount).toFixed());
+            setFeeAmount(feeAmount);
             setChangingToAmount(false);
             setChangingFromAmount(false);
         }
@@ -417,7 +434,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         loggedIn={loggedIn}
                     />
                 </Box>
-                <PointableBox
+                <Box
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
@@ -425,7 +442,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     p={2}
                 >
                     <ArrowIcon icon={faArrowDown} />
-                </PointableBox>
+                </Box>
                 <Box mb="12px">
                     <TokenSpecifier
                         variant="to"
@@ -458,12 +475,12 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         ) : swapData && swapData.averageFillPrice ? (
                             `${formatBigNumber(
                                 selling
-                                    ? swapData.averageFillPrice
-                                    : new BigNumber("1").dividedBy(
+                                    ? new BigNumber("1").dividedBy(
                                           swapData.averageFillPrice
-                                      ),
-                                4
-                            )} ${toToken.symbol}`
+                                      )
+                                    : swapData.averageFillPrice,
+                                3
+                            )} ${fromToken.symbol}`
                         ) : (
                             "-"
                         )}
@@ -500,8 +517,13 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     <Box>
                         <FormattedMessage id="swapper.fee" />
                     </Box>
-                    {/* TODO: this should be dynamically fetched */}
-                    <FeeTextBox>0</FeeTextBox>
+                    <Box>
+                        {feeAmount && feeAmount.isGreaterThan("0")
+                            ? `${formatBigNumber(feeAmount, 4)} ${
+                                  toToken.symbol
+                              }`
+                            : "-"}
+                    </Box>
                 </Flex>
             </BackgroundFlex>
             <Box display="flex" justifyContent="center" mb={4}>

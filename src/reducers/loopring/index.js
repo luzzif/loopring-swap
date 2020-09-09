@@ -162,6 +162,7 @@ export const loopringReducer = (state = initialState, action) => {
                         averageFillPrice: action.averageFillPrice,
                         slippagePercentage: action.slippagePercentage,
                         maximumAmount: action.maximumAmount,
+                        feePercentage: action.feePercentage,
                     },
                 },
             };
