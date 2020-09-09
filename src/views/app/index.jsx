@@ -59,7 +59,7 @@ const light = {
 const dark = {
     ...commonColors,
     background: "#151618",
-    foreground: "rgba(0, 0, 0, .65)",
+    foreground: "#0d0d0d",
     border: "#23262a",
     textLight: "#737373",
     text: "#F1F9D2",
