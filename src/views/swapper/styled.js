@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Flex } from "reflexbox";
+import { Flex, Box } from "reflexbox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const BackgroundFlex = styled(Flex)`
@@ -16,4 +16,8 @@ export const ArrowIcon = styled(FontAwesomeIcon)`
 
 export const SlippageText = styled.span`
     color: ${(props) => props.theme.error};
+`;
+
+export const PointableBox = styled(Box)`
+    cursor: pointer;
 `;

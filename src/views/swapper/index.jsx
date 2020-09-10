@@ -1,7 +1,12 @@
 import React, { useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { Flex, Box } from "reflexbox";
-import { BackgroundFlex, ArrowIcon, SlippageText } from "./styled";
+import {
+    BackgroundFlex,
+    ArrowIcon,
+    SlippageText,
+    PointableBox,
+} from "./styled";
 import { TokenSpecifier } from "../../components/token-specifier";
 import { useState } from "react";
 import {
@@ -415,6 +420,15 @@ export const Swapper = ({ onConnectWalletClick }) => {
         }
     }, [dispatch, loggedIn, loopringAccount, loopringWallet, supportedTokens]);
 
+    const handleAssetsInversion = useCallback(() => {
+        if(fromToken && toToken) {
+            setFromAmount("");
+            setToAmount("");
+            setFromToken(toToken);
+            setToToken(fromToken);
+        }
+    }, [fromToken, toToken]);
+
     return (
         <Flex flexDirection="column">
             <BackgroundFlex flexDirection="column" alignItems="center" mb={4}>
@@ -434,15 +448,16 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         loggedIn={loggedIn}
                     />
                 </Box>
-                <Box
+                <PointableBox
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
                     height={36}
                     p={2}
+                    onClick={handleAssetsInversion}
                 >
                     <ArrowIcon icon={faArrowDown} />
-                </Box>
+                </PointableBox>
                 <Box mb="12px">
                     <TokenSpecifier
                         variant="to"
