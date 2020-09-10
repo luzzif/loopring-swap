@@ -421,13 +421,14 @@ export const Swapper = ({ onConnectWalletClick }) => {
     }, [dispatch, loggedIn, loopringAccount, loopringWallet, supportedTokens]);
 
     const handleAssetsInversion = useCallback(() => {
-        if(fromToken && toToken) {
+        if (fromToken && toToken) {
             setFromAmount("");
             setToAmount("");
             setFromToken(toToken);
             setToToken(fromToken);
+            dispatch(resetSwapData());
         }
-    }, [fromToken, toToken]);
+    }, [fromToken, toToken, dispatch]);
 
     return (
         <Flex flexDirection="column">
