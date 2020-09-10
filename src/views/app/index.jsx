@@ -29,6 +29,7 @@ import it from "../../i18n/messages/it.json";
 import { switchLanguage } from "../../actions/i18n";
 import { InvalidChainId } from "../../components/invalid-chain-id";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import Authereum from "authereum";
 
 // setting up moment locales
 moment.locale("it", momentIt);
@@ -93,6 +94,12 @@ const web3ModalOptions = {
         },
         walletconnect: {
             package: WalletConnectProvider,
+            options: {
+                infuraId: INFURA_URL,
+            },
+        },
+        authereum: {
+            package: Authereum,
             options: {
                 infuraId: INFURA_URL,
             },
