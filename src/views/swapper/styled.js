@@ -18,10 +18,6 @@ export const SlippageText = styled.span`
     color: ${(props) => props.theme.error};
 `;
 
-export const FeeTextBox = styled(Box)`
-    color: ${(props) => props.theme.success};
-`;
-
 export const PointableBox = styled(Box)`
     cursor: pointer;
 `;

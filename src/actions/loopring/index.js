@@ -16,6 +16,7 @@ import { getMarketInfo } from "../../lightcone/api/v1/marketinfo/get";
 import config from "../../lightcone/config";
 import { getBalances } from "../../lightcone/api/v1/balances";
 import { fromWei } from "web3-utils";
+import { getFeeRates } from "../../lightcone/api/v1/fee-rates";
 
 // login
 
@@ -185,6 +186,8 @@ export const GET_SWAP_DATA_END = "GET_SWAP_DATA_END";
 export const GET_SWAP_DATA_SUCCESS = "GET_SWAP_DATA_SUCCESS";
 
 export const getSwapData = (
+    wallet,
+    account,
     baseToken,
     quoteToken,
     fromAmount,
@@ -194,6 +197,17 @@ export const getSwapData = (
     dispatch({ type: GET_SWAP_DATA_START });
     try {
         const market = `${baseToken.symbol}-${quoteToken.symbol}`;
+        let feePercentage = 0;
+        if (wallet && account) {
+            const wrappedFees = await getFeeRates(
+                [market],
+                account.accountId,
+                await getLoopringApiKey(wallet, account)
+            );
+            feePercentage = new BigNumber(wrappedFees[0].takerRate).dividedBy(
+                100000
+            );
+        }
         const { asks, bids } = await getDepth(market, 0, 1000, supportedTokens);
         const orders = selling ? bids : asks;
         const bestPrice = orders[0].price;
@@ -232,6 +246,7 @@ export const getSwapData = (
                 (totalSize, order) => totalSize.plus(order.sizeInNumber),
                 new BigNumber("0")
             ),
+            feePercentage,
         });
     } catch (error) {
         toast.error(<FormattedMessage id="error.swap.data" />);
