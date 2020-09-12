@@ -10,6 +10,7 @@ export const TokenSpecifier = ({
     variant,
     amount,
     token,
+    changing,
     onAmountChange,
     onBalancesRefresh,
     onTokenChange,
@@ -62,7 +63,7 @@ export const TokenSpecifier = ({
                             decimalSeparator="."
                             value={amount}
                             placeholder="0.0"
-                            decimalScale={4}
+                            decimalScale={changing ? undefined : 4}
                             onChange={handleAmountChange}
                         />
                     </Box>
@@ -94,6 +95,7 @@ TokenSpecifier.propTypes = {
     variant: PropTypes.oneOf(["from", "to"]),
     amount: PropTypes.string.isRequired,
     token: PropTypes.object,
+    changing: PropTypes.bool,
     onAmountChange: PropTypes.func.isRequired,
     onBalancesRefresh: PropTypes.func.isRequired,
     onTokenChange: PropTypes.func.isRequired,
