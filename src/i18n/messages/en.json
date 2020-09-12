@@ -35,6 +35,8 @@
     "swapper.price": "Estimated price",
     "swapper.slippage": "Estimated slippage",
     "swapper.fee": "Fees",
+    "swapper.error.amount.liquidity": "Insufficient liquidity",
+    "swapper.error.amount.balance": "Insufficient balance",
     "token.modal.empty": "Nothing matches your search...",
     "token.modal.searchbar.placeholder": "Search...",
     "swap.success": "The swap was correctly submitted. It should soon be reflected in your balances.",

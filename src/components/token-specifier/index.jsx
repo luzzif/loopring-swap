@@ -5,14 +5,11 @@ import { Box, Flex } from "reflexbox";
 import { FormattedMessage } from "react-intl";
 import { TokenSelect } from "../token-select";
 import { TokenModal } from "../token-modal";
-import { formatBigNumber } from "../../utils";
-import BigNumber from "bignumber.js";
 
 export const TokenSpecifier = ({
     variant,
     amount,
     token,
-    changing,
     onAmountChange,
     onBalancesRefresh,
     onTokenChange,
@@ -21,6 +18,7 @@ export const TokenSpecifier = ({
     loadingSupportedTokens,
     loadingBalances,
     loggedIn,
+    error,
 }) => {
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -53,19 +51,18 @@ export const TokenSpecifier = ({
 
     return (
         <>
-            <RootFlex>
+            <RootFlex error={error}>
                 <HeaderText width="100%" mb={2}>
                     <FormattedMessage id={`token.specifier.${variant}`} />
                 </HeaderText>
                 <Flex width="100%" alignItems="flex-end">
                     <Box flex="1">
                         <Input
+                            thousandSeparator=","
+                            decimalSeparator="."
+                            value={amount}
                             placeholder="0.0"
-                            value={
-                                !amount || changing
-                                    ? amount
-                                    : formatBigNumber(new BigNumber(amount), 4)
-                            }
+                            decimalScale={4}
                             onChange={handleAmountChange}
                         />
                     </Box>
@@ -97,7 +94,6 @@ TokenSpecifier.propTypes = {
     variant: PropTypes.oneOf(["from", "to"]),
     amount: PropTypes.string.isRequired,
     token: PropTypes.object,
-    changing: PropTypes.bool,
     onAmountChange: PropTypes.func.isRequired,
     onBalancesRefresh: PropTypes.func.isRequired,
     onTokenChange: PropTypes.func.isRequired,
@@ -105,4 +101,5 @@ TokenSpecifier.propTypes = {
     loadingSupportedTokens: PropTypes.bool.isRequired,
     loadingBalances: PropTypes.bool.isRequired,
     loggedIn: PropTypes.bool.isRequired,
+    error: PropTypes.bool.isRequired,
 };

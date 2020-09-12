@@ -28,7 +28,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
 import { Spinner } from "../spinner";
-import { formatBigNumber } from "../../utils";
 
 export const TokenModal = ({
     loading,
@@ -41,7 +40,7 @@ export const TokenModal = ({
     selected,
     loggedIn,
 }) => {
-    const { formatMessage } = useIntl();
+    const { formatMessage, formatNumber } = useIntl();
     const contentRef = useRef(null);
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -221,8 +220,13 @@ export const TokenModal = ({
                                                     <Box>
                                                         {etherBalance.isZero()
                                                             ? "-"
-                                                            : formatBigNumber(
-                                                                  etherBalance
+                                                            : formatNumber(
+                                                                  etherBalance,
+                                                                  {
+                                                                      style:
+                                                                          "decimal",
+                                                                      maximumSignificantDigits: 4,
+                                                                  }
                                                               )}
                                                     </Box>
                                                 </Flex>

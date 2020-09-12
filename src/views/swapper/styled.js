@@ -21,3 +21,7 @@ export const SlippageText = styled.span`
 export const PointableBox = styled(Box)`
     cursor: pointer;
 `;
+
+export const ErrorTextBox = styled(Box)`
+    color: ${(props) => props.theme.error};
+`;
