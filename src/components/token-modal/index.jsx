@@ -120,7 +120,7 @@ export const TokenModal = ({
             <RootFlex open={open} onClick={handleLocalCloseOnOutsideClick}>
                 <ContentFlex
                     ref={contentRef}
-                    width={["90%", "60%", "50%", "30%"]}
+                    maxWidth="440px"
                     flexDirection="column"
                 >
                     <SearchFlex mt="4px">

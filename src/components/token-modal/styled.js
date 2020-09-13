@@ -26,7 +26,7 @@ export const ContentFlex = styled(Flex)`
     background: ${(props) => props.theme.background};
     transition: color 0.3s ease, background 0.3s ease;
     border-radius: 12px;
-    max-height: 70%;
+    max-height: 64%;
     overflow: auto;
     box-shadow: 0px 30px 62px 0px ${(props) => props.theme.shadow};
 `;
