@@ -428,19 +428,17 @@ export const Swapper = ({ onConnectWalletClick }) => {
     };
 
     const getPriceNotation = () => {
-        let priceFromToken, priceToToken, price;
+        let price;
+        const priceFromToken = flippedPriceNotation ? fromToken : toToken;
+        const priceToToken = flippedPriceNotation ? toToken : fromToken;
         if (selling) {
-            priceFromToken = flippedPriceNotation ? toToken : fromToken;
-            priceToToken = flippedPriceNotation ? fromToken : toToken;
-            price = flippedPriceNotation
-                ? swapData.averageFillPrice
-                : new BigNumber("1").dividedBy(swapData.averageFillPrice);
-        } else {
-            priceFromToken = flippedPriceNotation ? fromToken : toToken;
-            priceToToken = flippedPriceNotation ? toToken : fromToken;
             price = flippedPriceNotation
                 ? new BigNumber("1").dividedBy(swapData.averageFillPrice)
                 : swapData.averageFillPrice;
+        } else {
+            price = flippedPriceNotation
+                ? swapData.averageFillPrice
+                : new BigNumber("1").dividedBy(swapData.averageFillPrice);
         }
         return `${formatNumber(price, {
             style: "decimal",
