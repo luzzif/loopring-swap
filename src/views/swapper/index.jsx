@@ -288,8 +288,6 @@ export const Swapper = ({ onConnectWalletClick }) => {
             );
             setToAmount(new BigNumber(newToAmount).minus(feeAmount).toFixed());
             setFeeAmount(feeAmount);
-            setChangingToAmount(false);
-            setChangingFromAmount(false);
         }
     }, [
         changingFromAmount,
@@ -508,10 +506,17 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         {loadingSwapData ? (
                             <Spinner size={12} />
                         ) : swapData && swapData.averageFillPrice ? (
-                            `${formatNumber(swapData.averageFillPrice, {
-                                style: "decimal",
-                                maximumSignificantDigits: 4,
-                            })} ${toToken.symbol}`
+                            `${formatNumber(
+                                selling
+                                    ? new BigNumber("1").dividedBy(
+                                          swapData.averageFillPrice
+                                      )
+                                    : swapData.averageFillPrice,
+                                {
+                                    style: "decimal",
+                                    maximumSignificantDigits: 4,
+                                }
+                            )} ${fromToken.symbol} per ${toToken.symbol}`
                         ) : (
                             "-"
                         )}

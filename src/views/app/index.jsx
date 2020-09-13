@@ -240,7 +240,7 @@ export const App = () => {
                         justifyContent="center"
                         alignItems="center"
                     >
-                        <Box width={["90%", "60%", "50%", "24%"]}>
+                        <Box maxWidth="420px" p="16px">
                             {!chainId || chainId === CHAIN_ID ? (
                                 <Swapper
                                     onConnectWalletClick={handleDrawerOpenClick}
