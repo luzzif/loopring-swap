@@ -25,3 +25,7 @@ export const PointableBox = styled(Box)`
 export const ErrorTextBox = styled(Box)`
     color: ${(props) => props.theme.error};
 `;
+
+export const PriceFlipIcon = styled(FontAwesomeIcon)`
+    color: ${(props) => props.theme.primary};
+`;

@@ -7,6 +7,7 @@ import {
     SlippageText,
     PointableBox,
     ErrorTextBox,
+    PriceFlipIcon,
 } from "./styled";
 import { TokenSpecifier } from "../../components/token-specifier";
 import { useState } from "react";
@@ -15,6 +16,7 @@ import {
     faExchangeAlt,
     faLockOpen,
     faExclamationTriangle,
+    faRandom,
 } from "@fortawesome/free-solid-svg-icons";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Button } from "../../components/button";
@@ -74,6 +76,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
     const [changingToAmount, setChangingToAmount] = useState(false);
     const [changingFromAmount, setChangingFromAmount] = useState(false);
     const [selling, setSelling] = useState(false);
+    const [flippedPriceNotation, setFlippedPriceNotation] = useState(false);
 
     const [debouncedGetSwapData] = useDebouncedCallback(
         (
@@ -424,6 +427,31 @@ export const Swapper = ({ onConnectWalletClick }) => {
         return null;
     };
 
+    const getPriceNotation = () => {
+        let priceFromToken, priceToToken, price;
+        if (selling) {
+            priceFromToken = flippedPriceNotation ? toToken : fromToken;
+            priceToToken = flippedPriceNotation ? fromToken : toToken;
+            price = flippedPriceNotation
+                ? swapData.averageFillPrice
+                : new BigNumber("1").dividedBy(swapData.averageFillPrice);
+        } else {
+            priceFromToken = flippedPriceNotation ? fromToken : toToken;
+            priceToToken = flippedPriceNotation ? toToken : fromToken;
+            price = flippedPriceNotation
+                ? new BigNumber("1").dividedBy(swapData.averageFillPrice)
+                : swapData.averageFillPrice;
+        }
+        return `${formatNumber(price, {
+            style: "decimal",
+            maximumSignificantDigits: 4,
+        })} ${priceFromToken.symbol} per ${priceToToken.symbol}`;
+    };
+
+    const handlePriceFlip = useCallback(() => {
+        setFlippedPriceNotation(!flippedPriceNotation);
+    }, [flippedPriceNotation]);
+
     return (
         <Flex flexDirection="column">
             <BackgroundFlex flexDirection="column" alignItems="center" mb={4}>
@@ -441,7 +469,6 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         loadingSupportedTokens={loadingSupportedTokens}
                         loadingBalances={loadingBalances}
                         loggedIn={loggedIn}
-                        error={liquidityError || balanceError}
                     />
                 </Box>
                 <PointableBox
@@ -468,7 +495,6 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         loadingSupportedTokens={loadingSupportedTokens}
                         loadingBalances={loadingBalances}
                         loggedIn={loggedIn}
-                        error={liquidityError || balanceError}
                     />
                 </Box>
                 <Flex
@@ -506,17 +532,12 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         {loadingSwapData ? (
                             <Spinner size={12} />
                         ) : swapData && swapData.averageFillPrice ? (
-                            `${formatNumber(
-                                selling
-                                    ? new BigNumber("1").dividedBy(
-                                          swapData.averageFillPrice
-                                      )
-                                    : swapData.averageFillPrice,
-                                {
-                                    style: "decimal",
-                                    maximumSignificantDigits: 4,
-                                }
-                            )} ${fromToken.symbol} per ${toToken.symbol}`
+                            <Flex>
+                                <Box mr="4px">{getPriceNotation()}</Box>
+                                <PointableBox onClick={handlePriceFlip}>
+                                    <PriceFlipIcon icon={faRandom} />
+                                </PointableBox>
+                            </Flex>
                         ) : (
                             "-"
                         )}

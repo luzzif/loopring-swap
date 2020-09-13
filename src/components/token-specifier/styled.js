@@ -4,8 +4,7 @@ import NumberFormat from "react-number-format";
 
 export const RootFlex = styled(Flex)`
     background: ${(props) => props.theme.background};
-    border: solid 1px
-        ${(props) => (props.error ? props.theme.error : props.theme.border)};
+    border: solid 1px ${(props) => props.theme.border};
     border-radius: 12px;
     padding: 12px 12px 8px 12px;
     flex-direction: column;
