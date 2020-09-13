@@ -59,7 +59,7 @@ const light = {
 
 const dark = {
     ...commonColors,
-    background: "#151618",
+    background: "#18191b",
     foreground: "#0d0d0d",
     border: "#23262a",
     textLight: "#737373",
@@ -240,7 +240,7 @@ export const App = () => {
                         justifyContent="center"
                         alignItems="center"
                     >
-                        <Box width={["90%", "60%", "50%", "24%"]}>
+                        <Box maxWidth="420px" p="16px">
                             {!chainId || chainId === CHAIN_ID ? (
                                 <Swapper
                                     onConnectWalletClick={handleDrawerOpenClick}

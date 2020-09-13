@@ -5,8 +5,6 @@ import { Box, Flex } from "reflexbox";
 import { FormattedMessage } from "react-intl";
 import { TokenSelect } from "../token-select";
 import { TokenModal } from "../token-modal";
-import { formatBigNumber } from "../../utils";
-import BigNumber from "bignumber.js";
 
 export const TokenSpecifier = ({
     variant,
@@ -21,6 +19,7 @@ export const TokenSpecifier = ({
     loadingSupportedTokens,
     loadingBalances,
     loggedIn,
+    error,
 }) => {
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -60,12 +59,11 @@ export const TokenSpecifier = ({
                 <Flex width="100%" alignItems="flex-end">
                     <Box flex="1">
                         <Input
+                            thousandSeparator=","
+                            decimalSeparator="."
+                            value={amount}
                             placeholder="0.0"
-                            value={
-                                !amount || changing
-                                    ? amount
-                                    : formatBigNumber(new BigNumber(amount), 4)
-                            }
+                            decimalScale={changing ? undefined : 4}
                             onChange={handleAmountChange}
                         />
                     </Box>
@@ -105,4 +103,5 @@ TokenSpecifier.propTypes = {
     loadingSupportedTokens: PropTypes.bool.isRequired,
     loadingBalances: PropTypes.bool.isRequired,
     loggedIn: PropTypes.bool.isRequired,
+    error: PropTypes.bool.isRequired,
 };

@@ -6,6 +6,8 @@ import {
     ArrowIcon,
     SlippageText,
     PointableBox,
+    ErrorTextBox,
+    PriceFlipIcon,
 } from "./styled";
 import { TokenSpecifier } from "../../components/token-specifier";
 import { useState } from "react";
@@ -13,8 +15,10 @@ import {
     faArrowDown,
     faExchangeAlt,
     faLockOpen,
+    faExclamationTriangle,
+    faRandom,
 } from "@fortawesome/free-solid-svg-icons";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { Button } from "../../components/button";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -26,9 +30,10 @@ import {
 import BigNumber from "bignumber.js";
 import { Spinner } from "../../components/spinner";
 import { useDebouncedCallback } from "use-debounce";
-import { formatBigNumber } from "../../utils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const Swapper = ({ onConnectWalletClick }) => {
+    const { formatNumber } = useIntl();
     const dispatch = useDispatch();
 
     const {
@@ -61,6 +66,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
 
     const [fromToken, setFromToken] = useState(null);
     const [fromAmount, setFromAmount] = useState("");
+    const [liquidityError, setLiquidityError] = useState(null);
+    const [balanceError, setBalanceError] = useState(null);
     const [toToken, setToToken] = useState(null);
     const [toAmount, setToAmount] = useState("");
     const [feeAmount, setFeeAmount] = useState("");
@@ -69,6 +76,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
     const [changingToAmount, setChangingToAmount] = useState(false);
     const [changingFromAmount, setChangingFromAmount] = useState(false);
     const [selling, setSelling] = useState(false);
+    const [flippedPriceNotation, setFlippedPriceNotation] = useState(false);
 
     const [debouncedGetSwapData] = useDebouncedCallback(
         (
@@ -99,8 +107,11 @@ export const Swapper = ({ onConnectWalletClick }) => {
         if (loggedIn) {
             setFromAmount("");
             setToAmount("");
+            dispatch(resetSwapData());
+            setLiquidityError(false);
+            setBalanceError(false);
         }
-    }, [loggedIn]);
+    }, [dispatch, loggedIn]);
 
     // set ether as the default "from" token
     useEffect(() => {
@@ -165,6 +176,7 @@ export const Swapper = ({ onConnectWalletClick }) => {
             supportedTokens.length > 0 &&
             fromToken &&
             toToken &&
+            !liquidityError &&
             // when the exchange rate is used to calculate the expected to or from token amount,
             // and that is enforced on the component's state, this effect is invoked again and again
             // until the currently fetched exchange rate is the same as the previous.
@@ -210,6 +222,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
         changingToAmount,
         compatibleMarkets,
         debouncedGetSwapData,
+        liquidityError,
+        balanceError,
         fromAmount,
         fromToken,
         selling,
@@ -250,59 +264,26 @@ export const Swapper = ({ onConnectWalletClick }) => {
             if (changingToAmount && newAmount !== fromAmount) {
                 // if the updated to amount is more than the maximum one based on
                 // the order book, the maximum possible value is set
-                if (
-                    swapData.maximumAmount &&
-                    new BigNumber(newAmount)
-                        .dividedBy(swapData.averageFillPrice)
-                        .isGreaterThan(swapData.maximumAmount)
-                ) {
-                    // FIXME: this could cause problems if a given market is particularily illuquid.
-                    // In some cases from amount will not have a significant decimal in the first 5 spots,
-                    // and since the UI doesn't support this, chances are the user will see 0 in the from
-                    // amount from the app, while the internal component state has a minuscule but present
-                    // from amount. It should only happen in extreme cases.
-                    let adjustedFromAmount = swapData.maximumAmount;
-                    if (selling) {
-                        adjustedFromAmount = adjustedFromAmount.dividedBy(
-                            swapData.averageFillPrice
-                        );
-                    } else {
-                        adjustedFromAmount = adjustedFromAmount.multipliedBy(
-                            swapData.averageFillPrice
-                        );
-                    }
-                    newFromAmount = adjustedFromAmount.toFixed();
-                } else {
-                    newFromAmount = newAmount;
-                }
+                newFromAmount = newAmount;
+                setLiquidityError(
+                    !!(
+                        swapData.maximumAmount &&
+                        new BigNumber(newAmount)
+                            .dividedBy(swapData.averageFillPrice)
+                            .isGreaterThan(swapData.maximumAmount)
+                    )
+                );
             } else if (!changingToAmount && newAmount !== toAmount) {
                 // If the new from amount would bring, based on the current average
                 // fill price, the to token amount to be bigger than the maximum allowed
                 // quantity, the from amount is adjusted accordingly
-                if (
-                    swapData.maximumAmount &&
-                    swapData.maximumAmount.isLessThan(newAmount)
-                ) {
-                    // FIXME: this could cause problems if a given market is particularily illuquid.
-                    // In some cases from amount will not have a significant decimal in the first 5 spots,
-                    // and since the UI doesn't support this, chances are the user will see 0 in the from
-                    // amount from the app, while the internal component state has a minuscule but present
-                    // from amount. It should only happen in extreme cases.
-                    let adjustedFromAmount = swapData.maximumAmount;
-                    if (selling) {
-                        adjustedFromAmount = adjustedFromAmount.dividedBy(
-                            swapData.averageFillPrice
-                        );
-                    } else {
-                        adjustedFromAmount = adjustedFromAmount.multipliedBy(
-                            swapData.averageFillPrice
-                        );
-                    }
-                    newFromAmount = adjustedFromAmount.toFixed();
-                    newToAmount = swapData.maximumAmount.toFixed();
-                } else {
-                    newToAmount = newAmount;
-                }
+                newToAmount = newAmount;
+                setLiquidityError(
+                    !!(
+                        swapData.maximumAmount &&
+                        swapData.maximumAmount.isLessThan(newAmount)
+                    )
+                );
             }
             setFromAmount(newFromAmount);
             const feeAmount = new BigNumber(newToAmount).multipliedBy(
@@ -310,8 +291,6 @@ export const Swapper = ({ onConnectWalletClick }) => {
             );
             setToAmount(new BigNumber(newToAmount).minus(feeAmount).toFixed());
             setFeeAmount(feeAmount);
-            setChangingToAmount(false);
-            setChangingFromAmount(false);
         }
     }, [
         changingFromAmount,
@@ -343,9 +322,13 @@ export const Swapper = ({ onConnectWalletClick }) => {
         if (!fromAmount && toAmount && changingFromAmount) {
             setToAmount("");
             dispatch(resetSwapData());
+            setLiquidityError(false);
+            setBalanceError(false);
         } else if (!toAmount && fromAmount && changingToAmount) {
             setFromAmount("");
             dispatch(resetSwapData());
+            setLiquidityError(false);
+            setBalanceError(false);
         }
     }, [changingFromAmount, dispatch, changingToAmount, fromAmount, toAmount]);
 
@@ -356,12 +339,14 @@ export const Swapper = ({ onConnectWalletClick }) => {
             );
             const tokenMaximumExchangeBalance =
                 exchangeBalance && exchangeBalance.balance;
-            if (
-                tokenMaximumExchangeBalance &&
-                new BigNumber(amount).isGreaterThan(tokenMaximumExchangeBalance)
-            ) {
-                amount = new BigNumber(tokenMaximumExchangeBalance).toNumber();
-            }
+            setBalanceError(
+                !!(
+                    tokenMaximumExchangeBalance &&
+                    new BigNumber(amount).isGreaterThan(
+                        tokenMaximumExchangeBalance
+                    )
+                )
+            );
             setChangingToAmount(false);
             setChangingFromAmount(true);
             setFromAmount(amount);
@@ -426,9 +411,44 @@ export const Swapper = ({ onConnectWalletClick }) => {
             setToAmount("");
             setFromToken(toToken);
             setToToken(fromToken);
+            setLiquidityError(false);
+            setBalanceError(false);
             dispatch(resetSwapData());
         }
     }, [fromToken, toToken, dispatch]);
+
+    const getErrorCause = () => {
+        if (liquidityError) {
+            return "liquidity";
+        }
+        if (balanceError) {
+            return "balance";
+        }
+        return null;
+    };
+
+    const getPriceNotation = () => {
+        let price;
+        const priceFromToken = flippedPriceNotation ? fromToken : toToken;
+        const priceToToken = flippedPriceNotation ? toToken : fromToken;
+        if (selling) {
+            price = flippedPriceNotation
+                ? new BigNumber("1").dividedBy(swapData.averageFillPrice)
+                : swapData.averageFillPrice;
+        } else {
+            price = flippedPriceNotation
+                ? swapData.averageFillPrice
+                : new BigNumber("1").dividedBy(swapData.averageFillPrice);
+        }
+        return `${formatNumber(price, {
+            style: "decimal",
+            maximumSignificantDigits: 4,
+        })} ${priceFromToken.symbol} per ${priceToToken.symbol}`;
+    };
+
+    const handlePriceFlip = useCallback(() => {
+        setFlippedPriceNotation(!flippedPriceNotation);
+    }, [flippedPriceNotation]);
 
     return (
         <Flex flexDirection="column">
@@ -480,6 +500,27 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     justifyContent="space-between"
                     alignItems="center"
                     px={2}
+                    height="12px"
+                    width="100%"
+                >
+                    {(liquidityError || balanceError) && (
+                        <>
+                            <ErrorTextBox>
+                                <FormattedMessage
+                                    id={`swapper.error.amount.${getErrorCause()}`}
+                                />
+                            </ErrorTextBox>
+                            <ErrorTextBox>
+                                <FontAwesomeIcon icon={faExclamationTriangle} />
+                            </ErrorTextBox>
+                        </>
+                    )}
+                </Flex>
+                <Flex
+                    mb="8px"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    px={2}
                     width="100%"
                 >
                     <Box>
@@ -489,14 +530,12 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         {loadingSwapData ? (
                             <Spinner size={12} />
                         ) : swapData && swapData.averageFillPrice ? (
-                            `${formatBigNumber(
-                                selling
-                                    ? new BigNumber("1").dividedBy(
-                                          swapData.averageFillPrice
-                                      )
-                                    : swapData.averageFillPrice,
-                                4
-                            )} ${fromToken.symbol}`
+                            <Flex>
+                                <Box mr="4px">{getPriceNotation()}</Box>
+                                <PointableBox onClick={handlePriceFlip}>
+                                    <PriceFlipIcon icon={faRandom} />
+                                </PointableBox>
+                            </Flex>
                         ) : (
                             "-"
                         )}
@@ -517,7 +556,11 @@ export const Swapper = ({ onConnectWalletClick }) => {
                             <Spinner size={12} />
                         ) : swapData && swapData.slippagePercentage ? (
                             <SlippageText>
-                                {formatBigNumber(swapData.slippagePercentage)}%
+                                {formatNumber(swapData.slippagePercentage, {
+                                    style: "decimal",
+                                    maximumSignificantDigits: 4,
+                                })}
+                                %
                             </SlippageText>
                         ) : (
                             "-"
@@ -535,9 +578,10 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     </Box>
                     <Box>
                         {feeAmount && feeAmount.isGreaterThan("0")
-                            ? `${formatBigNumber(feeAmount, 4)} ${
-                                  toToken.symbol
-                              }`
+                            ? `${formatNumber(feeAmount, {
+                                  style: "decimal",
+                                  maximumSignificantDigits: 4,
+                              })} ${toToken.symbol}`
                             : "-"}
                     </Box>
                 </Flex>
@@ -549,7 +593,9 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     loading={loggedIn && loadingSwapSubmission}
                     disabled={
                         loggedIn &&
-                        (!fromToken ||
+                        (liquidityError ||
+                            balanceError ||
+                            !fromToken ||
                             !fromAmount ||
                             fromAmount === "0" ||
                             !toToken ||

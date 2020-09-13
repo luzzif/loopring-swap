@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Flex, Box } from "reflexbox";
+import NumberFormat from "react-number-format";
 
 export const RootFlex = styled(Flex)`
     background: ${(props) => props.theme.background};
@@ -15,7 +16,7 @@ export const HeaderText = styled(Box)`
     font-size: 16px;
 `;
 
-export const Input = styled.input`
+export const Input = styled(NumberFormat)`
     font-size: 32px;
     color: ${(props) => props.theme.text};
     font-family: Montserrat, sans-serif;
