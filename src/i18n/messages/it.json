@@ -37,6 +37,8 @@
     "swapper.fee": "Commissioni",
     "swapper.error.amount.liquidity": "Liquidità del pair insufficiente",
     "swapper.error.amount.balance": "Bilancio insufficiente",
+    "swapper.error.amount.minimum": "Il volume dello swap è troppo basso",
+    "swapper.error.amount.maximum": "Il volume dello swap è troppo alto",
     "token.modal.empty": "Nessun risultato corrisponde alla tua ricerca...",
     "token.modal.searchbar.placeholder": "Cerca...",
     "swap.success": "Lo swap è stato sottoposto correttamente. Tra poco dovrebbe essere riflettuto nei tuoi bilanci.",
