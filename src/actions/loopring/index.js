@@ -15,8 +15,8 @@ import { getDepth } from "../../lightcone/api/v1/depth/get";
 import { getMarketInfo } from "../../lightcone/api/v1/marketinfo/get";
 import config from "../../lightcone/config";
 import { getBalances } from "../../lightcone/api/v1/balances";
-import { fromWei } from "web3-utils";
 import { getFeeRates } from "../../lightcone/api/v1/fee-rates";
+import { weiToEther } from "../../utils";
 
 // login
 
@@ -165,7 +165,10 @@ export const getUserBalances = (account, wallet, supportedTokens) => async (
                     symbol: supportedTokenSymbol,
                     name: supportedToken.name,
                     address: supportedToken.address,
-                    balance: new BigNumber(fromWei(balance)),
+                    balance: weiToEther(
+                        new BigNumber(balance),
+                        supportedToken.decimals
+                    ),
                     decimals: supportedToken.decimals,
                 });
                 return allBalances;
