@@ -24,13 +24,8 @@ export const TokenSpecifier = ({
     const [modalOpen, setModalOpen] = useState(false);
 
     const handleAmountChange = useCallback(
-        (event) => {
-            const newAmount = event.target.value.replace(",", "");
-            if (/^\d+(\.\d*)?$/.test(newAmount)) {
-                onAmountChange(newAmount);
-            } else {
-                onAmountChange("");
-            }
+        (wrappedAmount) => {
+            onAmountChange(wrappedAmount.value);
         },
         [onAmountChange]
     );
@@ -64,7 +59,7 @@ export const TokenSpecifier = ({
                             value={amount}
                             placeholder="0.0"
                             decimalScale={changing ? undefined : 4}
-                            onChange={handleAmountChange}
+                            onValueChange={handleAmountChange}
                         />
                     </Box>
                     <Box display="flex" alignItems="center" ml={2} mb="2px">
