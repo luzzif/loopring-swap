@@ -287,29 +287,37 @@ export const getSwapData = (
                 100000
             );
         }
-        const { asks, bids } = await getDepth(market, 0, 1000, supportedTokens);
+        const { asks, bids } = await getDepth(market, 1, 1000, supportedTokens);
         const orders = selling ? bids : asks;
         const bestPrice = orders[0].price;
         const estimatedToAmount = selling
             ? new BigNumber(fromAmount).multipliedBy(bestPrice)
             : new BigNumber(fromAmount).dividedBy(bestPrice);
         // fetching all the orders required to fill the requested size
-        const requiredOrders = [];
         let totalOrdersSize = new BigNumber("0");
+        let averageFillPrice = new BigNumber("0");
+        let weights = new BigNumber("0");
         for (let i = 0; i < orders.length; i++) {
             const order = orders[i];
-            requiredOrders.push(order);
-            totalOrdersSize = totalOrdersSize.plus(order.sizeInNumber);
+            let adjustedOrderSize = new BigNumber(order.aggregatedSize);
+            if (
+                totalOrdersSize
+                    .plus(adjustedOrderSize)
+                    .isGreaterThan(estimatedToAmount)
+            ) {
+                adjustedOrderSize = estimatedToAmount.minus(totalOrdersSize);
+            }
+            const weight = adjustedOrderSize.dividedBy(estimatedToAmount);
+            weights = weights.plus(weight);
+            const weightedPrice = new BigNumber(order.price).multipliedBy(
+                weight
+            );
+            averageFillPrice = averageFillPrice.plus(weightedPrice);
+            totalOrdersSize = totalOrdersSize.plus(adjustedOrderSize);
             if (totalOrdersSize.isGreaterThanOrEqualTo(estimatedToAmount)) {
                 break;
             }
         }
-        const averageFillPrice = requiredOrders
-            .reduce(
-                (pricesSum, { price }) => pricesSum.plus(price),
-                new BigNumber("0")
-            )
-            .dividedBy(requiredOrders.length);
         let slippagePercentage = new BigNumber(averageFillPrice)
             .minus(bestPrice)
             .dividedBy(averageFillPrice)
@@ -322,7 +330,7 @@ export const getSwapData = (
             averageFillPrice: averageFillPrice,
             slippagePercentage,
             maximumAmount: orders.reduce(
-                (totalSize, order) => totalSize.plus(order.sizeInNumber),
+                (totalSize, order) => totalSize.plus(order.aggregatedSize),
                 new BigNumber("0")
             ),
             feePercentage,

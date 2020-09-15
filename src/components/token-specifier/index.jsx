@@ -10,7 +10,6 @@ export const TokenSpecifier = ({
     variant,
     amount,
     token,
-    changing,
     onAmountChange,
     onBalancesRefresh,
     onTokenChange,
@@ -19,7 +18,6 @@ export const TokenSpecifier = ({
     loadingSupportedTokens,
     loadingBalances,
     loggedIn,
-    error,
 }) => {
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -58,7 +56,7 @@ export const TokenSpecifier = ({
                             decimalSeparator="."
                             value={amount}
                             placeholder="0.0"
-                            decimalScale={changing ? undefined : 4}
+                            decimalScale={token ? token.precision : undefined}
                             onValueChange={handleAmountChange}
                         />
                     </Box>
