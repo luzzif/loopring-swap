@@ -15,8 +15,84 @@ import { getDepth } from "../../lightcone/api/v1/depth/get";
 import { getMarketInfo } from "../../lightcone/api/v1/marketinfo/get";
 import config from "../../lightcone/config";
 import { getBalances } from "../../lightcone/api/v1/balances";
-import { fromWei } from "web3-utils";
 import { getFeeRates } from "../../lightcone/api/v1/fee-rates";
+import { weiToEther } from "../../utils";
+import { getEthNonce } from "../../lightcone/api/v1/ethnonce/get";
+import { getRecommendedGasPrice } from "../../lightcone/api/v1/recommendedGasPrice/get";
+
+// auth status
+
+export const GET_AUTH_STATUS_SUCCESS = "GET_AUTH_STATUS_SUCCESS";
+export const GET_AUTH_STATUS_START = "GET_AUTH_STATUS_START";
+export const GET_AUTH_STATUS_END = "GET_AUTH_STATUS_END";
+
+export const getAuthStatus = (address) => async (dispatch) => {
+    try {
+        dispatch({ type: GET_AUTH_STATUS_START });
+        let needsRegistration = false;
+        try {
+            await lightconeGetAccount(address);
+        } catch (error) {
+            needsRegistration = true;
+        }
+        dispatch({ type: GET_AUTH_STATUS_SUCCESS, needsRegistration });
+    } catch (error) {
+        toast.error(<FormattedMessage id="error.auth.status" />);
+        console.error("error checking auth status", error);
+    } finally {
+        dispatch({ type: GET_AUTH_STATUS_END });
+    }
+};
+
+// registration
+
+export const register = (web3Instance, ethereumAccount) => async (dispatch) => {
+    try {
+        const wallet = new Wallet("MetaMask", web3Instance, ethereumAccount);
+        try {
+            if (await lightconeGetAccount(wallet.address)) {
+                toast.warn(
+                    <FormattedMessage id="warn.register.existing.account" />
+                );
+                console.warn("the account is already registered");
+                return;
+            }
+        } catch (error) {
+            // silently fail if the account is yet to be created
+        }
+        const {
+            exchangeAddress,
+            onchainFees,
+            chainId,
+        } = await getExchangeInfo();
+        const tokens = await getTokenInfo();
+        const fee = new BigNumber(
+            config.getFeeByType("create", onchainFees).fee
+        ).plus(config.getFeeByType("deposit", onchainFees).fee);
+        const { keyPair } = await wallet.generateKeyPair(exchangeAddress, 0);
+        if (!keyPair || !keyPair.secretKey) {
+            throw new Error("failed to generate key pair");
+        }
+        await wallet.createOrUpdateAccount(
+            keyPair,
+            {
+                exchangeAddress,
+                fee: fee.toString(),
+                chainId: chainId,
+                token: config.getTokenBySymbol("ETH", tokens),
+                amount: "",
+                permission: "",
+                nonce: await getEthNonce(wallet.address),
+                gasPrice: await getRecommendedGasPrice(),
+            },
+            true
+        );
+        toast.success(<FormattedMessage id="success.register" />);
+    } catch (error) {
+        toast.error(<FormattedMessage id="error.register" />);
+        console.error("error registering user", error);
+    }
+};
 
 // login
 
@@ -165,7 +241,10 @@ export const getUserBalances = (account, wallet, supportedTokens) => async (
                     symbol: supportedTokenSymbol,
                     name: supportedToken.name,
                     address: supportedToken.address,
-                    balance: new BigNumber(fromWei(balance)),
+                    balance: weiToEther(
+                        new BigNumber(balance),
+                        supportedToken.decimals
+                    ),
                     decimals: supportedToken.decimals,
                 });
                 return allBalances;
@@ -208,29 +287,37 @@ export const getSwapData = (
                 100000
             );
         }
-        const { asks, bids } = await getDepth(market, 0, 1000, supportedTokens);
+        const { asks, bids } = await getDepth(market, 1, 1000, supportedTokens);
         const orders = selling ? bids : asks;
         const bestPrice = orders[0].price;
         const estimatedToAmount = selling
             ? new BigNumber(fromAmount).multipliedBy(bestPrice)
             : new BigNumber(fromAmount).dividedBy(bestPrice);
         // fetching all the orders required to fill the requested size
-        const requiredOrders = [];
         let totalOrdersSize = new BigNumber("0");
+        let averageFillPrice = new BigNumber("0");
+        let weights = new BigNumber("0");
         for (let i = 0; i < orders.length; i++) {
             const order = orders[i];
-            requiredOrders.push(order);
-            totalOrdersSize = totalOrdersSize.plus(order.sizeInNumber);
+            let adjustedOrderSize = new BigNumber(order.aggregatedSize);
+            if (
+                totalOrdersSize
+                    .plus(adjustedOrderSize)
+                    .isGreaterThan(estimatedToAmount)
+            ) {
+                adjustedOrderSize = estimatedToAmount.minus(totalOrdersSize);
+            }
+            const weight = adjustedOrderSize.dividedBy(estimatedToAmount);
+            weights = weights.plus(weight);
+            const weightedPrice = new BigNumber(order.price).multipliedBy(
+                weight
+            );
+            averageFillPrice = averageFillPrice.plus(weightedPrice);
+            totalOrdersSize = totalOrdersSize.plus(adjustedOrderSize);
             if (totalOrdersSize.isGreaterThanOrEqualTo(estimatedToAmount)) {
                 break;
             }
         }
-        const averageFillPrice = requiredOrders
-            .reduce(
-                (pricesSum, { price }) => pricesSum.plus(price),
-                new BigNumber("0")
-            )
-            .dividedBy(requiredOrders.length);
         let slippagePercentage = new BigNumber(averageFillPrice)
             .minus(bestPrice)
             .dividedBy(averageFillPrice)
@@ -243,7 +330,7 @@ export const getSwapData = (
             averageFillPrice: averageFillPrice,
             slippagePercentage,
             maximumAmount: orders.reduce(
-                (totalSize, order) => totalSize.plus(order.sizeInNumber),
+                (totalSize, order) => totalSize.plus(order.aggregatedSize),
                 new BigNumber("0")
             ),
             feePercentage,

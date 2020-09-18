@@ -6,6 +6,7 @@ import {
     faLock,
     faLockOpen,
     faTimes,
+    faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { selectedTheme } from "../../views/app";
 import { FormattedMessage } from "react-intl";
@@ -32,6 +33,9 @@ export const Drawer = ({
     onConnectWallet,
     selectedWeb3Account,
     onLogin,
+    onRegister,
+    needsRegistration,
+    loadingAuthStatus,
     onLogout,
     loggedIn,
     darkTheme,
@@ -47,7 +51,12 @@ export const Drawer = ({
     const [buttonMessageKey, setButtonMessageKey] = useState("placeholder");
 
     useLayoutEffect(() => {
-        if (loggedIn) {
+        if (needsRegistration) {
+            setIcon(faUserPlus);
+            setIconColor(selectedTheme.primary);
+            setSummaryMessageKey("drawer.wallet.connect.register");
+            setButtonMessageKey("drawer.wallet.connect.action.register");
+        } else if (loggedIn) {
             setIcon(faLockOpen);
             setIconColor(selectedTheme.success);
             setSummaryMessageKey("drawer.wallet.connect.logout");
@@ -63,17 +72,27 @@ export const Drawer = ({
             setSummaryMessageKey("drawer.wallet.connect.summary");
             setButtonMessageKey("drawer.wallet.connect.action.connect");
         }
-    }, [loggedIn, selectedWeb3Account]);
+    }, [loggedIn, needsRegistration, selectedWeb3Account]);
 
     const handleButtonClick = useCallback(() => {
-        if (loggedIn) {
+        if (needsRegistration) {
+            onRegister();
+        } else if (loggedIn) {
             onLogout();
         } else if (selectedWeb3Account) {
             onLogin();
         } else {
             onConnectWallet();
         }
-    }, [loggedIn, onConnectWallet, onLogin, onLogout, selectedWeb3Account]);
+    }, [
+        loggedIn,
+        needsRegistration,
+        onConnectWallet,
+        onLogin,
+        onLogout,
+        onRegister,
+        selectedWeb3Account,
+    ]);
 
     return (
         <RootFlex
@@ -103,7 +122,7 @@ export const Drawer = ({
                 </SummaryMessage>
             </Box>
             <Box px={4} mb={4}>
-                <Button onClick={handleButtonClick}>
+                <Button onClick={handleButtonClick} loading={loadingAuthStatus}>
                     <FormattedMessage id={buttonMessageKey} />
                 </Button>
             </Box>
@@ -137,6 +156,9 @@ Drawer.propTypes = {
     onConnectWallet: PropTypes.func.isRequired,
     selectedWeb3Account: PropTypes.string,
     onLogin: PropTypes.func.isRequired,
+    onRegister: PropTypes.func.isRequired,
+    needsRegistration: PropTypes.bool.isRequired,
+    loadingAuthStatus: PropTypes.bool.isRequired,
     onLogout: PropTypes.func.isRequired,
     loggedIn: PropTypes.bool.isRequired,
     darkTheme: PropTypes.bool.isRequired,

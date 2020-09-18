@@ -7,6 +7,8 @@
     "drawer.wallet.connect.action.logout": "Logout",
     "drawer.wallet.connect.login": "You need to log in to start swapping.",
     "drawer.wallet.connect.logout": "You have logged in. Enjoy our non-custodial & high-performance swapping experience.",
+    "drawer.wallet.connect.register": "Please register to Loopring to start swapping.",
+    "drawer.wallet.connect.action.register": "Register",
     "drawer.wallet.connect.list.header.settings": "Settings",
     "drawer.wallet.connect.list.header.lrc": "LRC",
     "drawer.wallet.connect.list.header.support": "Support",
@@ -37,6 +39,8 @@
     "swapper.fee": "Fees",
     "swapper.error.amount.liquidity": "Insufficient liquidity",
     "swapper.error.amount.balance": "Insufficient balance",
+    "swapper.error.amount.minimum": "Swap volume is too low",
+    "swapper.error.amount.maximum": "Swap volume is too high",
     "token.modal.empty": "Nothing matches your search...",
     "token.modal.searchbar.placeholder": "Search...",
     "swap.success": "The swap was correctly submitted. It should soon be reflected in your balances.",
@@ -44,12 +48,16 @@
     "footer.warning": "Source code not audited by Loopring, use at your own risk.",
     "invalid.chain.id.message": "You're currently on an invalid network. Please switch to {chainName}",
 
+    "success.register": "The registration transaction was correctly broadcast to the network. On confirmation, in a few minutes, you'll be able to use Loopring Swap.",
     "warn.account.not.found": "Seems like this account is not yet on our platform. Please register first.",
+    "warn.register.existing.account": "Seems like you already own a Loopring account.",
     "error.login": "There was an error logging in. Please try again later.",
     "error.supported.tokens": "There was an error fetching the supported tokens. Please try again later.",
     "error.supported.markets": "There was an error fetching the supported markets. Please try again later.",
     "error.user.balances": "There was an error fetching your balances. Please try again later.",
     "error.swap.data": "There was an error fetching the current market swap data. Please try again later.",
     "error.swap.size": "There's currently not enough liquidity to process the swap. Please try again later.",
-    "error.swap": "An error occurred performing the swap. Please try again later."
+    "error.swap": "An error occurred performing the swap. Please try again later.",
+    "error.auth.status": "There was an error checking your auth status. Please try again later.",
+    "error.register": "There was an error registering. Please try again later."
 }

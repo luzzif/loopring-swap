@@ -31,6 +31,7 @@ import BigNumber from "bignumber.js";
 import { Spinner } from "../../components/spinner";
 import { useDebouncedCallback } from "use-debounce";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { weiToEther } from "../../utils";
 
 export const Swapper = ({ onConnectWalletClick }) => {
     const { formatNumber } = useIntl();
@@ -68,6 +69,12 @@ export const Swapper = ({ onConnectWalletClick }) => {
     const [fromAmount, setFromAmount] = useState("");
     const [liquidityError, setLiquidityError] = useState(null);
     const [balanceError, setBalanceError] = useState(null);
+    const [lessThanMinimumOrderError, setLessThanMinimumOrderError] = useState(
+        null
+    );
+    const [moreThanMaximumOrderError, setMoreThanMaximumOrderError] = useState(
+        null
+    );
     const [toToken, setToToken] = useState(null);
     const [toAmount, setToAmount] = useState("");
     const [feeAmount, setFeeAmount] = useState("");
@@ -110,6 +117,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
             dispatch(resetSwapData());
             setLiquidityError(false);
             setBalanceError(false);
+            setLessThanMinimumOrderError(false);
+            setMoreThanMaximumOrderError(false);
         }
     }, [dispatch, loggedIn]);
 
@@ -223,7 +232,6 @@ export const Swapper = ({ onConnectWalletClick }) => {
         compatibleMarkets,
         debouncedGetSwapData,
         liquidityError,
-        balanceError,
         fromAmount,
         fromToken,
         selling,
@@ -291,6 +299,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
             );
             setToAmount(new BigNumber(newToAmount).minus(feeAmount).toFixed());
             setFeeAmount(feeAmount);
+            setChangingFromAmount(false);
+            setChangingToAmount(false);
         }
     }, [
         changingFromAmount,
@@ -319,40 +329,77 @@ export const Swapper = ({ onConnectWalletClick }) => {
     }, [compatibleMarkets, fromToken, toToken]);
 
     useEffect(() => {
-        if (!fromAmount && toAmount && changingFromAmount) {
+        if (
+            (!fromAmount && toAmount && changingFromAmount) ||
+            (!toAmount && fromAmount && changingToAmount)
+        ) {
             setToAmount("");
             dispatch(resetSwapData());
             setLiquidityError(false);
             setBalanceError(false);
-        } else if (!toAmount && fromAmount && changingToAmount) {
-            setFromAmount("");
-            dispatch(resetSwapData());
-            setLiquidityError(false);
-            setBalanceError(false);
+            setLessThanMinimumOrderError(false);
+            setMoreThanMaximumOrderError(false);
         }
     }, [changingFromAmount, dispatch, changingToAmount, fromAmount, toAmount]);
 
-    const handleFromAmountChange = useCallback(
-        (amount) => {
-            const exchangeBalance = balances.find(
-                (balance) => balance.id === fromToken.tokenId
-            );
-            const tokenMaximumExchangeBalance =
-                exchangeBalance && exchangeBalance.balance;
-            setBalanceError(
-                !!(
-                    tokenMaximumExchangeBalance &&
-                    new BigNumber(amount).isGreaterThan(
-                        tokenMaximumExchangeBalance
-                    )
-                )
-            );
-            setChangingToAmount(false);
-            setChangingFromAmount(true);
-            setFromAmount(amount);
-        },
-        [balances, fromToken]
-    );
+    useEffect(() => {
+        if (!fromToken || !toToken) {
+            return;
+        }
+        const wrappedBalance = balances.find(
+            (balance) => balance.id === fromToken.tokenId
+        );
+        const tokenMaximumExchangeBalance =
+            wrappedBalance && wrappedBalance.balance;
+        const bigNumberFromAmount = new BigNumber(fromAmount);
+        const bigNumberToAmount = new BigNumber(toAmount);
+        setBalanceError(
+            !!(
+                tokenMaximumExchangeBalance &&
+                bigNumberFromAmount.isGreaterThan(tokenMaximumExchangeBalance)
+            )
+        );
+        const fromTokenMinimumTradeVolume = weiToEther(
+            new BigNumber(fromToken.minOrderAmount),
+            fromToken.decimals
+        );
+        const toTokenMinimumTradeVolume = weiToEther(
+            new BigNumber(toToken.minOrderAmount),
+            toToken.decimals
+        );
+        setLessThanMinimumOrderError(
+            !!(
+                !bigNumberFromAmount.isZero() &&
+                !bigNumberToAmount.isZero() &&
+                (bigNumberFromAmount.isLessThan(fromTokenMinimumTradeVolume) ||
+                    bigNumberToAmount.isLessThan(toTokenMinimumTradeVolume))
+            )
+        );
+        const fromTokenMaximumTradeVolume = weiToEther(
+            new BigNumber(fromToken.maxOrderAmount),
+            fromToken.decimals
+        );
+        const toTokenMaximumTradeVolume = weiToEther(
+            new BigNumber(toToken.maxOrderAmount),
+            toToken.decimals
+        );
+        setMoreThanMaximumOrderError(
+            !!(
+                !bigNumberFromAmount.isZero() &&
+                !bigNumberToAmount.isZero() &&
+                (bigNumberFromAmount.isGreaterThan(
+                    fromTokenMaximumTradeVolume
+                ) ||
+                    bigNumberToAmount.isGreaterThan(toTokenMaximumTradeVolume))
+            )
+        );
+    }, [balances, fromAmount, fromToken, toAmount, toToken]);
+
+    const handleFromAmountChange = useCallback((amount) => {
+        setChangingToAmount(false);
+        setChangingFromAmount(true);
+        setFromAmount(amount);
+    }, []);
 
     const handleToAmountChange = useCallback((weiAmount) => {
         setChangingToAmount(true);
@@ -413,16 +460,24 @@ export const Swapper = ({ onConnectWalletClick }) => {
             setToToken(fromToken);
             setLiquidityError(false);
             setBalanceError(false);
+            setLessThanMinimumOrderError(false);
+            setMoreThanMaximumOrderError(false);
             dispatch(resetSwapData());
         }
     }, [fromToken, toToken, dispatch]);
 
     const getErrorCause = () => {
+        if (moreThanMaximumOrderError) {
+            return "maximum";
+        }
         if (liquidityError) {
             return "liquidity";
         }
         if (balanceError) {
             return "balance";
+        }
+        if (lessThanMinimumOrderError) {
+            return "minimum";
         }
         return null;
     };
@@ -458,7 +513,6 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         variant="from"
                         amount={fromAmount}
                         token={fromToken}
-                        changing={changingFromAmount}
                         onAmountChange={handleFromAmountChange}
                         onBalancesRefresh={handleBalancesRefresh}
                         onTokenChange={setFromToken}
@@ -484,7 +538,6 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         variant="to"
                         amount={toAmount}
                         token={toToken}
-                        changing={changingToAmount}
                         onAmountChange={handleToAmountChange}
                         onBalancesRefresh={handleBalancesRefresh}
                         onTokenChange={setToToken}
@@ -503,7 +556,10 @@ export const Swapper = ({ onConnectWalletClick }) => {
                     height="12px"
                     width="100%"
                 >
-                    {(liquidityError || balanceError) && (
+                    {(liquidityError ||
+                        balanceError ||
+                        lessThanMinimumOrderError ||
+                        moreThanMaximumOrderError) && (
                         <>
                             <ErrorTextBox>
                                 <FormattedMessage
@@ -595,6 +651,8 @@ export const Swapper = ({ onConnectWalletClick }) => {
                         loggedIn &&
                         (liquidityError ||
                             balanceError ||
+                            lessThanMinimumOrderError ||
+                            moreThanMaximumOrderError ||
                             !fromToken ||
                             !fromAmount ||
                             fromAmount === "0" ||
