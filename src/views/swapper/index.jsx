@@ -193,7 +193,12 @@ export const Swapper = ({ onConnectWalletClick }) => {
             // annoying flickering effect. We avoid it by calculating from and to amounts only if
             // an actual user interacted with the form (NOT when the app updates the to and
             // from amounts after swap-details-related calculations)
-            (changingFromAmount || changingToAmount)
+            ((!changingFromAmount &&
+                !changingToAmount &&
+                fromAmount &&
+                toAmount) ||
+                (changingFromAmount && fromAmount) ||
+                (changingToAmount && toAmount))
         ) {
             const tradedMarket = compatibleMarkets.find(
                 (market) =>
