@@ -121,7 +121,7 @@ export const Drawer = ({
                     <FormattedMessage id={summaryMessageKey} />
                 </SummaryMessage>
             </Box>
-            <Box px={4} mb={4}>
+            <Box mb={4}>
                 <Button onClick={handleButtonClick} loading={loadingAuthStatus}>
                     <FormattedMessage id={buttonMessageKey} />
                 </Button>
